@@ -17,7 +17,7 @@ CustomRenderTexture:
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthStencilFormat: 94
-  m_ColorFormat: 8
+  m_ColorFormat: 28
   m_MipMap: 0
   m_GenerateMips: 1
   m_SRGB: 0
@@ -43,7 +43,7 @@ CustomRenderTexture:
   m_InitColor: {r: 1, g: 1, b: 1, a: 1}
   m_InitTexture: {fileID: 0}
   m_UpdateMode: 0
-  m_InitializationMode: 2
+  m_InitializationMode: 0
   m_UpdateZoneSpace: 0
   m_CurrentUpdateZoneSpace: 0
   m_UpdateZones: []
