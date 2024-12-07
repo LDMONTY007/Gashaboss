@@ -112,10 +112,10 @@ PrefabInstance:
       addedObject: {fileID: 4278799704102157299}
     - targetCorrespondingSourceObject: {fileID: -2796492743467506607, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8274833387743975755}
+      addedObject: {fileID: 8863299737426679895}
     - targetCorrespondingSourceObject: {fileID: -2796492743467506607, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8863299737426679895}
+      addedObject: {fileID: 5786651601936535824}
     - targetCorrespondingSourceObject: {fileID: -6495593044749635117, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7931332674101472317}
@@ -335,22 +335,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!138 &8274833387743975755
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1592519289113316748}
-  serializedVersion: 1
-  m_ConnectedBody: {fileID: 0}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!64 &8863299737426679895
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -373,6 +357,31 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -69760931014144829, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
+--- !u!145 &5786651601936535824
+SpringJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1592519289113316748}
+  serializedVersion: 3
+  m_ConnectedBody: {fileID: 0}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_Anchor: {x: 0, y: 0, z: 0}
+  m_Axis: {x: 1, y: 0, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_Spring: 10
+  m_Damper: 0.2
+  m_MinDistance: 0
+  m_MaxDistance: 0
+  m_Tolerance: 0.025
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1 &1995383931372242262 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3127723086408782709, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -511,8 +520,8 @@ SpringJoint:
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: -0.01}
-  m_Spring: 25
-  m_Damper: 1
+  m_Spring: 1000
+  m_Damper: 0
   m_MinDistance: 0
   m_MaxDistance: 0
   m_Tolerance: 0.025
@@ -610,8 +619,8 @@ SpringJoint:
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: -0.01}
-  m_Spring: 25
-  m_Damper: 1
+  m_Spring: 1000
+  m_Damper: 0
   m_MinDistance: 0
   m_MaxDistance: 0
   m_Tolerance: 0.025
