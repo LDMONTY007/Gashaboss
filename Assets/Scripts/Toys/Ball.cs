@@ -33,7 +33,6 @@ public class Ball : MonoBehaviour
 
     float QuadStep(float t)
     {
-            Debug.Log(t + ", " + (2.0f * t * t));
             return 2.0f * t * t;
     }
 
