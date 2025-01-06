@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour, IDamageable
 {
@@ -179,6 +180,9 @@ public class Player : MonoBehaviour, IDamageable
 
         curHealth -= d;
 
+        //Set to be low resolution for a small amount of time.
+        StartLowResRoutine();
+
         //Start iFrames here.
         StartIFrames();
 
@@ -197,6 +201,8 @@ public class Player : MonoBehaviour, IDamageable
 
     public void StartIFrames()
     {
+
+
         //if we're already invincible and
         //the iframes coroutine is currently
         //going, stop it, and create a new one.
@@ -209,11 +215,11 @@ public class Player : MonoBehaviour, IDamageable
         }
         
         //start iframes coroutine
-        iFramesRoutine = StartCoroutine(iFramesCoroutine()); 
+        iFramesRoutine = StartCoroutine(IFramesCoroutine()); 
      
     }
 
-    public IEnumerator iFramesCoroutine()
+    public IEnumerator IFramesCoroutine()
     {
         invinicible = true;
         //wait for 0.67 seconds while invincible.
@@ -228,5 +234,56 @@ public class Player : MonoBehaviour, IDamageable
 
         //exit coroutine.
         yield break;
+    }
+
+    bool isLowRes = false;
+
+    Coroutine lowResRoutine = null;
+
+    public void StartLowResRoutine()
+    {
+        if (isLowRes && lowResRoutine != null)
+        {
+            return;
+        }
+
+        lowResRoutine = StartCoroutine(LowResCoroutine());
+    }
+
+    public IEnumerator LowResCoroutine()
+    {
+        //say we are in low resolution
+        isLowRes = true;
+
+        //store previous layer
+        int prevLayer = animatedModel.layer;
+
+        for (int i = 0; i < animatedModel.transform.childCount; i++)
+        {
+            animatedModel.transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("LowRes");
+        }
+
+        //set to be low resolution
+        animatedModel.layer = LayerMask.NameToLayer("LowRes");
+
+        //wait for .25 seconds
+        yield return new WaitForSeconds(0.25f);
+
+        //after waiting return to original layer
+        animatedModel.layer = prevLayer;
+
+        for (int i = 0; i < animatedModel.transform.childCount; i++)
+        {
+            animatedModel.transform.GetChild(i).gameObject.layer = prevLayer;
+        }
+
+        //say we are no longer low res.
+        isLowRes = false;
+
+        //set back to null
+        //to indicate the coroutine has ended.
+        lowResRoutine = null;
+
+        yield return null;
     }
 }

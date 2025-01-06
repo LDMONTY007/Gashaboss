@@ -2102,7 +2102,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!23 &893601736
 MeshRenderer:
@@ -2198,7 +2198,7 @@ MonoBehaviour:
   animatedModel: {fileID: 919132148104097550}
   playerInput: {fileID: 893601740}
   _maxHealth: 5
-  bounceForce: 5
+  bounceForce: 50
   invinicible: 0
   iFrameTime: 0.67
   moveSpeed: 5
