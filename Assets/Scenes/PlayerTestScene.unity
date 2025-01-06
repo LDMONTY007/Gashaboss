@@ -2201,7 +2201,129 @@ MonoBehaviour:
   bounceForce: 50
   invinicible: 0
   iFrameTime: 0.67
+  groundCheckScale: 0.4
+  accelerating: 0
+  minSpeed: 0
+  maxSpeed: 30
+  timeToMaxSpeed: 10
+  currentInputMoveTime: 0
+  speedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.2
+      inSlope: 198.76735
+      outSlope: 198.76735
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.3333335
+    - serializedVersion: 3
+      time: 0.05
+      value: 5
+      inSlope: 32.651173
+      outSlope: 32.651173
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.5127347
+    - serializedVersion: 3
+      time: 0.49694985
+      value: 10.124212
+      inSlope: 0.01536847
+      outSlope: 0.01536847
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.6170237
+    - serializedVersion: 3
+      time: 1
+      value: 15
+      inSlope: 34.678913
+      outSlope: 34.678913
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.26848695
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 20
+      inSlope: 0.07496627
+      outSlope: 0.07496627
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.20743735
+    - serializedVersion: 3
+      time: 5
+      value: 4.8
+      inSlope: -0.009527342
+      outSlope: -0.009527342
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 10
+      value: 4.75
+      inSlope: -0.031275116
+      outSlope: -0.031275116
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.18125005
+    - serializedVersion: 3
+      time: 20.095795
+      value: 3.5
+      inSlope: 0.0041338215
+      outSlope: 0.0041338215
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.96189934
+    - serializedVersion: 3
+      time: 26.019983
+      value: 3.5
+      inSlope: -0.005376863
+      outSlope: -0.005376863
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 30
+      value: 3
+      inSlope: -0.00076189335
+      outSlope: -0.00076189335
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.22851066
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxAcceleration: 10
+  maxDeceleration: 20
+  currentSpeed: 0
   moveSpeed: 5
+  lastMoveVector: {x: 0, y: 0, z: 0}
+  jumpForce: 5
+  jumpHeight: 5
+  fallMultiplier: 9
+  groundCheckDist: 0.5
+  jumpPressed: 0
+  isJumping: 0
+  playerCollider: {fileID: 893601738}
+  isGrounded: 0
+  desiredMoveDirection: {x: 0, y: 0, z: 0}
+  accumulatedVelocity: {x: 0, y: 0}
 --- !u!114 &893601740
 MonoBehaviour:
   m_ObjectHideFlags: 0
