@@ -43,7 +43,7 @@ public class Draggable : MonoBehaviour
         //Layermask for ignoring raycasts
         //so that my ball shooter doesn't
         //block the raycast.
-        if (!Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
+        if (!Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out hit, 100f, ~LayerMask.GetMask("Ignore Raycast", "Player")))
             return;
 
 
