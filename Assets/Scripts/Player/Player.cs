@@ -191,9 +191,16 @@ public class Player : MonoBehaviour, IDamageable
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
 
+        //Get the forward vector using player up and the camera right vector
+        //so it's a forward vector on the plane created by the up axis of the player
+        //and the right axis of the camera. 
+        Vector3 forwardProjectedOnPlane = Vector3.Cross(cam.transform.right, transform.up);
+
+        Debug.DrawRay(transform.position, forwardProjectedOnPlane.normalized * 10f, Color.yellow);
+
         //project controls to the camera's rotation so left and right are always the left and right sides of the camera.
-        desiredMoveDirection = cam.transform.right * moveInput.x + cam.transform.forward * moveInput.y;
-        moveVector = cam.transform.right * moveInput.x + cam.transform.forward * moveInput.y;
+        desiredMoveDirection = cam.transform.right * moveInput.normalized.x + forwardProjectedOnPlane * moveInput.normalized.y;
+        moveVector = cam.transform.right * moveInput.normalized.x + forwardProjectedOnPlane * moveInput.normalized.y;
         moveVector = moveVector.normalized * moveSpeed;
 
         //Getting sqrMagnitude is more efficient than normal magnitude.
@@ -291,11 +298,11 @@ public class Player : MonoBehaviour, IDamageable
         //rb.linearVelocity += moveVector;
 
         #region constant movement
-        /*        //Store yVelocity
-                float yVel = rb.linearVelocity.y;
-                rb.linearVelocity = moveVector;
-                //Restore yVelocity
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);*/
+/*        //Store yVelocity
+        float yVel = rb.linearVelocity.y;
+        rb.linearVelocity = moveVector;
+        //Restore yVelocity
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);*/
         #endregion
 
 
@@ -453,6 +460,19 @@ public class Player : MonoBehaviour, IDamageable
     public void Die()
     {
 
+        for (int i = 0; i < ragdollParentTransform.transform.childCount; i++)
+        {
+            ragdollParentTransform.transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("LowRes");
+
+            for (int j = 0; j < ragdollParentTransform.transform.GetChild(i).transform.childCount; j++)
+            {
+                ragdollParentTransform.transform.GetChild(i).transform.GetChild(j).gameObject.layer = LayerMask.NameToLayer("LowRes");
+            }
+        }
+
+        //set to be low resolution
+        ragdollParentTransform.gameObject.layer = LayerMask.NameToLayer("LowRes");
+
         ragdollParentTransform.gameObject.SetActive(true);
         //set ragdoll parent position and then unparent the limbs
         ragdollParentTransform.position = transform.position;
@@ -465,6 +485,8 @@ public class Player : MonoBehaviour, IDamageable
         //TODO:
         //copy the animation rotation and such of the model's limbs
         //to the ragdoll.
+
+
 
         //disable the visual model for the character.
         animatedModel.SetActive(false);
