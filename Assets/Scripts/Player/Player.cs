@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -110,7 +111,15 @@ public class Player : MonoBehaviour, IDamageable
 
     public float currentSpeed = 0f;
 
-    public float moveSpeed = 5.0f;
+    [SerializeField]
+    private float moveSpeed = 5.0f;
+
+    public float walkSpeed = 10f;
+    
+    public float sprintSpeed = 20f;
+
+
+    public float rotationSpeed = 5f;
 
     private Coroutine slowToStopCoroutine;
 
@@ -142,10 +151,13 @@ public class Player : MonoBehaviour, IDamageable
 
     bool isOnWall = false;
 
+    bool isSprinting = false;
+
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
     InputAction attackAction;
+    InputAction sprintAction;
 
     //Raycast vars
 
@@ -165,6 +177,7 @@ public class Player : MonoBehaviour, IDamageable
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
+        sprintAction = playerInput.actions["Sprint"];
 
         //disable the ragdoll after
         //it is done initializing the joints.
@@ -195,8 +208,21 @@ public class Player : MonoBehaviour, IDamageable
         //isGrounded = GetComponent<Collider>().Raycast(ray, out RaycastHit hitinfo, groundCheckDist);
         #endregion
 
+        //Check if the player is wanting to sprint
+
+        if (isGrounded)
+        {
+            isSprinting = sprintAction.IsPressed();
+        }
+        else
+        {
+            isSprinting = false;
+        }
+
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
+
+        moveSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         //Get the forward vector using player up and the camera right vector
         //so it's a forward vector on the plane created by the up axis of the player
@@ -291,7 +317,9 @@ public class Player : MonoBehaviour, IDamageable
     {
         //rotate towards the velocity direction but don't rotate upwards.
         if (moveVector != Vector3.zero)
-            rb.MoveRotation(Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up));
+            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+
+        
     }
 
     public void HandleMovement()
@@ -314,87 +342,87 @@ public class Player : MonoBehaviour, IDamageable
         //rb.linearVelocity += moveVector;
 
         #region constant movement
-/*        //Store yVelocity
+        //Store yVelocity
         float yVel = rb.linearVelocity.y;
         rb.linearVelocity = moveVector;
         //Restore yVelocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);*/
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);
         #endregion
 
-        //The dot product check is for when we are
-        //turning on a dime and our velocity is the opposite direction
-        //of our desired velocity. 
-        if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0 || moveInput.magnitude == 0 && /*!grappling.IsGrappling() &&*/ !isJumping && isGrounded && /*!dashPressed &&*/ !jumpPressed)
-        {
-            //rb.linearVelocity *= 0;
-            //Slow down very quickly but still make it look like it was gradual.
-            if (slowToStopCoroutine == null)
-            {
-                slowToStopCoroutine = StartCoroutine(slowToStop());
-            }
-        }
-        //Instant velocity changes depending on speed.
-        //When we start moving we want to immediately go 
-        //to our base walking speed so velocity change.
-        //Then from there on out we slowly approach running.
-        else if (isGrounded && /*!grappling.IsGrappling() &&*/ !isJumping && !jumpPressed)
-        {
-            // Calculate normalized time for acceleration and deceleration
-            // float accelerationTime = currentSpeed / maxSpeed;
-            // float decelerationTime = 1f - accelerationTime;
-            float accelerationTime = currentInputMoveTime / timeToMaxSpeed;
-            float decelerationTime = 1f - accelerationTime;
+        ////The dot product check is for when we are
+        ////turning on a dime and our velocity is the opposite direction
+        ////of our desired velocity. 
+        //if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0 || moveInput.magnitude == 0 && /*!grappling.IsGrappling() &&*/ !isJumping && isGrounded && /*!dashPressed &&*/ !jumpPressed)
+        //{
+        //    //rb.linearVelocity *= 0;
+        //    //Slow down very quickly but still make it look like it was gradual.
+        //    if (slowToStopCoroutine == null)
+        //    {
+        //        slowToStopCoroutine = StartCoroutine(slowToStop());
+        //    }
+        //}
+        ////Instant velocity changes depending on speed.
+        ////When we start moving we want to immediately go 
+        ////to our base walking speed so velocity change.
+        ////Then from there on out we slowly approach running.
+        //else if (isGrounded && /*!grappling.IsGrappling() &&*/ !isJumping && !jumpPressed)
+        //{
+        //    // Calculate normalized time for acceleration and deceleration
+        //    // float accelerationTime = currentSpeed / maxSpeed;
+        //    // float decelerationTime = 1f - accelerationTime;
+        //    float accelerationTime = currentInputMoveTime / timeToMaxSpeed;
+        //    float decelerationTime = 1f - accelerationTime;
 
-            // Apply custom acceleration curve
-            currentSpeed = accelerationCurve.Evaluate(rb.linearVelocity.magnitude/*accelerationTime*/);
+        //    // Apply custom acceleration curve
+        //    currentSpeed = accelerationCurve.Evaluate(rb.linearVelocity.magnitude/*accelerationTime*/);
 
-            // Apply custom speed curve
-            // currentSpeed = speedCurve.Evaluate(accelerationTime);
+        //    // Apply custom speed curve
+        //    // currentSpeed = speedCurve.Evaluate(accelerationTime);
 
-            Debug.DrawRay(transform.position, transform.TransformDirection(rb.linearVelocity), Color.blue);
+        //    Debug.DrawRay(transform.position, transform.TransformDirection(rb.linearVelocity), Color.blue);
 
-            //Vector3 targetVelocity = desiredMoveDirection.normalized * maxSpeed;
+        //    //Vector3 targetVelocity = desiredMoveDirection.normalized * maxSpeed;
 
-            // Evaluate speed using animation curve, they highest value in the curve is 1 so 1 * maxspeed = maxspeed. 
-            // This is how we gradually approach our maxSpeed.
-            //float targetSpeed = speedCurve.Evaluate(rb.linearVelocity.magnitude / maxSpeed) * maxSpeed;
-            Vector3 targetVelocity = desiredMoveDirection.normalized * currentSpeed;
-            //Vector3 targetVelocity = desiredMoveDirection.normalized * maxSpeed;
+        //    // Evaluate speed using animation curve, they highest value in the curve is 1 so 1 * maxspeed = maxspeed. 
+        //    // This is how we gradually approach our maxSpeed.
+        //    //float targetSpeed = speedCurve.Evaluate(rb.linearVelocity.magnitude / maxSpeed) * maxSpeed;
+        //    Vector3 targetVelocity = desiredMoveDirection.normalized * currentSpeed;
+        //    //Vector3 targetVelocity = desiredMoveDirection.normalized * maxSpeed;
 
-            //AccelerateToward(targetVelocity);
-            // Determine current acceleration based on current speed
-            //float acceleration = Mathf.Lerp(initialAcceleration, maxAcceleration, rb.linearVelocity.magnitude / maxSpeed);
+        //    //AccelerateToward(targetVelocity);
+        //    // Determine current acceleration based on current speed
+        //    //float acceleration = Mathf.Lerp(initialAcceleration, maxAcceleration, rb.linearVelocity.magnitude / maxSpeed);
 
-            // Calculate current velocity in desired direction
-            //Vector3 currentVelocity = Vector3.Project(rb.linearVelocity, new Vector3(moveInput.x, 0f, moveInput.y));
+        //    // Calculate current velocity in desired direction
+        //    //Vector3 currentVelocity = Vector3.Project(rb.linearVelocity, new Vector3(moveInput.x, 0f, moveInput.y));
 
-            //CounterVelocity();
-            //Doing targetVelocity - rb.linearVelocity * rb.mass / Time.fixedDeltaTime gives us an acceleration of sorts.
-            //This is what makes it so no matter how fast you turn the velocity isn't decreased.
-            //The LateUpdate() call is what sets the direction of velocity to always face the direction we are wanting
-            //to move. 
+        //    //CounterVelocity();
+        //    //Doing targetVelocity - rb.linearVelocity * rb.mass / Time.fixedDeltaTime gives us an acceleration of sorts.
+        //    //This is what makes it so no matter how fast you turn the velocity isn't decreased.
+        //    //The LateUpdate() call is what sets the direction of velocity to always face the direction we are wanting
+        //    //to move. 
 
-            //The only problem here is doing targetVelocity - rb.linearVelocity basically gets rid of any speed generated
-            //by doing a grapple or dash. We want to perserve it somehow.
-            //targetVelocity = targetVelocity.normalized * (targetVelocity.magnitude + (rb.linearVelocity.magnitude));
-            Vector3 force = (targetVelocity/* - rb.linearVelocity*/)/* * rb.mass / Time.fixedDeltaTime*/;
-            //force *= acceleration;
-            //force = Vector3.ClampMagnitude(force, maxSpeed);
-            //rb.AddForce(force, ForceMode.VelocityChange);
-            if (slowToStopCoroutine == null)
-                rb.AddForce(force, ForceMode.Force);
+        //    //The only problem here is doing targetVelocity - rb.linearVelocity basically gets rid of any speed generated
+        //    //by doing a grapple or dash. We want to perserve it somehow.
+        //    //targetVelocity = targetVelocity.normalized * (targetVelocity.magnitude + (rb.linearVelocity.magnitude));
+        //    Vector3 force = (targetVelocity/* - rb.linearVelocity*/)/* * rb.mass / Time.fixedDeltaTime*/;
+        //    //force *= acceleration;
+        //    //force = Vector3.ClampMagnitude(force, maxSpeed);
+        //    //rb.AddForce(force, ForceMode.VelocityChange);
+        //    if (slowToStopCoroutine == null)
+        //        rb.AddForce(force, ForceMode.Force);
 
 
 
-            //rb.AddForce(movement, ForceMode.VelocityChange);
-            //rb.AddForce(moveVector * movementMultiplier, ForceMode.Force);
-            //rb.AddForce(AccumulatedVelocity, ForceMode.VelocityChange);
-        }
-        else
-        {
-            if (slowToStopCoroutine == null)
-                rb.AddForce(moveVector);
-        }
+        //    //rb.AddForce(movement, ForceMode.VelocityChange);
+        //    //rb.AddForce(moveVector * movementMultiplier, ForceMode.Force);
+        //    //rb.AddForce(AccumulatedVelocity, ForceMode.VelocityChange);
+        //}
+        //else
+        //{
+        //    if (slowToStopCoroutine == null)
+        //        rb.AddForce(moveVector);
+        //}
 
         //rb.AddForce(moveVector - GetComponent<Rigidbody>().velocity, ForceMode.VelocityChange);
         //rb.AddForce(moveVector);
@@ -464,15 +492,15 @@ public class Player : MonoBehaviour, IDamageable
             velWithoutY = Vector3.ClampMagnitude(velWithoutY, maxSpeed);
 
             //when turning on a dime instantly stop moving before continuing.
-            //if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0)
-            //{
-            //    rb.linearVelocity = new Vector3(0f, tempY, 0f);
-            //}
-            //else
-            //{
-            //    rb.linearVelocity = desiredMoveDirection.normalized * velWithoutY.magnitude/*Mathf.Clamp(rb.linearVelocity.magnitude, 0f, maxSpeed)*/;
-            //    rb.linearVelocity = new Vector3(rb.linearVelocity.x, tempY, rb.linearVelocity.z);
-            //}
+            if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0)
+            {
+                rb.linearVelocity = new Vector3(0f, tempY, 0f);
+            }
+            else
+            {
+                rb.linearVelocity = desiredMoveDirection.normalized * velWithoutY.magnitude/*Mathf.Clamp(rb.linearVelocity.magnitude, 0f, maxSpeed)*/;
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, tempY, rb.linearVelocity.z);
+            }
 
            
 
