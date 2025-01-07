@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour, IDamageable
     public GameObject animatedModel; 
 
     public PlayerInput playerInput;
+
+    public Weapon curWeapon;
 
     #region health vars
     [Header("Health Variables")]
@@ -84,7 +87,7 @@ public class Player : MonoBehaviour, IDamageable
     //the force at which we bounce off of the object that damaged us. 
     public float bounceForce = 5f;
 
-    public bool invinicible = false;
+    public bool invincible = false;
 
     //terraria uses this number for iframes as do most games.
     public float iFrameTime = 0.67f;
@@ -140,6 +143,7 @@ public class Player : MonoBehaviour, IDamageable
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
+    InputAction attackAction;
 
     //Raycast vars
 
@@ -158,6 +162,7 @@ public class Player : MonoBehaviour, IDamageable
         //get move action
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
+        attackAction = playerInput.actions["Attack"];
 
         //disable the ragdoll after
         //it is done initializing the joints.
@@ -233,6 +238,15 @@ public class Player : MonoBehaviour, IDamageable
         }
 
         //dashPressed |= Input.GetKeyDown(KeyCode.LeftShift);
+
+        #region attacking
+
+        if (attackAction.WasPressedThisFrame())
+        {
+            curWeapon.Attack();
+        }
+
+        #endregion
 
         #region wall check
         Collider[] colliders1 = Physics.OverlapBox(transform.position + (-transform.right * this.GetComponent<Collider>().bounds.size.x / 2), new Vector3(0.1f, GetComponent<Collider>().bounds.size.y * 2f / 3f, GetComponent<Collider>().bounds.size.z), transform.rotation, playerMask);
@@ -504,7 +518,7 @@ public class Player : MonoBehaviour, IDamageable
     {
         //if we're invincible, 
         //then exit this method.
-        if (invinicible)
+        if (invincible)
         {
             return;
         }
@@ -538,10 +552,10 @@ public class Player : MonoBehaviour, IDamageable
         //the iframes coroutine is currently
         //going, stop it, and create a new one.
         //Debug an error that this should never occur.
-        if (invinicible == true && iFramesRoutine != null)
+        if (invincible == true && iFramesRoutine != null)
         {
             StopCoroutine(iFramesRoutine);
-            invinicible = false;
+            invincible = false;
             Debug.LogError("Player was damaged when in I-Frames, please check that enemies obey the rules of damage and only deal damage by calling TakeDamage.");
         }
         
@@ -552,11 +566,11 @@ public class Player : MonoBehaviour, IDamageable
 
     public IEnumerator IFramesCoroutine()
     {
-        invinicible = true;
+        invincible = true;
         //wait for 0.67 seconds while invincible.
         yield return new WaitForSeconds(iFrameTime);
         //after 0.67 seconds become hittable again.
-        invinicible = false;
+        invincible = false;
 
         //set iframes routine to null 
         //to indicate we have finished
