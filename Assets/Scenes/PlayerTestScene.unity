@@ -2465,8 +2465,8 @@ MonoBehaviour:
   groundCheckScale: 0.4
   accelerating: 0
   minSpeed: 0
-  maxSpeed: 30
-  timeToMaxSpeed: 10
+  maxSpeed: 15
+  timeToMaxSpeed: 0
   currentInputMoveTime: 0
   speedCurve:
     serializedVersion: 2

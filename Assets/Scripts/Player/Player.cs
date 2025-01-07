@@ -437,8 +437,15 @@ public class Player : MonoBehaviour, IDamageable
             //remove the Y value from velocity before we apply that to the forward momentum so we don't "steal" values from the vertical
             //momentum and add them to the forward momentum.
             Vector3 velWithoutY = rb.linearVelocity - new Vector3(0f, tempY, 0f);
+
+            //Clamp without y to not prevent jump speed from slowing down,
+            //just clamp xz plane movement.
+            velWithoutY = Vector3.ClampMagnitude(velWithoutY, maxSpeed);
+
             rb.linearVelocity = desiredMoveDirection.normalized * velWithoutY.magnitude/*Mathf.Clamp(rb.linearVelocity.magnitude, 0f, maxSpeed)*/;
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, tempY, rb.linearVelocity.z);
+
+            
         }
     }
 
