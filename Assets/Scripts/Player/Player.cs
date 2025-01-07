@@ -225,7 +225,7 @@ public class Player : MonoBehaviour, IDamageable
             currentInputMoveTime = 0;
         }
 
-        jumpPressed |= jumpAction.IsPressed();
+        jumpPressed |= jumpAction.WasPressedThisFrame();
 
         if (isGrounded)
         {
@@ -274,7 +274,7 @@ public class Player : MonoBehaviour, IDamageable
     public void HandleRbRotation()
     {
         //rotate towards the velocity direction but don't rotate upwards.
-        if (rb.linearVelocity != Vector3.zero)
+        if (moveVector != Vector3.zero)
             rb.MoveRotation(Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up));
     }
 
@@ -392,6 +392,7 @@ public class Player : MonoBehaviour, IDamageable
             jumpForce = Mathf.Sqrt(2f * -Physics.gravity.y * jumpHeight/*modJumpHeight*/) * rb.mass;
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             jumpPressed = false;
+            Debug.LogWarning("START JUMPING");
             isJumping = true;
         }
 
@@ -431,7 +432,7 @@ public class Player : MonoBehaviour, IDamageable
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
             // Don't override the Y velocity.
-            Debug.Log(desiredMoveDirection.normalized);
+            
             //store the current y velocity
             float tempY = rb.linearVelocity.y;
             //remove the Y value from velocity before we apply that to the forward momentum so we don't "steal" values from the vertical
@@ -451,10 +452,10 @@ public class Player : MonoBehaviour, IDamageable
 
     private IEnumerator slowToStop()
     {
-        Debug.LogWarning("Start Slowing To Stop!");
+        //Debug.LogWarning("Start Slowing To Stop!");
         while (rb.linearVelocity.magnitude > 0 && moveInput.magnitude == 0 && isGrounded /*&& !dashPressed*/)
         {
-            Debug.LogWarning("Slowing To Stop!");
+            //Debug.LogWarning("Slowing To Stop!");
             //AccumulatedVelocity -= 0.05f * AccumulatedVelocity;
             rb.linearVelocity -= 0.05f * rb.linearVelocity;
             yield return new WaitForFixedUpdate();
