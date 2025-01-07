@@ -268,7 +268,7 @@ public class Player : MonoBehaviour, IDamageable
     {
         //rotate towards the velocity direction but don't rotate upwards.
         if (rb.linearVelocity != Vector3.zero)
-            rb.MoveRotation(Quaternion.LookRotation(moveVector, transform.up));
+            rb.MoveRotation(Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up));
     }
 
     public void HandleMovement()
