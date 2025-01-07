@@ -106,6 +106,8 @@ public class Player : MonoBehaviour, IDamageable
     public float maxAcceleration = 10f;
     public float maxDeceleration = 20f;
 
+    public float slowDownMultiplier = 0.05f;
+
     public float currentSpeed = 0f;
 
     public float moveSpeed = 5.0f;
@@ -319,8 +321,10 @@ public class Player : MonoBehaviour, IDamageable
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);*/
         #endregion
 
-
-        if (moveInput.magnitude == 0 && /*!grappling.IsGrappling() &&*/ !isJumping && isGrounded && /*!dashPressed &&*/ !jumpPressed)
+        //The dot product check is for when we are
+        //turning on a dime and our velocity is the opposite direction
+        //of our desired velocity. 
+        if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0 || moveInput.magnitude == 0 && /*!grappling.IsGrappling() &&*/ !isJumping && isGrounded && /*!dashPressed &&*/ !jumpPressed)
         {
             //rb.linearVelocity *= 0;
             //Slow down very quickly but still make it look like it was gradual.
@@ -377,7 +381,8 @@ public class Player : MonoBehaviour, IDamageable
             //force *= acceleration;
             //force = Vector3.ClampMagnitude(force, maxSpeed);
             //rb.AddForce(force, ForceMode.VelocityChange);
-            rb.AddForce(force, ForceMode.Force);
+            if (slowToStopCoroutine == null)
+                rb.AddForce(force, ForceMode.Force);
 
 
 
@@ -387,7 +392,8 @@ public class Player : MonoBehaviour, IDamageable
         }
         else
         {
-            rb.AddForce(moveVector);
+            if (slowToStopCoroutine == null)
+                rb.AddForce(moveVector);
         }
 
         //rb.AddForce(moveVector - GetComponent<Rigidbody>().velocity, ForceMode.VelocityChange);
@@ -457,21 +463,60 @@ public class Player : MonoBehaviour, IDamageable
             //just clamp xz plane movement.
             velWithoutY = Vector3.ClampMagnitude(velWithoutY, maxSpeed);
 
-            rb.linearVelocity = desiredMoveDirection.normalized * velWithoutY.magnitude/*Mathf.Clamp(rb.linearVelocity.magnitude, 0f, maxSpeed)*/;
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, tempY, rb.linearVelocity.z);
+            //when turning on a dime instantly stop moving before continuing.
+            //if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0)
+            //{
+            //    rb.linearVelocity = new Vector3(0f, tempY, 0f);
+            //}
+            //else
+            //{
+            //    rb.linearVelocity = desiredMoveDirection.normalized * velWithoutY.magnitude/*Mathf.Clamp(rb.linearVelocity.magnitude, 0f, maxSpeed)*/;
+            //    rb.linearVelocity = new Vector3(rb.linearVelocity.x, tempY, rb.linearVelocity.z);
+            //}
 
-            
+           
+
+            //if (Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0)
+            //{
+            //    //currentSpeed = accelerationCurve.Evaluate(0f);//rb.linearVelocity.magnitude/*accelerationTime*/);
+            //    //rb.linearVelocity -= rb.linearVelocity + desiredMoveDirection * 0.1f;
+
+            //    /*rb.linearVelocity -= velWithoutY;
+            //    rb.linearVelocity += velWithoutY * 0.01f;*/
+
+            //    //Slow down very quickly but still make it look like it was gradual.
+            //    if (slowToStopCoroutine == null)
+            //    {
+            //        slowToStopCoroutine = StartCoroutine(slowToStop());
+            //    }
+
+            //}
+
         }
     }
 
     private IEnumerator slowToStop()
     {
-        //Debug.LogWarning("Start Slowing To Stop!");
-        while (rb.linearVelocity.magnitude > 0 && moveInput.magnitude == 0 && isGrounded /*&& !dashPressed*/)
+        Debug.LogWarning("Start Slowing To Stop!");
+        //we check both if the player has stopped giving input
+        //or if they just turned on a dime using dot product
+        //to determine if we need to keep slowing down,
+        //this allows us to slow down before moving in the 
+        //opposite direction when turning on a dime,
+        //while still maintaining the original slow down
+        //conditions from momentum mori.
+        while (rb.linearVelocity.magnitude > 0 && (moveInput.magnitude == 0 || Vector3.Dot(desiredMoveDirection, rb.linearVelocity) < 0) && isGrounded /*&& !dashPressed*/)
         {
-            //Debug.LogWarning("Slowing To Stop!");
+            Debug.LogWarning("Slowing To Stop!");
             //AccumulatedVelocity -= 0.05f * AccumulatedVelocity;
-            rb.linearVelocity -= 0.05f * rb.linearVelocity;
+
+            //store the current y velocity
+            float tempY = rb.linearVelocity.y;
+            //remove the Y value from velocity before we apply that to the forward momentum so we don't destroy values from the vertical
+            //momentum in an attempt to slow down horizontal momentum
+            Vector3 velWithoutY = rb.linearVelocity - new Vector3(0f, tempY, 0f);
+
+            rb.linearVelocity -= slowDownMultiplier * velWithoutY;
             yield return new WaitForFixedUpdate();
         }
         slowToStopCoroutine = null;

@@ -2264,7 +2264,7 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: -0.15, z: 0}
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 0, y: 1, z: 1}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -2810,6 +2810,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxAcceleration: 10
   maxDeceleration: 20
+  slowDownMultiplier: 0.15
   currentSpeed: 0
   moveSpeed: 5
   lastMoveVector: {x: 0, y: 0, z: 0}
@@ -3012,7 +3013,6 @@ MonoBehaviour:
   hasCooldown: 1
   cooldownTime: 1
   canAttack: 1
-  attackTime: 1
   attackRadius: 0.5
   attackDistance: 5
 --- !u!1001 &1097847391
