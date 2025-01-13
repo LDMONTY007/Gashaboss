@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 //LD Montello
@@ -11,6 +12,8 @@ public class Weapon : MonoBehaviour
     //cus it'll make scaling easier. 
 
     public ParticleSystem hitParticles;
+
+    public CollisionSensor collisionSensor;
 
     //public Collider weaponCollider;
 
@@ -70,7 +73,52 @@ public class Weapon : MonoBehaviour
         //but for now enable the collider for an attack.
         //weaponCollider.enabled = true;
 
-        //RaycastHit hits = Physics.SphereCastAll(transform.position, attackRadius, transform.forward, attackDistance, playerMask);
+        List<GameObject> objs = collisionSensor.ScanForObjects();
+
+        if (objs.Count > 0 )
+        {
+            for ( int i = 0; i < objs.Count; i++ )
+            {
+                if (objs[i] != null)
+                {
+                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        //make the damageable take damage.
+                        //and tell it we gave it damage.
+                        damageable.TakeDamage(1, gameObject);
+
+                        //TODO:
+                        //Spawn a particle system burst that destroys itself
+                        //when we hit a damageable so that the player can see where they hit.
+                        //maybe give each weapon an individualized particle effect.
+                        //spawn a particle effect facing outward from the normal
+                        //at the position that was hit.
+                        //TODO:
+                        //in the future replace this with
+                        //some code that checks the direction
+                        //the attack is coming from, does a box 
+                        //cast and uses the normal and hit point from
+                        //that box cast to calculate where the damage
+                        //particle effect should spawn. 
+                        Collider c = objs[i].GetComponent<Collider>();
+                       
+
+                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
+                        
+
+                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
+                }
+                
+            }
+        }
+
+        /*//RaycastHit hits = Physics.SphereCastAll(transform.position, attackRadius, transform.forward, attackDistance, playerMask);
         RaycastHit sphereHit;
         
         if (Physics.SphereCast(transform.position, attackRadius, transform.forward * attackDistance, out sphereHit, attackDistance, playerMask))
@@ -97,7 +145,7 @@ public class Weapon : MonoBehaviour
             }
 
 
-        }
+        }*/
 
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
