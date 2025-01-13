@@ -129,21 +129,40 @@ public class Player : MonoBehaviour, IDamageable
     public Vector3 lastMoveVector = Vector3.zero;
     Vector3 moveVector;
 
-    [Header("Jumping")]
-    public float jumpForce = 5f;
-    public float jumpHeight = 5f;
-    public float fallMultiplier = 9f;
+    [Header("Jump Parameters")]
     public float groundCheckDist = 0.1f;
+    [SerializeField] private int jumpCount = 1;
+    public int jumpTotal = 1;
+    [SerializeField] private bool jumpCanceled;
+    [SerializeField] private bool jumping;
+    public float jumpHeight = 5f;
+    [SerializeField] private float buttonTime;
+    [SerializeField] private float jumpTime;
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
+    public float multiplier = 100f;
+    public float timeToApex = 0.01f;
+    public float timeToFall = 0.5f;
 
-    private Coroutine jumpCoroutine;
+    //The gravity we return to 
+    //after modifying gravity.
+    float baseGravity = 9.81f;
+    float gravity = 9.81f;
+    float fallGravity = 9.81f;
 
-    public bool jumpPressed = false;
+    public bool doJump;
 
-    public bool isJumping = false;
+    /* private Coroutine jumpCoroutine;
+
+     public bool jumpPressed = false;
+
+     public bool isJumping = false;*/
 
     public Collider playerCollider;
 
     public bool isGrounded = false;
+
+    public bool inAir => !jumping && !isGrounded;
 
     public Vector3 desiredMoveDirection;
 
@@ -166,6 +185,9 @@ public class Player : MonoBehaviour, IDamageable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //DISABLE GRAVITY SO WE CAN USE OUR OWN.
+        rb.useGravity = false;
+
         //get player mask
         playerMask = LayerMask.GetMask("Player", "Ignore Raycast"); //Assign our layer mask to player
         playerMask = ~playerMask; //Invert the layermask value so instead of being just the player it becomes every layer but the mask
@@ -258,11 +280,56 @@ public class Player : MonoBehaviour, IDamageable
             currentInputMoveTime = 0;
         }
 
-        jumpPressed |= jumpAction.WasPressedThisFrame();
+        //jumpPressed |= jumpAction.WasPressedThisFrame();
+
+        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping);
 
         if (isGrounded)
         {
-            isJumping = false;
+            if (!jumping)
+            {
+                jumpCount = jumpTotal;
+                jumpCanceled = false;
+                //set gravity back to base.
+                gravity = baseGravity;
+                Debug.Log("BACK TO BASE".Color("Green"));
+                //animator.SetTrigger("landing");
+            }
+        }
+
+        if (jumping)
+        {
+            jumpTime += Time.deltaTime;
+        }
+
+        if (jumping && !jumpCanceled)
+        {
+            if (!jumpAction.IsPressed()) //If we stop giving input for jump cancel jump so we can have a variable jump.
+            {
+                jumpCanceled = true;
+                //gravity = fallGravity;
+            }
+
+            if (jumpTime >= buttonTime) //When we reach our projected time stop jumping and begin falling.
+            {
+                Debug.Log("JUMP CANCELED BY BUTTON TIME".Color("Green"));
+                //pause the editor
+                //Debug.Break();
+                jumpCanceled = true;
+
+                //set gravity back to fall gravity
+                gravity = fallGravity;
+                //gravity = baseGravity;
+
+
+                //jumpDist = Vector2.Distance(transform.position, ogJump); //Not needed, just calculates distance from where we started jumping to our highest point in the jump.
+                //jumpDist = transform.position.y - ogJump.y;
+            }
+        }
+
+        if (jumpCanceled)
+        {
+            jumping = false;
         }
 
         //dashPressed |= Input.GetKeyDown(KeyCode.LeftShift);
@@ -434,32 +501,48 @@ public class Player : MonoBehaviour, IDamageable
 
     public void HandleJumping()
     {
-        if (jumpPressed && isGrounded)
+
+
+        if (doJump)
         {
-            /*float*/
-            jumpForce = Mathf.Sqrt(2f * -Physics.gravity.y * jumpHeight/*modJumpHeight*/) * rb.mass;
+            //I did the work out and 2 * h / t = gravity so I'm going to do that.
+            gravity = 2 * jumpHeight / timeToApex;
+            fallGravity = 2 * jumpHeight / timeToFall;
+
+            float projectedHeight = timeToApex * gravity / 2f;
+            Debug.Log(timeToApex + " " + projectedHeight + " " + gravity);
+            Debug.Log(("Projected Height " + projectedHeight).ToString().Color("Cyan"));
+
+            doJump = false;
+            jumpCount--;
+            float jumpForce;
+
+            jumpForce = Mathf.Sqrt(2f * gravity * jumpHeight) * rb.mass; //multiply by mass at the
+            //end so that it reaches the height regardless of weight.
+
+            //divide by 2 so we get the amount of time to reach the apex of the jump.
+            buttonTime = (jumpForce / (rb.mass * gravity));
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-            jumpPressed = false;
-            Debug.LogWarning("START JUMPING");
-            isJumping = true;
+            jumpTime = 0;
+            jumping = true;
+            jumpCanceled = false;
+
+            
         }
 
-        if (isJumping)
+        //Where I learned this https://www.youtube.com/watch?v=7KiK0Aqtmzc
+        //This is what gives us consistent fall velocity so that jumping has the correct arc.
+        Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+
+        if (localVel.y < 0 && inAir) //If we are in the air and at the top of the arc then apply our fall speed to make falling more game-like
         {
-
-            //Where I learned this https://www.youtube.com/watch?v=7KiK0Aqtmzc
-            //This is what gives us consistent fall velocity so that jumping has the correct arc.
-            Vector2 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-
-            if (localVel.y < 0) //If we are in the air and at the top of the arc then apply our fall speed to make falling more game-like
-            {
-                //animator.SetBool("falling", true);
-                //we don't multiply by mass because forceMode2D.Force includes that in it's calculation.
-                //set gravity to be fallGravity.
-                //gravity = fallGravity;
-                Vector2 jumpVec = -transform.up * (fallMultiplier - 1) * 100f * Time.deltaTime;
-                rb.AddForce(jumpVec, ForceMode.Force);
-            }
+            //animator.SetBool("falling", true);
+            //we don't multiply by mass because forceMode2D.Force includes that in it's calculation.
+            //set gravity to be fallGravity.
+            gravity = fallGravity;
+            Vector3 jumpVec = -transform.up * (fallMultiplier - 1)/* * 100f * Time.deltaTime*/;
+            rb.AddForce(jumpVec, ForceMode.Force);
         }
     }
 
@@ -475,7 +558,7 @@ public class Player : MonoBehaviour, IDamageable
     public void ApplyFinalMovements()
     {
         //We need to check that the desiredMoveDirection vector isn't zero because otherwise it can zero out our velocity.
-        if (isGrounded && !isJumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
+        if (isGrounded && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
         {
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
@@ -521,6 +604,14 @@ public class Player : MonoBehaviour, IDamageable
             //}
 
         }
+
+
+        //Apply gravity, because gravity is not affected by mass and 
+        //we can't use ForceMode.acceleration with 2D just multiply
+        //by mass at the end. It's basically the same.
+        //In unity it factors in mass for this calculation so 
+        //multiplying by mass cancels out mass entirely.
+        rb.AddForce(-transform.up * gravity * rb.mass);
     }
 
     private IEnumerator slowToStop()

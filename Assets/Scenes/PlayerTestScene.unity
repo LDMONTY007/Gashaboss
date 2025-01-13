@@ -2365,7 +2365,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!23 &893601736
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2527,12 +2527,20 @@ MonoBehaviour:
   sprintSpeed: 20
   rotationSpeed: 15
   lastMoveVector: {x: 0, y: 0, z: 0}
-  jumpForce: 5
-  jumpHeight: 5
-  fallMultiplier: 9
   groundCheckDist: 0.97
-  jumpPressed: 0
-  isJumping: 0
+  jumpCount: 3
+  jumpTotal: 1
+  jumpCanceled: 0
+  jumping: 0
+  jumpHeight: 15
+  buttonTime: 0
+  jumpTime: 0
+  fallMultiplier: 9
+  lowJumpMultiplier: 2
+  multiplier: 100
+  timeToApex: 1
+  timeToFall: 2
+  doJump: 0
   playerCollider: {fileID: 893601738}
   isGrounded: 0
   desiredMoveDirection: {x: 0, y: 0, z: 0}
