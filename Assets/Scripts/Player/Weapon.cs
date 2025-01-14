@@ -29,9 +29,17 @@ public class Weapon : MonoBehaviour
 
     LayerMask playerMask;
 
+
+    //colors used when debugging the collision sensor mesh
+    private Color ogMeshColor;
+    //blue with 100 alpha.
+    private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //get original mesh color
+        ogMeshColor = collisionSensor.meshColor;
         //weaponCollider.enabled = false;
 
         //get player mask
@@ -147,9 +155,15 @@ public class Weapon : MonoBehaviour
 
         }*/
 
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.meshColor = cooldownMeshColor;
+
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
         yield return new WaitForSeconds(cooldownTime);
+
+        //restore default color
+        collisionSensor.meshColor = ogMeshColor;
 
         //allow us to attack again.
         canAttack = true;
@@ -157,30 +171,7 @@ public class Weapon : MonoBehaviour
         yield break;
     }
 
-    //You didn't code this,
-    //you got it from here:
-    //https://discussions.unity.com/t/draw-spherecasts-code-review/872716/2
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, attackDistance);
 
-        RaycastHit hit;
-        if (Physics.SphereCast(transform.position, attackRadius, transform.forward * attackDistance, out hit, attackDistance, playerMask))
-        {
-            Gizmos.color = Color.green;
-            Vector3 sphereCastMidpoint = transform.position + (transform.forward * hit.distance);
-            Gizmos.DrawWireSphere(sphereCastMidpoint, attackRadius);
-            Gizmos.DrawSphere(hit.point, 0.1f);
-            Debug.DrawLine(transform.position, sphereCastMidpoint, Color.green);
-        }
-        else
-        {
-            Gizmos.color = Color.red;
-            Vector3 sphereCastMidpoint = transform.position + (transform.forward * (attackDistance - attackRadius));
-            Gizmos.DrawWireSphere(sphereCastMidpoint, attackRadius);
-            Debug.DrawLine(transform.position, sphereCastMidpoint, Color.red);
-        }
-    }
 
     /*private void OnCollisionEnter(Collision collision)
     {

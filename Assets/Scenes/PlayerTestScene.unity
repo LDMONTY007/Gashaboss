@@ -2734,7 +2734,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 1054384726}
   hasCooldown: 1
-  cooldownTime: 1
+  cooldownTime: 0.45
   canAttack: 1
   attackRadius: 3.38
   attackDistance: 7
