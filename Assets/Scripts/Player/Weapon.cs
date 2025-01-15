@@ -92,6 +92,13 @@ public class Weapon : MonoBehaviour
                     IDamageable damageable = objs[i].GetComponent<IDamageable>();
                     if (damageable != null)
                     {
+                        //if the damageable is a boss, and is dead, skip this object in the loop.
+                        BossController boss = objs[i].GetComponent<BossController>();
+                        if (boss.isDead)
+                        {
+                            continue;
+                        }
+
                         //make the damageable take damage.
                         //and tell it we gave it damage.
                         damageable.TakeDamage(1, gameObject);

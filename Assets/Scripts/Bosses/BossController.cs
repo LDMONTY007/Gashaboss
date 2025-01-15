@@ -1,22 +1,123 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-public class BossController : MonoBehaviour
+public class BossController : MonoBehaviour, IDamageable
 {
 
-    bool doStateMachine = false;
+    #region health vars
+    [Header("Health Variables")]
+    public int _maxHealth = 3;
+
+    public int maxHealth
+    {
+        get
+        {
+            //Calc the health when we access it.
+            //Also make sure that if we 
+            //leveled up and got more health
+            //that we reset the player's health.
+            //if (_maxHealth != CalcHealth(level))
+            //{
+            //    _maxHealth = CalcHealth(level);
+            //    /*                if (_health < 9)
+            //                    {
+            //                        _health = 10;
+            //                    }*/
+            //    curHealth = CalcHealth(level);
+            //}
+            return _maxHealth;
+        }
+    }
+
+    private int _curHealth = 3;
+
+    public int curHealth
+    {
+        get
+        {
+            return _curHealth;
+        }
+
+        set
+        {
+            _curHealth = Mathf.Clamp(value, 0, maxHealth);
+            if (curHealth == 0)
+            {
+                Die();
+            }
+        }
+    }
+
+    public void Die()
+    {
+
+
+
+
+        //TODO:
+        //copy the animation rotation and such of the model's limbs
+        //to the ragdoll.
+
+
+
+        //disable the visual model for the character.
+        //animatedModel.SetActive(false);
+
+        //TODO:
+        //Play some sort of death effect
+        //where it falls to the ground then fades away
+
+        isDead = true;
+
+        //set color to be red when dead.
+        bossRenderer.material.color = Color.red;
+        rb.constraints = RigidbodyConstraints.None;
+    }
+
+    [HideInInspector]
+    public bool isDead = false;
+
+    #endregion
+
+    public bool doStateMachine = false;
 
     [Header("Attack Parameters")]
     public float attackCheckRadius = 10f;
+
+
+
+    Rigidbody rb;
+
+    [Header("Move Parameters")]
+    public float moveSpeed = 5f;
+
+    public float chargeSpeed = 10f;
+
+    public float targetAccuracy = 0.1f;
+
+    bool isMoving = false;
+
+    bool isShaking = false;
 
     public enum BossState
     {
         idle,
         attack,
         move,
+        stun,
     }
 
-    public BossState bossState;
+    public BossState curState = BossState.idle;
+
+    public GameObject animatedModel;
+
+    private MeshRenderer bossRenderer;
+
+    public Transform lookTransform;
+    private bool invincible;
+
+    private GameObject playerObject;
 
     bool IsPlayerInAttackRange()
     {
@@ -35,7 +136,10 @@ public class BossController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        playerObject = Player.instance.gameObject;
+
+        bossRenderer = animatedModel.GetComponent<MeshRenderer>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -51,11 +155,11 @@ public class BossController : MonoBehaviour
     {
         #region boss state switching
 
-        if (bossState != BossState.attack)
+        if (curState != BossState.attack)
         { 
             if (IsPlayerInAttackRange())
             {
-                bossState = BossState.attack;
+                curState = BossState.attack;
             }
         }
 
@@ -63,26 +167,60 @@ public class BossController : MonoBehaviour
 
         #region handling individual states
 
-        switch (bossState)
+        switch (curState)
         {
             case BossState.idle:
+                HandleIdle();
                 break;
             case BossState.attack:
                 HandleAttack();
                 break;
             case BossState.move:
+                HandleMove();
                 break;
         }
 
         #endregion
     }
 
-    public void HandleAttack()
+    //Here we decide if we want to attack,
+    //or if we want to try and get closer to the player.
+    public void HandleIdle()
     {
-
+        if (IsPlayerInAttackRange())
+        {
+            Debug.Log("Boss is in attack range!".Color("orange"));
+            curState = BossState.attack;
+        }
+        else
+        {
+            curState = BossState.move;
+        }
     }
 
-   
+    public void HandleAttack()
+    {
+        Debug.Log("Boss wants to attack here!".Color("Red"));
+
+        //TODO:
+        //choose the attack based on our pattern
+        //and execute it.
+        //attacks should be a seperate script to make modular bosses and boss design easier.
+
+        //at the end of an attack coroutine
+        //always set the state back to idle
+        curState = BossState.idle;
+    }
+
+    public void HandleMove()
+    {
+        if (!isMoving)
+        {
+            Debug.Log("Boss is moving to player!".Color("Red"));
+            //for now just move towards the player
+            StartCoroutine(MoveToPosition(playerObject.transform.position));
+        }
+    }
 
     private void OnDrawGizmos()
     {
@@ -97,5 +235,204 @@ public class BossController : MonoBehaviour
 
         //Set gizmos color back to the original color.
         Gizmos.color = prevColor;
+    }
+
+    //draw health for debug.
+    void OnGUI()
+    {
+        string text = curHealth.ToString();
+        int oldFontSize = GUI.skin.label.fontSize;
+        GUI.skin.label.fontSize = 30;
+        Vector3 position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
+        GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
+        GUI.skin.label.fontSize = oldFontSize;
+    }
+
+    public IEnumerator MoveToPosition(Vector3 targetPos)
+    {
+        isMoving = true;
+
+        //Shake to telegraph
+        //the attack so the player knows it's happening
+        //then after the whole coroutine executes
+        //we can charge.
+        //yield return ShakeCoroutine();
+        ShakeModel();
+
+        while (isShaking)
+        {
+
+            yield return null;
+        }
+
+        //Loop till we reach our position
+        //and only stop if we reach it or we hit an object.
+        while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
+        {
+            Debug.LogWarning("HERE");
+            rb.linearVelocity = (targetPos - transform.position).normalized * chargeSpeed;
+            yield return null;
+        }
+
+
+        //if we reach our position or we are stunned
+        //then stop moving.
+        rb.linearVelocity = Vector3.zero;
+
+        //if we weren't 
+        //stunned then go to the default
+        //state so the attack pattern can
+        //reset.
+        /*        if (curState != BossState.Stun)
+                {
+                    curState = BossState.None;
+                    //Set the position to match our target
+                    //because we were close enough.
+                    //transform.position = targetPos;
+                }*/
+
+        isMoving = false;
+
+        //say we are no longer moving
+        //and need to make a decision.
+        curState = BossState.idle;
+    }
+
+    //Just a small shake 
+    //animation for the sprite object
+    //so I can use this
+    //when they get hit.
+    public void ShakeModel()
+    {
+        if (!isShaking)
+        {
+            StartCoroutine(ShakeCoroutine());
+        }
+    }
+
+    private IEnumerator ShakeCoroutine()
+    {
+        isShaking = true;
+
+        float total = 0.3f;
+        float currentTime = 0f;
+
+        //Sleep for 50 ms.
+        float sleepTime = 0.05f;
+
+        //Cache the current position of the model
+        //incase it isn't Vector3.zero
+        Vector3 modelPos = animatedModel.transform.localPosition;
+
+        int sign = 1;
+        float frequency = 5f;
+
+        //Set startTime
+        float startTime = Time.timeSinceLevelLoad;
+
+        while (currentTime < total)
+        {
+            //Add the time since start time
+            currentTime += Time.timeSinceLevelLoad - startTime;
+
+            //offset the model one direction this frame
+            //the opposite direction the next frame,
+            //so it looks like it's shaking
+            //left and right.
+            animatedModel.transform.localPosition = modelPos + lookTransform.right.normalized * sign * frequency * Time.deltaTime;
+
+            //invert direction to immitate shaking
+            sign *= -1;
+
+
+            //Set start time before we wait for 
+            //sleepTime so that when control returns
+            //to us the total amount of time we spend shaking
+            //will still be equivalent to the total time given.
+            startTime = Time.timeSinceLevelLoad;
+            yield return new WaitForSeconds(sleepTime);
+        }
+
+
+
+        //Set back to original position.
+        animatedModel.transform.localPosition = modelPos;
+
+        isShaking = false;
+
+        yield break;
+    }
+
+    public void TakeDamage(int d, GameObject other)
+    {
+        //if we're invincible, 
+        //then exit this method.
+        //or if we're dead don't
+        //take damage
+        if (invincible || isDead)
+        {
+            return;
+        }
+
+        curHealth -= d;
+
+        //Start the shaking animation
+        ShakeModel();
+
+        //Set to be low resolution for a small amount of time.
+        StartLowResRoutine();
+    }
+
+
+    bool isLowRes = false;
+
+    Coroutine lowResRoutine = null;
+
+    public void StartLowResRoutine()
+    {
+        if (isLowRes && lowResRoutine != null)
+        {
+            return;
+        }
+
+        lowResRoutine = StartCoroutine(LowResCoroutine());
+    }
+
+    public IEnumerator LowResCoroutine()
+    {
+        //say we are in low resolution
+        isLowRes = true;
+
+        //store previous layer
+        int prevLayer = animatedModel.layer;
+
+        for (int i = 0; i < animatedModel.transform.childCount; i++)
+        {
+            animatedModel.transform.GetChild(i).gameObject.layer = LayerMask.NameToLayer("LowRes");
+        }
+
+        //set to be low resolution
+        animatedModel.layer = LayerMask.NameToLayer("LowRes");
+
+        //wait for .25 seconds
+        yield return new WaitForSeconds(0.25f);
+
+        //after waiting return to original layer
+        animatedModel.layer = prevLayer;
+
+        for (int i = 0; i < animatedModel.transform.childCount; i++)
+        {
+            animatedModel.transform.GetChild(i).gameObject.layer = prevLayer;
+        }
+
+        //say we are no longer low res.
+        isLowRes = false;
+
+        //set back to null
+        //to indicate the coroutine has ended.
+        lowResRoutine = null;
+
+        yield return null;
     }
 }

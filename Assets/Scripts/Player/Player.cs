@@ -8,6 +8,9 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour, IDamageable
 {
+
+    public static Player instance;
+
     //private references 
     Camera cam;
 
@@ -182,9 +185,18 @@ public class Player : MonoBehaviour, IDamageable
 
     LayerMask playerMask;
 
+    //set our static instance so it's easier to find the player.
+    private void Awake()
+    {
+        instance = this;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         //DISABLE GRAVITY SO WE CAN USE OUR OWN.
         rb.useGravity = false;
 
@@ -821,5 +833,18 @@ public class Player : MonoBehaviour, IDamageable
         // restore previous Gizmos settings
         Gizmos.color = prevColor;
         Gizmos.matrix = prevMatrix;
+    }
+
+    //draw health
+    //for debug.
+    void OnGUI()
+    {
+        string text = curHealth.ToString();
+        int oldFontSize = GUI.skin.label.fontSize;
+        GUI.skin.label.fontSize = 30;
+        Vector3 position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
+        GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
+        GUI.skin.label.fontSize = oldFontSize;
     }
 }
