@@ -170,12 +170,15 @@ public class BossController : MonoBehaviour, IDamageable
         switch (curState)
         {
             case BossState.idle:
+                bossRenderer.material.color = Color.white;
                 HandleIdle();
                 break;
             case BossState.attack:
+                bossRenderer.material.color = Color.yellow;
                 HandleAttack();
                 break;
             case BossState.move:
+                bossRenderer.material.color = Color.blue;
                 HandleMove();
                 break;
         }
@@ -207,9 +210,13 @@ public class BossController : MonoBehaviour, IDamageable
         //and execute it.
         //attacks should be a seperate script to make modular bosses and boss design easier.
 
+        JumpAttack jumpAttack = new JumpAttack();
+        jumpAttack.Execute(this, 1f);
+
         //at the end of an attack coroutine
         //always set the state back to idle
-        curState = BossState.idle;
+        //curState = BossState.idle;
+
     }
 
     public void HandleMove()
@@ -270,7 +277,6 @@ public class BossController : MonoBehaviour, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
-            Debug.LogWarning("HERE");
             rb.linearVelocity = (targetPos - transform.position).normalized * chargeSpeed;
             yield return null;
         }

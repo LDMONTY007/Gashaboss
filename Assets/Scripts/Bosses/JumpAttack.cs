@@ -1,0 +1,24 @@
+using System.Collections;
+using UnityEngine;
+
+public class JumpAttack : BossAttack
+{
+    public float height;
+    public bool stopAtApex;
+
+    public override void Execute(BossController boss, float duration)
+    {
+        boss.StartCoroutine(PerformJump(boss, duration));
+    }
+
+    private IEnumerator PerformJump(BossController boss, float duration)
+    {
+        // Handle the jump physics using height and stopAtApex.
+
+        yield return new WaitForSeconds(duration);
+        //Debug.LogWarning("JUMP PERFORMED".Color("Blue"));
+
+        //always set to idle after an attack.
+        boss.curState = BossController.BossState.idle;
+    }
+}

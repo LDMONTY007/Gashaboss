@@ -39,7 +39,7 @@ public class Weapon : MonoBehaviour
     void Start()
     {
         //get original mesh color
-        ogMeshColor = collisionSensor.meshColor;
+        ogMeshColor = collisionSensor.sensorColor;
         //weaponCollider.enabled = false;
 
         //get player mask
@@ -163,14 +163,14 @@ public class Weapon : MonoBehaviour
         }*/
 
         //set color of debug mesh to show we are in cooldown
-        collisionSensor.meshColor = cooldownMeshColor;
+        collisionSensor.sensorColor = cooldownMeshColor;
 
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
         yield return new WaitForSeconds(cooldownTime);
 
         //restore default color
-        collisionSensor.meshColor = ogMeshColor;
+        collisionSensor.sensorColor = ogMeshColor;
 
         //allow us to attack again.
         canAttack = true;

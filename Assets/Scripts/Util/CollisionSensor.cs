@@ -5,16 +5,11 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class CollisionSensor : MonoBehaviour
 {
-    public float distance = 10;
     public float angle = 30;
     public float height = 1.0f;
-    public float heightOffset = 0f;
-    public Color meshColor = Color.red;
-    public int scanFrequency = 30;
-    public LayerMask layers;
-    public LayerMask occlusionLayers;
     public bool debugTargets;
     public bool debug;
+    public Color sensorColor = Color.blue;
     public List<GameObject> Objects
     {
         get
@@ -25,215 +20,68 @@ public class CollisionSensor : MonoBehaviour
     }
     private List<GameObject> objects = new List<GameObject>();
 
-    Collider[] colliders = new Collider[50];
-    Mesh mesh;
-    int count;
-    float scanInterval;
-    float scanTimer;
+    public SphereCollider triggerCollider;
 
     // Start is called before the first frame update
     void Start()
     {
-        scanInterval = 1f / scanFrequency;
+        triggerCollider = GetComponent<SphereCollider>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        //Old code for collision sensor stuff.
-        //it used to run all the time but we only
-        //run it once when attacking.
-/*        scanTimer -= Time.deltaTime;
-        if (scanTimer < 0)
-        {
-            scanTimer += scanInterval;
-            Scan();
-        }*/
     }
 
-    private void Scan()
-    {
-        count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
-
-        objects.Clear();
-
-        
-
-        for (int i = 0; i < count; i++)
-        {
-            GameObject obj = colliders[i].gameObject;
-            if (IsInSight(obj, colliders[i]))
-            {
-                objects.Add(obj);
-            }
-        }
-    }
+    
 
     public List<GameObject> ScanForObjects()
     {
-        count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
-
-        objects.Clear();
-
-
-
-        for (int i = 0; i < count; i++)
+        //get the objects in our 
+        //arc.
+        List<GameObject> _objects = new List<GameObject>();
+        foreach (Transform t in transforms)
         {
-            GameObject obj = colliders[i].gameObject;
-            if (IsInSight(obj, colliders[i]))
-            {
-                objects.Add(obj);
-            }
+            _objects.Add(t.gameObject);
         }
-
-        return objects;
+        
+        return _objects;
     }
 
-    public bool IsInSight(GameObject obj, Collider col)
+
+    //draws a wedge that spans from -angle to angle
+    public void DrawWedge(float angle, Vector3 forward, Vector3 up, Vector3 startPos)
     {
-
-
-        //include height offset in origin.
-        Vector3 origin = transform.position - new Vector3(0f, heightOffset, 0f);
-        Vector3 dest = obj.transform.position;
-        Vector3 direction = dest - origin;
-
-        //we use col.bounds.size.y / 2 
-        //here so that we get the full shape of the collider's vertical
-        //bounds in worldspace to adhere to our method of checking collisions.
-        //this makes it so we don't just check where the origin of the object
-        //is that is within our sensor, we instead check the full size of our object.
-        if (direction.y < 0 - col.bounds.size.y / 2 || direction.y > height + col.bounds.size.y / 2)
+        for (int i = 0; i < angle * 2; i++)
         {
-            //draw a ray to show when we aren't intersecting,
-            //where the direction is facing.
-            //Debug.DrawRay(transform.position, direction.normalized * Vector3.Distance(origin, dest), Color.red);
-            return false;
-        }
-
-        direction.y = 0;
-        float deltaAngle = Vector3.Angle(direction, transform.forward);
-        if (deltaAngle > angle)
-        {
-            return false;
-        }
-
-        origin.y += height / 2;
-        dest.y = origin.y;
-        if (Physics.Linecast(origin, dest, occlusionLayers))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    Mesh CreateWedgeMesh()
-    {
-        Mesh mesh = new Mesh();
-
-        int segments = 10;
-        int numTriangles = (segments * 4) + 2 + 2;
-        int numVertices = numTriangles * 3;
-
-        Vector3[] vertices = new Vector3[numVertices];
-        int[] triangles = new int[numVertices];
-
-        Vector3 bottomCenter = (Vector3.zero) - new Vector3(0f, heightOffset, 0f);
-        Vector3 bottomLeft = (Quaternion.Euler(0, -angle, 0) * Vector3.forward * distance) - new Vector3(0f, heightOffset, 0f);
-        Vector3 bottomRight = (Quaternion.Euler(0, angle, 0) * Vector3.forward * distance) - new Vector3(0f, heightOffset, 0f);
-
-        Vector3 topCenter = bottomCenter + Vector3.up * height;
-        Vector3 topRight = bottomRight + Vector3.up * height;
-        Vector3 topLeft = bottomLeft + Vector3.up * height;
-
-        int vert = 0;
-
-        //Left side
-        vertices[vert++] = bottomCenter;
-        vertices[vert++] = bottomLeft;
-        vertices[vert++] = topLeft;
-
-        vertices[vert++] = topLeft;
-        vertices[vert++] = topCenter;
-        vertices[vert++] = bottomCenter;
-
-        //Right side
-        vertices[vert++] = bottomCenter;
-        vertices[vert++] = topCenter;
-        vertices[vert++] = topRight;
-
-        vertices[vert++] = topRight;
-        vertices[vert++] = bottomRight;
-        vertices[vert++] = bottomCenter;
-
-        float currentAngle = -angle;
-        float deltaAngle = (angle * 2) / segments;
-        for (int i = 0; i < segments; i++)
-        {
-
-            bottomLeft = (Quaternion.Euler(0, currentAngle, 0) * Vector3.forward * distance) - new Vector3(0f, heightOffset, 0f);
-            bottomRight = (Quaternion.Euler(0, currentAngle + deltaAngle, 0) * Vector3.forward * distance) - new Vector3(0f, heightOffset, 0f);
+            //we do i - angle because we start at the negative side of the angle and extend to the positive
+            // so we go from -angle to +angle
+            Vector3 offsetVector = Quaternion.AngleAxis(i - angle, up) * (forward.normalized * triggerCollider.radius * 2);
+            //Vector3 oppositeOffsetVector = Quaternion.AngleAxis(angle, up) * (forward.normalized * distance);
 
 
-            topRight = bottomRight + Vector3.up * height;
-            topLeft = bottomLeft + Vector3.up * height;
-
-            //Far side
-            vertices[vert++] = bottomLeft;
-            vertices[vert++] = bottomRight;
-            vertices[vert++] = topRight;
-
-            vertices[vert++] = topRight;
-            vertices[vert++] = topLeft;
-            vertices[vert++] = bottomLeft;
-
-            //Top side
-
-            vertices[vert++] = topCenter;
-            vertices[vert++] = topLeft;
-            vertices[vert++] = topRight;
-
-
-            //Bottom side
-            //The reason we reverse the order here is because the normals need to face outward from the center of the mesh.
-            vertices[vert++] = bottomCenter;
-            vertices[vert++] = bottomRight;
-            vertices[vert++] = bottomLeft;
-
-            currentAngle += deltaAngle;
+            Gizmos.color = sensorColor;
+            //draw line from the arc origin to the edge of the radius at the desired angle.
+            Gizmos.DrawLine(startPos, startPos + offsetVector);
+            Gizmos.color = Color.green;
+            //draw a line to show the height and how it extends in both directions.
+            Gizmos.DrawLine(startPos + offsetVector, startPos + offsetVector + transform.up.normalized * height * 0.5f);
+            Gizmos.DrawLine(startPos + offsetVector, startPos + offsetVector - transform.up.normalized * height * 0.5f);
+            //Gizmos.DrawLine(startPos, startPos + oppositeOffsetVector);
         }
 
 
-        for (int i = 0; i < numVertices; i++)
-        {
-            triangles[i] = i;
-        }
-
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
-
-        return mesh;
-    }
-
-    private void OnValidate()
-    {
-        scanInterval = 1f / scanFrequency;
-        mesh = CreateWedgeMesh(); //if we change something in the inspector recalculate this mesh.
+        
     }
 
     private void OnDrawGizmos()
     {
         if (debug)
         {
-            if (mesh)
-            {
-                Gizmos.color = meshColor;
-                Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
-            }
-
+            //draw the wedge arc for where we're allowed to 
+            //consider the object within our attack arc.
+            DrawWedge(angle, transform.forward, transform.up, transform.position);
         }
 
         if (debugTargets)
@@ -243,27 +91,158 @@ public class CollisionSensor : MonoBehaviour
             {
                 Gizmos.DrawSphere(obj.transform.position, 0.5f);
             }
+
+            //Draw transforms that are within the sphere trigger.
+            if (transforms.Count > 0)
+            {
+                foreach (Transform t in transforms)
+                {
+                    
+                    Gizmos.DrawSphere(t.position, 0.5f);
+                    Gizmos.color = Color.blue;
+                    //draw the bounds width in the up direcion of our collision sensor.
+                    Gizmos.DrawLine(t.position, t.position + transform.up.normalized * GetWidthAlongDirection(t.GetComponent<Collider>().bounds, transform.up) / 2);
+                    Gizmos.DrawLine(t.position, t.position - transform.up.normalized * GetWidthAlongDirection(t.GetComponent<Collider>().bounds, transform.up) / 2);
+                }
+            }
         }
 
     }
 
-    public int Filter(GameObject[] buffer, string layerName)
-    {
-        int layer = LayerMask.NameToLayer(layerName);
-        int count = 0;
-        foreach (var obj in Objects)
-        {
-            if (obj.layer == layer)
-            {
-                buffer[count++] = obj;
-            }
+    List<Transform> transforms = new List<Transform>();
 
-            if (buffer.Length == count)
-            {
-                break; //buffer is full
-            }
+
+    //old point in arc method.
+    public bool pointInArc(Vector3 point)
+    {
+        
+
+        if (Mathf.Abs(Vector3.SignedAngle(transform.forward, (point - transform.position).normalized, transform.up)) <= angle)
+        {
+            Debug.LogWarning(Mathf.Abs(Vector3.SignedAngle(transform.forward, (point - transform.position).normalized, transform.up)));
+            return true;
+        }
+        return false;
+    }
+
+    bool IsPointWithinArc(Vector3 point, Vector3 arcCenter, Vector3 forwardTransform, Vector3 upTransform, float arcAngle, float heightRange)
+
+    {
+
+        //Calculate plane normal, this is the plane that our arc lies on.
+
+        Vector3 planeNormal = Vector3.Cross(upTransform, forwardTransform).normalized;
+
+
+
+        //Project point onto the plane, this makes it easy to check
+        //if it's within our target angle or not.
+        Vector3 projectedPoint = point - Vector3.Dot(point - arcCenter, planeNormal) * planeNormal;
+
+
+
+        //Calculate angle between projected point and center
+        Vector3 directionVector = projectedPoint - arcCenter;
+        float angle = Vector3.Angle(directionVector, forwardTransform);
+
+
+        //print out the height distance from the arc's center to the point
+        //we are checking for the arc to see if it's within our height range. 
+        Debug.Log(Vector3.Dot(arcCenter - point, upTransform));
+
+        //Check if angle is within arc range and height is within height range
+        //for the height range, we're just projecting the point onto the arc's up
+        //transform so we can get a float value that represents the distance from 
+        //the projected point to the actual point to check if it is within
+        //the height range. 
+        return (angle <= arcAngle / 2) && (Mathf.Abs(Vector3.Dot(arcCenter - point, upTransform)) <= heightRange);
+
+    }
+
+    
+    //gets the width of the bounds in a given direction.
+    //this is used for calculating if bounds are within
+    //our collision sensor.
+    public float GetWidthAlongDirection(Bounds bounds, Vector3 direction)
+
+    {
+
+        //start at infinities
+        var maxProjection = Mathf.NegativeInfinity;
+
+        var minProjection = Mathf.Infinity;
+
+
+
+        //Check each corner of the bounds
+        //it was trial and error to figure
+        //out how to get the coordinates of all
+        //the corners.
+        foreach (var corner in new Vector3[] { bounds.min, bounds.max, new Vector3(bounds.min.x, bounds.max.y, bounds.min.z), new Vector3(bounds.max.x, bounds.min.y, bounds.max.z) })
+
+        {
+            //project the corner onto the direction vector,
+            //thus turning it into a float
+            var projection = Vector3.Dot(corner, direction);
+
+            //set max projection, gives us the edge of the object on
+            //one side in our direction
+            maxProjection = Mathf.Max(maxProjection, projection);
+
+            //set min projection, gives us the other edge of the object
+            //on the other side in our direction
+            minProjection = Mathf.Min(minProjection, projection);
+
         }
 
-        return count;
+
+        //return the difference between the max and min projection,
+        //which will be the distance from one edge of the bounds to the other
+        //in our specified direction.
+        return maxProjection - minProjection;
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //we add the GetWidthAlongDirection calculation here so
+        //that the point we check also takes into account the width
+        //of the collider in the up direction of the collision sensor.
+        if (IsPointWithinArc(other.transform.position , transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(other.bounds, transform.up) / 2))
+        {
+            //add the transform to our list.
+            transforms.Add(other.transform);
+        }
+
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        //If the point is within the arc angle and height
+        if (IsPointWithinArc(other.transform.position, transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(other.bounds, transform.up) / 2))
+        {
+            //if this transform isn't in the transforms
+            //yet, then add it.
+            if (!transforms.Contains(other.transform))
+            {
+                transforms.Add(other.transform);
+            }
+        }
+        //if the angle is too great,
+        //remove them from the list.
+        else
+        {
+            //remove the transform from
+            //the list as it is no longer
+            //within the arc.
+            transforms.Remove(other.transform);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        //remove the transform from
+        //the list as it has left the sphere.
+        transforms.Remove(other.transform);
     }
 }
