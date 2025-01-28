@@ -97,7 +97,8 @@ public class CollisionSensor : MonoBehaviour
             {
                 foreach (Transform t in transforms)
                 {
-                    
+                    //if the transform is null, then continue instead.
+                    if (t == null) continue;
                     Gizmos.DrawSphere(t.position, 0.5f);
                     Gizmos.color = Color.blue;
                     //draw the bounds width in the up direcion of our collision sensor.

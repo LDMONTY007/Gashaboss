@@ -73,7 +73,16 @@ public class BossController : MonoBehaviour, IDamageable
         //set color to be red when dead.
         bossRenderer.material.color = Color.red;
         rb.constraints = RigidbodyConstraints.None;
+
+        //TODO:
+        //play the death animation for the boss.
+        
+        //Destroy the boss object after stopping all coroutines on this object
+        StopAllCoroutines();
+        Destroy(gameObject);
     }
+
+    
 
     [HideInInspector]
     public bool isDead = false;
