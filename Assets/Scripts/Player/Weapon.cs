@@ -94,7 +94,7 @@ public class Weapon : MonoBehaviour
                     {
                         //if the damageable is a boss, and is dead, skip this object in the loop.
                         BossController boss = objs[i].GetComponent<BossController>();
-                        if (boss.isDead)
+                        if (boss != null && boss.isDead)
                         {
                             continue;
                         }
