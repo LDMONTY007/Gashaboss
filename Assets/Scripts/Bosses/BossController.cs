@@ -128,7 +128,7 @@ public class BossController : MonoBehaviour, IDamageable
     public Transform lookTransform;
     private bool invincible;
 
-    private GameObject playerObject;
+    public GameObject playerObject;
 
     bool IsPlayerInAttackRange()
     {
@@ -166,13 +166,16 @@ public class BossController : MonoBehaviour, IDamageable
     {
         #region boss state switching
 
-        if (curState != BossState.attack)
+        //old code to go straight to attacking,
+        //but this doesn't make sense to do because
+        //we want to allow the state to execute fully first.
+        /*if (curState != BossState.attack)
         { 
             if (IsPlayerInAttackRange())
             {
                 curState = BossState.attack;
             }
-        }
+        }*/
 
         #endregion
 
@@ -220,6 +223,8 @@ public class BossController : MonoBehaviour, IDamageable
         //choose the attack based on our pattern
         //and execute it.
         //attacks should be a seperate script to make modular bosses and boss design easier.
+        
+
 
         MeleeAttack meleeAttack = new MeleeAttack();
         meleeAttack.Execute(this, 1f);
@@ -271,6 +276,8 @@ public class BossController : MonoBehaviour, IDamageable
     {
         isMoving = true;
 
+        float moveTime = 0f;
+
         //Shake to telegraph
         //the attack so the player knows it's happening
         //then after the whole coroutine executes
@@ -280,7 +287,7 @@ public class BossController : MonoBehaviour, IDamageable
 
         while (isShaking)
         {
-
+            moveTime += Time.deltaTime;
             yield return null;
         }
 
@@ -288,6 +295,7 @@ public class BossController : MonoBehaviour, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
+            moveTime += Time.deltaTime;
             rb.linearVelocity = (targetPos - transform.position).normalized * chargeSpeed;
             yield return null;
         }
@@ -310,6 +318,8 @@ public class BossController : MonoBehaviour, IDamageable
                 }*/
 
         isMoving = false;
+
+        Debug.LogWarning(moveTime);
 
         //say we are no longer moving
         //and need to make a decision.
