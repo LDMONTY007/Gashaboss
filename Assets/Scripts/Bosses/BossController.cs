@@ -121,6 +121,8 @@ public class BossController : MonoBehaviour, IDamageable
 
     public GameObject animatedModel;
 
+    public Weapon weapon;
+
     private MeshRenderer bossRenderer;
 
     public Transform lookTransform;
@@ -219,8 +221,8 @@ public class BossController : MonoBehaviour, IDamageable
         //and execute it.
         //attacks should be a seperate script to make modular bosses and boss design easier.
 
-        JumpAttack jumpAttack = new JumpAttack();
-        jumpAttack.Execute(this, 1f);
+        MeleeAttack meleeAttack = new MeleeAttack();
+        meleeAttack.Execute(this, 1f);
 
         //at the end of an attack coroutine
         //always set the state back to idle
