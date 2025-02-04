@@ -15,5 +15,8 @@ public class MeleeAttack : BossAction
         {
             Debug.LogError("The boss has no weapon equipped, please ensure there is one equipped.");
         }
+
+        DashAwayMove dashAwayMove = new DashAwayMove();
+        dashAwayMove.Execute(boss, 1f);
     }
 }
