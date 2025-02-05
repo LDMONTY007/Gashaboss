@@ -41,6 +41,8 @@ public class Player : MonoBehaviour, IDamageable
 
     public Weapon curWeapon;
 
+    public ParticleSystem dashParticles;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -602,6 +604,9 @@ public class Player : MonoBehaviour, IDamageable
     //and distance.
     public IEnumerator DashCoroutine()
     {
+        //set the dash particles to play
+        dashParticles.Play();
+
         //cancel out all momentum accept for jumping.
         rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
 
@@ -632,7 +637,9 @@ public class Player : MonoBehaviour, IDamageable
             yield return new WaitForFixedUpdate();
         }
 
-        
+
+        //set the dash particles to stop
+        dashParticles.Stop();
 
         //reset the x and z velocity but don't reset y velocity in case they jumped and dashed.
         //this simulates an instantaneous stop.
@@ -644,6 +651,8 @@ public class Player : MonoBehaviour, IDamageable
         //say we are no longer
         //dashing
         dashing = false;
+
+        
     }
 
     

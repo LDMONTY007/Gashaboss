@@ -1777,6 +1777,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &887232846 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+  m_PrefabInstance: {fileID: 1684072345133267363}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &890623310 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2038318179940851923, guid: c9fe7c2aad6d2ef40b531fb998877403, type: 3}
@@ -2733,10 +2738,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 581660060944427641, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 581660060944427641, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 581660060944427641, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
       propertyPath: ragdollChest
       value: 
       objectReference: {fileID: 1939208910}
+    - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: dashParticles
+      value: 
+      objectReference: {fileID: 887232846}
     - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
       propertyPath: ragdollParentTransform
       value: 
@@ -2780,6 +2801,42 @@ PrefabInstance:
     - target: {fileID: 5881323034138899602, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: ColorModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime0
+      value: 42020
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7108178822967578991, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.m_ColorSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7340001647599122808, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
