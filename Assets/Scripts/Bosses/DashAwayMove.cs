@@ -9,7 +9,7 @@ public class DashAwayMove : BossAction
         boss.curState = BossController.BossState.move;
         
         
-        boss.StartCoroutine(boss.MoveToPosition(doubledDashAwayPosition));
+        boss.StartCoroutine(boss.MoveToPosition(doubledDashAwayPosition, 50f, 1f));
 
     }
 }

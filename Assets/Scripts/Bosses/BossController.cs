@@ -101,10 +101,6 @@ public class BossController : MonoBehaviour, IDamageable
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
 
-    public float chargeSpeed = 10f;
-
-    public float targetAccuracy = 0.1f;
-
     bool isMoving = false;
 
     bool isShaking = false;
@@ -272,7 +268,15 @@ public class BossController : MonoBehaviour, IDamageable
         GUI.skin.label.fontSize = oldFontSize;
     }
 
-    public IEnumerator MoveToPosition(Vector3 targetPos)
+    //LD Montello
+    /// <summary>
+    /// Moves from current position to target position given a speed value. 
+    /// </summary>
+    /// <param name="targetPos">Position to move to.</param>
+    /// <param name="speed">Speed to move at. Defaults to 10, can be overridden</param>
+    /// <param name="targetAccuracy">Range we must be within before stopping movement.</param>
+    /// <returns></returns>
+    public IEnumerator MoveToPosition(Vector3 targetPos, float speed = 10f, float targetAccuracy = 5f)
     {
         isMoving = true;
 
@@ -296,7 +300,7 @@ public class BossController : MonoBehaviour, IDamageable
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
             moveTime += Time.deltaTime;
-            rb.linearVelocity = (targetPos - transform.position).normalized * chargeSpeed;
+            rb.linearVelocity = (targetPos - transform.position).normalized * speed;
             yield return null;
         }
 
