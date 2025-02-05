@@ -124,6 +124,11 @@ MonoBehaviour:
   sprintSpeed: 20
   rotationSpeed: 15
   lastMoveVector: {x: 0, y: 0, z: 0}
+  doDash: 0
+  dashSpeed: 100
+  dashTotal: 1
+  dashing: 0
+  dashDist: 35
   groundCheckDist: 0.97
   jumpCount: 3
   jumpTotal: 1

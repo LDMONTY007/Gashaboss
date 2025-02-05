@@ -132,6 +132,14 @@ public class Player : MonoBehaviour, IDamageable
     public Vector3 lastMoveVector = Vector3.zero;
     Vector3 moveVector;
 
+    [Header("Dash Parameters")]
+    public bool doDash = false;
+    public float dashSpeed = 10f;
+    public int dashTotal = 1;
+    private int dashCount = 1;
+    public bool dashing = false;
+    public float dashDist = 10f;
+
     [Header("Jump Parameters")]
     public float groundCheckDist = 0.1f;
     [SerializeField] private int jumpCount = 1;
@@ -179,7 +187,7 @@ public class Player : MonoBehaviour, IDamageable
     InputAction moveAction;
     InputAction jumpAction;
     InputAction attackAction;
-    InputAction sprintAction;
+    InputAction dashAction;
 
     //Raycast vars
 
@@ -211,7 +219,7 @@ public class Player : MonoBehaviour, IDamageable
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
-        sprintAction = playerInput.actions["Sprint"];
+        dashAction = playerInput.actions["Dash"];
 
         //disable the ragdoll after
         //it is done initializing the joints.
@@ -242,20 +250,10 @@ public class Player : MonoBehaviour, IDamageable
         //isGrounded = GetComponent<Collider>().Raycast(ray, out RaycastHit hitinfo, groundCheckDist);
         #endregion
 
-        //Check if the player is wanting to sprint
-
-        if (isGrounded)
-        {
-            isSprinting = sprintAction.IsPressed();
-        }
-        else
-        {
-            isSprinting = false;
-        }
-
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
 
+        //TODO: Remove isSprinting because we don't want sprint anymore.
         moveSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         //Get the forward vector using player up and the camera right vector
@@ -298,6 +296,8 @@ public class Player : MonoBehaviour, IDamageable
 
         if (isGrounded)
         {
+            //reset jump count and jump canceled, and gravity
+            //when not jumping and grounded.
             if (!jumping)
             {
                 jumpCount = jumpTotal;
@@ -307,8 +307,14 @@ public class Player : MonoBehaviour, IDamageable
                 Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
             }
+            //reset dash count when grounded, and not dashing.
+            if (!dashing)
+            {
+                dashCount = dashTotal;
+            }
         }
 
+        //increase jump time while jumping
         if (jumping)
         {
             jumpTime += Time.deltaTime;
@@ -344,7 +350,7 @@ public class Player : MonoBehaviour, IDamageable
             jumping = false;
         }
 
-        //dashPressed |= Input.GetKeyDown(KeyCode.LeftShift);
+        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing;
 
         #region attacking
 
@@ -388,22 +394,38 @@ public class Player : MonoBehaviour, IDamageable
         
         HandleRbRotation();
 
+        HandleDashing();
         HandleMovement();
         HandleJumping();
+        
     }
 
     public void HandleRbRotation()
     {
-        //rotate towards the velocity direction but don't rotate upwards.
-        if (moveVector != Vector3.zero)
-            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+        //when dashing we want to rotate to face the dash direction
+        if (dashing)
+        {
+            return;
+            //rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
+        }
+        else //otherwise we want to face the input direction.
+        {
+            //rotate towards the velocity direction but don't rotate upwards.
+            if (moveVector != Vector3.zero)
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+        }
+
+        
 
         
     }
 
     public void HandleMovement()
     {
-
+        if (dashing)
+        {
+            return;
+        }
 
         //We need to store the accumulated velocity and just take that and use vector projection on the normalized input to 
         //get some sort of accumulation going where we can just have the actual speed be moving in the direction of our input.
@@ -513,7 +535,10 @@ public class Player : MonoBehaviour, IDamageable
 
     public void HandleJumping()
     {
-
+        if (dashing)
+        {
+            return;
+        }
 
         if (doJump)
         {
@@ -558,6 +583,71 @@ public class Player : MonoBehaviour, IDamageable
         }
     }
 
+    public void HandleDashing()
+    {
+        if (doDash)
+        {
+            doDash = false;
+            //rb.AddForce(transform.forward.normalized * dashSpeed, ForceMode.Impulse);
+            //StartCoroutine(MoveToPosition(transform.forward.normalized * dashDist, dashSpeed, 0.1f));
+            dashing = true;
+            dashCount--;
+            StartCoroutine(DashCoroutine());
+           
+        }
+    }
+
+    //LD Montello
+    //dash given speed
+    //and distance.
+    public IEnumerator DashCoroutine()
+    {
+        //cancel out all momentum accept for jumping.
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        Vector3 startPos = transform.position;
+
+
+        //acceleration = (finalVelocity^2 - initialVelocity^2) / (2 * distance)
+        float acceleration = (dashSpeed * dashSpeed - 0 * 0) / (2 * dashDist);
+       
+
+        //Time = distance / speed
+        float dashTime = dashDist / dashSpeed;
+
+        //rb.AddForce(transform.forward * dashSpeed, ForceMode.Impulse);
+
+        //move at the dashSpeed
+        //until we have reached the full
+        //calculated dash time.
+        while (dashTime > 0)
+        {
+            //rb.AddForce(transform.forward * dashSpeed, ForceMode.Force);
+            dashTime -= Time.deltaTime;
+            rb.linearVelocity = transform.forward.normalized * dashSpeed;
+
+            //we wait for fixed update as yielding null here will cause
+            //movements to be inconsistent. All rigidbody velocity modifications
+            //should always occur in the fixed (also known as physics) step.
+            yield return new WaitForFixedUpdate();
+        }
+
+        
+
+        //reset the x and z velocity but don't reset y velocity in case they jumped and dashed.
+        //this simulates an instantaneous stop.
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        //Debug the total distance to make sure it is consistent
+        //Debug.LogWarning("Final Distance = " + (Vector3.Distance(transform.position, startPos)));
+
+        //say we are no longer
+        //dashing
+        dashing = false;
+    }
+
+    
+
     void LateUpdate()
     {
         ApplyFinalMovements();
@@ -570,7 +660,7 @@ public class Player : MonoBehaviour, IDamageable
     public void ApplyFinalMovements()
     {
         //We need to check that the desiredMoveDirection vector isn't zero because otherwise it can zero out our velocity.
-        if (isGrounded && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
+        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
         {
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
