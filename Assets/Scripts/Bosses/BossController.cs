@@ -101,6 +101,8 @@ public class BossController : MonoBehaviour, IDamageable
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
 
+    public float rotationSpeed = 20f;
+
     bool isMoving = false;
 
     bool isShaking = false;
@@ -155,7 +157,17 @@ public class BossController : MonoBehaviour, IDamageable
         if (doStateMachine)
         {
             HandleStateMachine();
+
+            
         }
+    }
+
+    private void FixedUpdate()
+    {
+        //LD Montello
+        //rotate towards the direction
+        //we are moving in.
+        HandleRbRotation();
     }
 
     public void HandleStateMachine()
@@ -239,6 +251,22 @@ public class BossController : MonoBehaviour, IDamageable
             //for now just move towards the player
             StartCoroutine(MoveToPosition(playerObject.transform.position));
         }
+    }
+
+    //LD Montello
+    public void HandleRbRotation()
+    {
+        //rotate towards the velocity direction but don't rotate upwards.
+        if (rb.linearVelocity != Vector3.zero)
+        {
+            //LD Montello
+            //Rotation is locked on our rigidbody settings
+            //so only code can rotate the object.
+            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up), rotationSpeed));
+        }
+
+
+
     }
 
     private void OnDrawGizmos()
