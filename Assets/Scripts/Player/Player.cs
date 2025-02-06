@@ -306,7 +306,7 @@ public class Player : MonoBehaviour, IDamageable
                 jumpCanceled = false;
                 //set gravity back to base.
                 gravity = baseGravity;
-                Debug.Log("BACK TO BASE".Color("Green"));
+                //Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
             }
             //reset dash count when grounded, and not dashing.

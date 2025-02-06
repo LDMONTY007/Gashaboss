@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class BossController : MonoBehaviour, IDamageable
@@ -89,6 +91,12 @@ public class BossController : MonoBehaviour, IDamageable
 
     #endregion
 
+    //LD Montello
+    //time to idle before making a decision
+    //by default this is zero but will change 
+    //depending on certain conditions.
+    public float curIdleTime = 0f;
+
     public bool doStateMachine = false;
 
     [Header("Attack Parameters")]
@@ -170,6 +178,14 @@ public class BossController : MonoBehaviour, IDamageable
         HandleRbRotation();
     }
 
+    public void SwitchToIdle(float idleTime)
+    {
+        //the time we should sit in the idle
+        //state before we make a decision.
+        curIdleTime = idleTime;
+        curState = BossState.idle;
+    }
+
     public void HandleStateMachine()
     {
         #region boss state switching
@@ -212,6 +228,21 @@ public class BossController : MonoBehaviour, IDamageable
     //or if we want to try and get closer to the player.
     public void HandleIdle()
     {
+        //LD Montello
+        //if we're supposed to idle,
+        //then decrement idle time and
+        //return before making any decisions.
+        if (curIdleTime > 0)
+        {
+            Debug.LogWarning("IDLE " + curIdleTime);
+            curIdleTime -= Time.deltaTime;
+            return;
+        }
+        else
+        {
+            Debug.LogWarning("EXIT IDLE " + curIdleTime);
+        }
+
         if (IsPlayerInAttackRange())
         {
             Debug.Log("Boss is in attack range!".Color("orange"));
@@ -247,7 +278,7 @@ public class BossController : MonoBehaviour, IDamageable
     {
         if (!isMoving)
         {
-            Debug.Log("Boss is moving to player!".Color("Red"));
+            //Debug.Log("Boss is moving to player!".Color("Red"));
             //for now just move towards the player
             StartCoroutine(MoveToPosition(playerObject.transform.position));
         }
@@ -257,7 +288,7 @@ public class BossController : MonoBehaviour, IDamageable
     public void HandleRbRotation()
     {
         //rotate towards the velocity direction but don't rotate upwards.
-        if (rb.linearVelocity != Vector3.zero)
+        if (new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
         {
             //LD Montello
             //Rotation is locked on our rigidbody settings
@@ -304,8 +335,10 @@ public class BossController : MonoBehaviour, IDamageable
     /// <param name="speed">Speed to move at. Defaults to 10, can be overridden</param>
     /// <param name="targetAccuracy">Range we must be within before stopping movement.</param>
     /// <returns></returns>
-    public IEnumerator MoveToPosition(Vector3 targetPos, float speed = 10f, float targetAccuracy = 5f)
+    public IEnumerator MoveToPosition(Vector3 targetPos, float speed = 10f, float targetAccuracy = 5f, float idleTime = 0f)
     {
+        curState = BossState.move;
+
         isMoving = true;
 
         float moveTime = 0f;
@@ -319,6 +352,13 @@ public class BossController : MonoBehaviour, IDamageable
 
         while (isShaking)
         {
+            //if we're not in the move state
+            //anymore than stop moving.
+            if (curState != BossState.move)
+            {
+                isMoving = false;
+                yield break;
+            }
             moveTime += Time.deltaTime;
             yield return null;
         }
@@ -327,6 +367,13 @@ public class BossController : MonoBehaviour, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
+            //if we're not in the move state
+            //anymore than stop moving.
+            if (curState != BossState.move)
+            {
+                isMoving = false;
+                yield break;
+            }
             moveTime += Time.deltaTime;
             rb.linearVelocity = (targetPos - transform.position).normalized * speed;
             yield return null;
@@ -353,9 +400,21 @@ public class BossController : MonoBehaviour, IDamageable
 
         Debug.LogWarning(moveTime);
 
+        //if we're not in the move state
+        //anymore than stop moving.
+        //this prevents the following
+        //"SwitchToIdle" call from breaking
+        //an ongoing "SwitchToIdle" call
+        //which is meant to cancel this movement.
+        if (curState != BossState.move)
+        {
+            isMoving = false;
+            yield break;
+        }
+
         //say we are no longer moving
         //and need to make a decision.
-        curState = BossState.idle;
+        SwitchToIdle(idleTime);
     }
 
     //Just a small shake 
@@ -436,11 +495,21 @@ public class BossController : MonoBehaviour, IDamageable
 
         curHealth -= d;
 
+        //idle for a few moments before moving again.
+        SwitchToIdle(20f);
+
         //Start the shaking animation
         ShakeModel();
 
         //Set to be low resolution for a small amount of time.
         StartLowResRoutine();
+
+
+
+        //LD Montello
+        //dash away from the player.
+/*        DashAwayMove dashAwayMove = new DashAwayMove();
+        dashAwayMove.Execute(this, 1f);*/
     }
 
 
