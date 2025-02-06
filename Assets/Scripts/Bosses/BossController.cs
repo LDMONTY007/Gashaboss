@@ -2,10 +2,14 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 
 public class BossController : MonoBehaviour, IDamageable
 {
+    [Header("Manually assigned variables")]
+    public TextMeshPro debugInfoTextMesh;
+
 
     #region health vars
     [Header("Health Variables")]
@@ -123,7 +127,14 @@ public class BossController : MonoBehaviour, IDamageable
         stun,
     }
 
-    public BossState curState = BossState.idle;
+    private BossState _curState = BossState.idle;
+
+    //I turned current state into a getter setter
+    //using a private property so that I can print
+    //whenever it changes just to make sure that it
+    //changes only when appropriate.
+    //it also lets me change the debug info text to display the state.
+    public BossState curState { get { return _curState; } set { Debug.LogWarning("State switched from " + _curState + " to " + value);  _curState = value; debugInfoTextMesh.text = _curState.ToString(); } }
 
     public GameObject animatedModel;
 
@@ -212,12 +223,15 @@ public class BossController : MonoBehaviour, IDamageable
                 HandleIdle();
                 break;
             case BossState.attack:
-                bossRenderer.material.color = Color.yellow;
+                bossRenderer.material.color = Color.red;
                 HandleAttack();
                 break;
             case BossState.move:
                 bossRenderer.material.color = Color.blue;
                 HandleMove();
+                break;
+            case BossState.stun:
+                bossRenderer.material.color = Color.yellow;
                 break;
         }
 
@@ -228,6 +242,7 @@ public class BossController : MonoBehaviour, IDamageable
     //or if we want to try and get closer to the player.
     public void HandleIdle()
     {
+
         //LD Montello
         //if we're supposed to idle,
         //then decrement idle time and
@@ -242,6 +257,7 @@ public class BossController : MonoBehaviour, IDamageable
         {
             Debug.LogWarning("EXIT IDLE " + curIdleTime);
         }
+
 
         if (IsPlayerInAttackRange())
         {
@@ -376,7 +392,11 @@ public class BossController : MonoBehaviour, IDamageable
             }
             moveTime += Time.deltaTime;
             rb.linearVelocity = (targetPos - transform.position).normalized * speed;
-            yield return null;
+
+            //LD Montello,
+            //for movement to be consistent we need to wait
+            //for fixed update to move.
+            yield return new WaitForFixedUpdate();
         }
 
 
@@ -496,7 +516,13 @@ public class BossController : MonoBehaviour, IDamageable
         curHealth -= d;
 
         //idle for a few moments before moving again.
-        SwitchToIdle(20f);
+        //SwitchToIdle(1f);
+
+        //When the boss takes damage,
+        //put them in the stun state
+        //to cancel any movements.
+        curState = BossState.stun;
+
 
         //Start the shaking animation
         ShakeModel();
@@ -505,11 +531,91 @@ public class BossController : MonoBehaviour, IDamageable
         StartLowResRoutine();
 
 
+        if (curIFramesRoutine == null)
+        {
+            //LD Montello
+            //Stun the boss temporarily.
+            curIFramesRoutine = StartCoroutine(IFramesCoroutine(1f));
+        }
+        else
+        {
+            Debug.LogError("PREVIOUS IFRAMES HAVEN'T FINISHED");
+        }
+        
+       
+    }
+
+    Coroutine curIFramesRoutine = null;
+
+    //This is where we do the iframes code
+    public IEnumerator IFramesCoroutine(float iFrameTime)
+    {
+        //curState = BossState.stun;
+
+        //set to be invincible so they
+        //can't be damaged during iframes
+        invincible = true;
+
+        //After being in iframes just dash away from the player.
 
         //LD Montello
         //dash away from the player.
-/*        DashAwayMove dashAwayMove = new DashAwayMove();
-        dashAwayMove.Execute(this, 1f);*/
+        DashAwayMove dashAwayMove = new DashAwayMove();
+        dashAwayMove.Execute(this, 1f);
+
+        float total = iFrameTime;
+        float curTime = 0f;
+
+        //cooldown for the sprite flickering.
+        float flickerCooldown = 0.2f;
+
+
+        //wait for the total iFrame time before
+        //leaving invincibility.
+        //Also flicker the 3D model while we do this.
+        while (curTime < total)
+        {
+            curTime += Time.deltaTime;
+
+            bossRenderer.enabled = !bossRenderer.enabled;
+            //wait until the cooldown to do the sprite flicker again.
+            yield return new WaitForSeconds(flickerCooldown);
+            //add the flicker cooldown to account for the time
+            //we waited.
+            curTime += flickerCooldown;
+
+            /*//If we died, stop blinking.
+            if (isDead)
+            {
+                break;
+            }*/
+            
+            Debug.LogWarning("FLICKER: " + curTime);
+
+            //wait until the cooldown to do the sprite flicker again.
+            yield return null;
+        }
+
+        bossRenderer.enabled = true;
+
+
+        
+
+        
+
+/*        //while we are dashing away, 
+        //wait before leaving i-frames.
+        while (isMoving)
+        {
+            yield return null;
+        }*/
+
+        //after the stun the boss is no longer
+        //invincible. 
+        //while invincible display I-frames.
+        invincible = false;
+
+        curIFramesRoutine = null;
     }
 
 

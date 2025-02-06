@@ -4,12 +4,16 @@ public class DashAwayMove : BossAction
 {
     public override void Execute(BossController boss, float duration)
     {
+        //the distance the player is going to dash at.
+        //this is here just for readability.
+        float dashDist = 10f;
+
         Vector3 dirFromPlayer = boss.playerObject.transform.position - boss.transform.position;
-        Vector3 doubledDashAwayPosition = -1f * dirFromPlayer.normalized * dirFromPlayer.magnitude * 2f;
+        Vector3 dashAwayPos = -1f * dirFromPlayer.normalized * dashDist;
         boss.curState = BossController.BossState.move;
         
         
-        boss.StartCoroutine(boss.MoveToPosition(doubledDashAwayPosition, 50f, 1f, 0.5f));
+        boss.StartCoroutine(boss.MoveToPosition(dashAwayPos, 50f, 1f, 0.5f));
 
     }
 }
