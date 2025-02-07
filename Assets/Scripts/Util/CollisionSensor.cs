@@ -41,9 +41,19 @@ public class CollisionSensor : MonoBehaviour
         //get the objects in our 
         //arc.
         List<GameObject> _objects = new List<GameObject>();
-        foreach (Transform t in transforms)
+
+
+        for (int i = 0; i < transforms.Count; i++)
         {
-            _objects.Add(t.gameObject);
+            //if the transform is now null,
+            //remove it from the list and skip
+            //adding it to the objects list.
+            if (transforms[i] == null)
+            {
+                transforms.Remove(transforms[i]);
+                continue;
+            }
+            _objects.Add(transforms[i].gameObject);
         }
         
         return _objects;
