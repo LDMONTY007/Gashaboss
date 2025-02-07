@@ -23,8 +23,6 @@ public class Weapon : MonoBehaviour
 
     public bool canAttack = true;
 
-    public float attackRadius = 10f;
-
     public float attackDistance = 1f;
 
     LayerMask playerMask;
@@ -35,9 +33,33 @@ public class Weapon : MonoBehaviour
     //blue with 100 alpha.
     private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
 
+    //when unity engine
+    //does the "Loading" prompt
+    //this method gets called.
+    //this also happens whenever
+    //the attackDistance is modified
+    //in the inspector
+    //which means that in the editor
+    //the radius of the trigger
+    //will also be modified without
+    //the game running. 
+    //this is the ideal behavior.
+    private void OnValidate()
+    {
+        //set the collision sensor 
+        //collider radius to be
+        //the same as our attack distance
+        collisionSensor.triggerCollider.radius = attackDistance;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //set the collision sensor 
+        //collider radius to be
+        //the same as our attack distance
+        collisionSensor.triggerCollider.radius = attackDistance;
+
         //get original mesh color
         ogMeshColor = collisionSensor.sensorColor;
         //weaponCollider.enabled = false;

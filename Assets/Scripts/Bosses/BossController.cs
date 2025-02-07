@@ -296,7 +296,8 @@ public class BossController : MonoBehaviour, IDamageable
         {
             //Debug.Log("Boss is moving to player!".Color("Red"));
             //for now just move towards the player
-            StartCoroutine(MoveToPosition(playerObject.transform.position));
+            //StartCoroutine(MoveToPosition(playerObject.transform.position));
+            StartCoroutine(GetCloseForAttack(moveSpeed));
         }
     }
 
@@ -435,6 +436,35 @@ public class BossController : MonoBehaviour, IDamageable
         //say we are no longer moving
         //and need to make a decision.
         SwitchToIdle(idleTime);
+    }
+
+
+    public IEnumerator GetCloseForAttack(float speed)
+    {
+        curState = BossState.move;
+        isMoving = true;
+
+        //while the player isn't
+        //close enough to be attacked,
+        //walk closer to them.
+        while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
+        {
+            rb.linearVelocity = rb.linearVelocity = (playerObject.transform.position - transform.position).normalized * speed;
+            yield return new WaitForFixedUpdate();
+        }
+
+        //TODO:
+        //Look at the player after moving
+        //and then switch to attacking 
+        //so we guaranteed hit them.
+
+        //Stop moving.
+        rb.linearVelocity = Vector3.zero;
+        isMoving = false;
+
+        //when they are in the attack range,
+        //switch to the attack state.
+        curState = BossState.attack;
     }
 
     //Just a small shake 

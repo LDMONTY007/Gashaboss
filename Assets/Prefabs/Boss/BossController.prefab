@@ -282,8 +282,7 @@ MonoBehaviour:
   hasCooldown: 1
   cooldownTime: 0.45
   canAttack: 1
-  attackRadius: 3.38
-  attackDistance: 7
+  attackDistance: 5
 --- !u!114 &2683351818666409076
 MonoBehaviour:
   m_ObjectHideFlags: 0
