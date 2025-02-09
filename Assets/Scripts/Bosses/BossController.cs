@@ -282,7 +282,7 @@ public class BossController : MonoBehaviour, IDamageable
 
 
         MeleeAttack meleeAttack = new MeleeAttack();
-        meleeAttack.Execute(this, 1f);
+        StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
 
         //at the end of an attack coroutine
         //always set the state back to idle
@@ -591,7 +591,8 @@ public class BossController : MonoBehaviour, IDamageable
         //LD Montello
         //dash away from the player.
         DashAwayMove dashAwayMove = new DashAwayMove();
-        dashAwayMove.Execute(this, 1f);
+/*        dashAwayMove.Execute(this, 1f);*/
+        yield return dashAwayMove.ActionCoroutine(this, 1f);
 
         float total = iFrameTime;
         float curTime = 0f;
