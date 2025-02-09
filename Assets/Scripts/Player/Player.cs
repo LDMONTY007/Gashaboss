@@ -842,10 +842,48 @@ public class Player : MonoBehaviour, IDamageable
     public IEnumerator IFramesCoroutine()
     {
         invincible = true;
-        //wait for 0.67 seconds while invincible.
-        yield return new WaitForSeconds(iFrameTime);
-        //after 0.67 seconds become hittable again.
+
+        float total = iFrameTime;
+        float curTime = 0f;
+
+        //cooldown for the sprite flickering.
+        float flickerCooldown = 0.2f;
+
+
+        //wait for the total iFrame time before
+        //leaving invincibility.
+        //Also flicker the 3D model while we do this.
+        while (curTime < total)
+        {
+            curTime += Time.deltaTime;
+
+            animatedModel.SetActive(!animatedModel.activeSelf);
+            //wait until the cooldown to do the sprite flicker again.
+            yield return new WaitForSeconds(flickerCooldown);
+            //add the flicker cooldown to account for the time
+            //we waited.
+            curTime += flickerCooldown;
+
+            /*//If we died, stop blinking.
+            if (isDead)
+            {
+                break;
+            }*/
+
+            Debug.LogWarning("FLICKER: " + curTime);
+
+            //wait until the cooldown to do the sprite flicker again.
+            yield return null;
+        }
+
+        //always make the animated model
+        //visible after we finish flickering.
+        animatedModel.SetActive(true);
+
+        //after hitframes become hittable again.
         invincible = false;
+
+
 
         //set iframes routine to null 
         //to indicate we have finished
