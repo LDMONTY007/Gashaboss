@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class BossController : MonoBehaviour, IDamageable
@@ -10,6 +12,7 @@ public class BossController : MonoBehaviour, IDamageable
     [Header("Manually assigned variables")]
     public TextMeshPro debugInfoTextMesh;
 
+    public Collider bossCollider;
 
     #region health vars
     [Header("Health Variables")]
@@ -449,7 +452,62 @@ public class BossController : MonoBehaviour, IDamageable
         //walk closer to them.
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
-            rb.linearVelocity = rb.linearVelocity = (playerObject.transform.position - transform.position).normalized * speed;
+            //List<GameObject> obstacles = weapon.collisionSensor.ScanForObjects();
+
+            Vector3 desiredVelocity = (playerObject.transform.position - transform.position).normalized * speed;
+
+            Vector3 steering = desiredVelocity - rb.linearVelocity;
+            
+            //remove y component.
+            steering.y = 0;
+
+
+            #region collision avoidance
+
+            Vector3 ahead = rb.linearVelocity.normalized * 100f;
+            ahead.y = 0;
+            Vector3 aheadWorld = transform.position + ahead;
+
+            List<GameObject> hitObjs = new List<GameObject>();
+
+            //we want to do the entire vertical size of the boss collider
+            for (int i = 0; i < bossCollider.bounds.size.y; i++)
+            {
+                Vector3 rayOrigin = transform.position + new Vector3(0, i - bossCollider.bounds.size.y / 2, 0);
+
+                Debug.DrawRay(rayOrigin, ahead, Color.red);
+
+                RaycastHit hitInfo;
+
+                if (Physics.Raycast(rayOrigin, ahead, out hitInfo, 100f))
+                {
+                    //if we hit ourselves or the player ignore them for collision avoidance.
+                    //also if we hit an object we already calculated avoidance forces for,
+                    //then skip it so we don't add multiple avoidances for one object.
+                    if (!hitObjs.Contains(hitInfo.collider.gameObject) && hitInfo.collider.gameObject.layer == LayerMask.GetMask("Player") || hitInfo.collider.gameObject == gameObject)
+                    { continue; }
+
+
+                    hitObjs.Add(hitInfo.collider.gameObject);
+
+                    Vector3 avoidanceForce = aheadWorld - hitInfo.point;
+                    avoidanceForce = avoidanceForce.normalized * 15f;
+                    //remove y component.
+                    avoidanceForce.y = 0;
+
+                    steering += avoidanceForce;
+                }
+            }
+
+
+
+            #endregion
+
+            steering.y = 0;
+            //add steering to current velocity.
+            rb.linearVelocity += steering;
+            rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, speed);
+
             yield return new WaitForFixedUpdate();
         }
 
