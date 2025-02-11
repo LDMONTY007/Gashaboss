@@ -464,7 +464,7 @@ public class BossController : MonoBehaviour, IDamageable
 
             #region collision avoidance
 
-            Vector3 ahead = rb.linearVelocity.normalized * 100f;
+            Vector3 ahead = rb.linearVelocity.normalized * 30f;
             ahead.y = 0;
             Vector3 aheadWorld = transform.position + ahead;
 
@@ -479,7 +479,8 @@ public class BossController : MonoBehaviour, IDamageable
 
                 RaycastHit hitInfo;
 
-                if (Physics.Raycast(rayOrigin, ahead, out hitInfo, 100f))
+                
+                if (Physics.SphereCast(rayOrigin, 3f, ahead, out hitInfo, 15f))
                 {
                     //if we hit ourselves or the player ignore them for collision avoidance.
                     //also if we hit an object we already calculated avoidance forces for,
@@ -490,12 +491,14 @@ public class BossController : MonoBehaviour, IDamageable
 
                     hitObjs.Add(hitInfo.collider.gameObject);
 
-                    Vector3 avoidanceForce = aheadWorld - hitInfo.point;
-                    avoidanceForce = avoidanceForce.normalized * 15f;
+                    Vector3 avoidanceForce = aheadWorld - hitInfo.collider.gameObject.transform.position;
+                    avoidanceForce = avoidanceForce.normalized * 50f;
                     //remove y component.
                     avoidanceForce.y = 0;
+                    Debug.DrawRay(transform.position, avoidanceForce, Color.cyan, 1f);
 
                     steering += avoidanceForce;
+                    break;
                 }
             }
 
