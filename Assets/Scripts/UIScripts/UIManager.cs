@@ -1,19 +1,19 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
 // UIManager is a Singleton class that manages the UI Panels in the game
 // It controls the Title Screen, In Game UI, Pause Menu, and transitions between them
 // It also handles the game state (paused or not)
 // The InGameUI currently also displays the BOSS health bar at all times, this needs to be set to only display during the boss fight
 // However, the boss fight is not implemented yet, so this is a placeholder
 
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+// UIManager is a Singleton that manages the In-Game UI & Pause Menu
 public class UIManager : MonoBehaviour
 {
     // Singleton instance
-    public static UIManager Instance; 
+    public static UIManager Instance;
 
     [Header("UI Panels")]
-    public GameObject titleScreenPanel;
     public GameObject inGameUI;
     public GameObject pauseMenuPanel;
 
@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton: Only one instance can exists
+        // Singleton: Only one instance can exist
         if (Instance == null)
         {
             Instance = this;
@@ -31,19 +31,25 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
 
-        // If UIManager is missing in the scene, create it
-        if (titleScreenPanel == null || pauseMenuPanel == null || inGameUI == null)
+        // Only keep UIManager in GameUIScene, not in TitleScreen
+        if (SceneManager.GetActiveScene().name != "TitleScreen")
         {
-            Debug.LogError("UIManager is missing. Make sure it's assigned in the Inspector.");
+            DontDestroyOnLoad(gameObject);
+        }
+
+        // Ensure Pause Menu is disabled on game start
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(false);  // hide the pause menu
         }
     }
 
-    // game always start with the title screen active
-    private void Start()
+    // Start the Game (Load Game Scene)
+    public void StartGame()
     {
-        ShowTitleScreen(); 
+        Time.timeScale = 1; // Resume normal game speed
+        SceneManager.LoadScene("GameUIScene"); // Ensure this scene exists
     }
 
     // Press ESC to toggle pause menu
@@ -55,24 +61,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
-    // Show the Title Screen, all other menus are inactive
-    public void ShowTitleScreen()
-    {
-        titleScreenPanel.SetActive(true);
-        pauseMenuPanel.SetActive(false);
-        inGameUI.SetActive(false);
-        Time.timeScale = 0; // Pause game until Start is pressed
-    }
-
-    // Start the Game (Title Screen deactivates, ingame UI starts)
-    public void StartGame()
-    {
-        titleScreenPanel.SetActive(false);
-        inGameUI.SetActive(true);
-        Time.timeScale = 1; // Resume game
-    }
-
     // Toggle Pause Menu (Pause Game)
     public void TogglePause()
     {
@@ -82,7 +70,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = isPaused ? 0 : 1;
     }
 
-    // Resume Game, dactivates pause menu and re-activates in game UI
+    // Resume Game
     public void ResumeGame()
     {
         isPaused = false;
@@ -91,18 +79,12 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    // Restart Level (keep or discard?) WE CAN PROBABLY DISCARD THIS
-    public void RestartGame()
+    // Quit to Title Screen (Load Title Scene)
+    public void QuitToTitle()
     {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    // Return to Main Menu
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 0;
-        SceneManager.LoadScene("TitleScreen"); // Make sure the scene exists
+        Time.timeScale = 1;  // Ensure normal speed
+        SceneManager.LoadScene("TitleScreen"); // Load the Title Screen scene
+        Destroy(gameObject); // Remove UIManager from memory since it's not needed in TitleScreen
     }
 
     // Quit Game
@@ -112,3 +94,4 @@ public class UIManager : MonoBehaviour
         Debug.Log("Game Quit! (Only works in a built game)");
     }
 }
+
