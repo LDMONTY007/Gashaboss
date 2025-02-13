@@ -1,14 +1,7 @@
 using UnityEngine;
 
-// Used to contain the drop stats for the drop tables
-public class CapsuleDrop{
-    public GameObject droppedObject;
-    public int weight;
-    public bool isRemovedAfterDrop;
-}
-
 // Base GachaMachine FrameWork
-public class GachaMachine implements IDamageable{
+public class GachaMachine: MonoBehavior, IDamageable{
     [SerializeField] private List<CapsuleDrop> drops;
     private int totalWeights;
     private Random rand;
