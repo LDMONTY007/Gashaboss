@@ -2607,6 +2607,17 @@ Rigidbody:
   m_CorrespondingSourceObject: {fileID: 2800533602043141878, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
   m_PrefabInstance: {fileID: 1684072345133267363}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &893601740 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+  m_PrefabInstance: {fileID: 1684072345133267363}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b136d2211bf8e4cb419c8feb416615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &895404805 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3710313826488658893, guid: c9fe7c2aad6d2ef40b531fb998877403, type: 3}
@@ -3494,6 +3505,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3928630742250186411, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 893601740}
     - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
       propertyPath: ragdollChest
       value: 

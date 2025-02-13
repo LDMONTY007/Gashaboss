@@ -189,6 +189,7 @@ public class Player : MonoBehaviour, IDamageable
     InputAction moveAction;
     InputAction jumpAction;
     InputAction attackAction;
+    InputAction altAttackAction;
     InputAction dashAction;
 
     //Raycast vars
@@ -221,6 +222,7 @@ public class Player : MonoBehaviour, IDamageable
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
+        altAttackAction = playerInput.actions["AltAttack"];
         dashAction = playerInput.actions["Dash"];
 
         //disable the ragdoll after
@@ -359,6 +361,11 @@ public class Player : MonoBehaviour, IDamageable
         if (attackAction.WasPressedThisFrame())
         {
             curWeapon.Attack();
+        }
+
+        if (altAttackAction.WasPressedThisFrame())
+        {
+            curWeapon.AltAttack();
         }
 
         #endregion
@@ -583,6 +590,36 @@ public class Player : MonoBehaviour, IDamageable
             Vector3 jumpVec = -transform.up * (fallMultiplier - 1)/* * 100f * Time.deltaTime*/;
             rb.AddForce(jumpVec, ForceMode.Force);
         }
+    }
+
+    //used when doing heavy attacks which will propel the player,
+    //for example a heavy downward slash from the sword will push the player
+    //up into the air without counting as a jump.
+    //TODO: Make this more configureable than it is with the time code from the jump function
+    public void LaunchPlayer(Vector3 direction, float force)
+    {
+
+        //I did the work out and 2 * h / t = gravity so I'm going to do that.
+        gravity = 2 * jumpHeight / timeToApex;
+        fallGravity = 2 * jumpHeight / timeToFall;
+
+        float projectedHeight = timeToApex * gravity / 2f;
+        Debug.Log(timeToApex + " " + projectedHeight + " " + gravity);
+        Debug.Log(("Projected Height " + projectedHeight).ToString().Color("Cyan"));
+
+        //doJump = false;
+        //jumpCount--;
+        float launchForce;
+
+        launchForce = Mathf.Sqrt(2f * gravity * jumpHeight) * rb.mass; //multiply by mass at the
+                                                                     //end so that it reaches the height regardless of weight.
+
+        //divide by 2 so we get the amount of time to reach the apex of the jump.
+        buttonTime = (launchForce / (rb.mass * gravity));
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(transform.up * launchForce, ForceMode.Impulse);
+
+        //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
 
     public void HandleDashing()
