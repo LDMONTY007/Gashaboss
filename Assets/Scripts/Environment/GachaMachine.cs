@@ -32,12 +32,17 @@ public class GachaMachine: IDamagable, MonoBehavior{
             }
             currDrop += drop.weight;
         }
+        return null;
     }
 
     public void TakeDamage(int damage, GameObject other){
         //TODO: Play Gacha Animation for drawing a capsule
-        GameObject drop = getRandomDrop();
+        GameObject drop = GetRandomDrop();
+        if (drop == null){
+            // TODO: Handle Error <- Shouldn't be possible
+            return;
+        }
         GameObject intCapsule = Instantiate(capsule);
-        intCapsule.getComponent<Capsule.cs>().setObjectHeld(GetRandomDrop());
+        intCapsule.getComponent<Capsule.cs>().SetObjectHeld(drop);
     }
 }
