@@ -1,10 +1,8 @@
 using UnityEngine;
 
-
-
-// Base GachaMachine FrameWork
 public class GachaMachine: IDamagable, MonoBehavior{
     [SerializeField] private List<CapsuleDrop> drops;
+    [SerializeField] private GameObject capsule;
     private int totalWeights;
     private Random rand;
 
@@ -18,7 +16,7 @@ public class GachaMachine: IDamagable, MonoBehavior{
 
     }
 
-    public GameObject getRandomDrop(){
+    public GameObject GetRandomDrop(){
         int dropRoll = rand.Next(1, totalWeights +1);
         int currDrop = 0;
         //Go through the objects in the list adding their weights up until
@@ -36,10 +34,10 @@ public class GachaMachine: IDamagable, MonoBehavior{
         }
     }
 
-    public void takeDamage(int damage, GameObject other){
-        GameObject drop = getRandomDrop();
-        //Instaite the Capsule
-        //Pass the object to the Capsule
+    public void TakeDamage(int damage, GameObject other){
         //TODO: Play Gacha Animation for drawing a capsule
+        GameObject drop = getRandomDrop();
+        GameObject intCapsule = Instantiate(capsule);
+        intCapsule.getComponent<Capsule.cs>().setObjectHeld(GetRandomDrop());
     }
 }
