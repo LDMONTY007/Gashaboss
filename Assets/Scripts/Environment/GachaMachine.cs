@@ -1,7 +1,9 @@
 using UnityEngine;
 
+
+
 // Base GachaMachine FrameWork
-public class GachaMachine: MonoBehavior, IDamageable{
+public class GachaMachine: IDamagable, MonoBehavior{
     [SerializeField] private List<CapsuleDrop> drops;
     private int totalWeights;
     private Random rand;
