@@ -441,6 +441,9 @@ public class BossController : MonoBehaviour, IDamageable
         SwitchToIdle(idleTime);
     }
 
+    public float avoidanceForceMultiplier = 50f;
+    public float avoidanceDistance = 30f;
+    public float sphereCastRadius = 3f;
 
     public IEnumerator GetCloseForAttack(float speed)
     {
@@ -464,7 +467,7 @@ public class BossController : MonoBehaviour, IDamageable
 
             #region collision avoidance
 
-            Vector3 ahead = rb.linearVelocity.normalized * 30f;
+            Vector3 ahead = rb.linearVelocity.normalized * avoidanceDistance;
             ahead.y = 0;
             Vector3 aheadWorld = transform.position + ahead;
 
@@ -480,7 +483,7 @@ public class BossController : MonoBehaviour, IDamageable
                 RaycastHit hitInfo;
 
                 
-                if (Physics.SphereCast(rayOrigin, 3f, ahead, out hitInfo, 15f))
+                if (Physics.SphereCast(rayOrigin, sphereCastRadius, ahead, out hitInfo, avoidanceDistance))
                 {
                     //if we hit ourselves or the player ignore them for collision avoidance.
                     //also if we hit an object we already calculated avoidance forces for,
@@ -492,7 +495,7 @@ public class BossController : MonoBehaviour, IDamageable
                     hitObjs.Add(hitInfo.collider.gameObject);
 
                     Vector3 avoidanceForce = aheadWorld - hitInfo.collider.gameObject.transform.position;
-                    avoidanceForce = avoidanceForce.normalized * 50f;
+                    avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
                     //remove y component.
                     avoidanceForce.y = 0;
                     Debug.DrawRay(transform.position, avoidanceForce, Color.cyan, 1f);

@@ -2135,7 +2135,7 @@ Transform:
   m_GameObject: {fileID: 657215935}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 1, z: 2}
+  m_LocalPosition: {x: -27.1, y: 1, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3839,13 +3839,21 @@ PrefabInstance:
       propertyPath: bossCollider
       value: 
       objectReference: {fileID: 94356272}
+    - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
+      propertyPath: avoidanceDistance
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
+      propertyPath: avoidanceForceMultiplier
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 3599179308196730325, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.807951
       objectReference: {fileID: 0}
     - target: {fileID: 3599179308196730325, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.4879227
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3599179308196730325, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: m_LocalPosition.z
