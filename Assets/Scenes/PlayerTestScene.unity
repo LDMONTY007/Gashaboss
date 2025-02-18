@@ -3856,7 +3856,7 @@ PrefabInstance:
       objectReference: {fileID: 94356272}
     - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: avoidanceDistance
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: avoidanceForceMultiplier

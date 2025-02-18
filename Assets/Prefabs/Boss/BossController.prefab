@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 6818133242696300460}
   - component: {fileID: 2683351818666409076}
   - component: {fileID: 4482620959930217726}
-  m_Layer: 6
+  m_Layer: 2
   m_Name: TestWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,6 +283,7 @@ MonoBehaviour:
   cooldownTime: 0.45
   canAttack: 1
   attackDistance: 5
+  player: {fileID: 0}
 --- !u!114 &2683351818666409076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,6 +536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugInfoTextMesh: {fileID: 6967904113999676315}
+  bossCollider: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   curIdleTime: 0
@@ -546,6 +548,9 @@ MonoBehaviour:
   weapon: {fileID: 6818133242696300460}
   lookTransform: {fileID: 410040115047980711}
   playerObject: {fileID: 0}
+  avoidanceForceMultiplier: 50
+  avoidanceDistance: 30
+  sphereCastRadius: 3
 --- !u!54 &6498016807078793078
 Rigidbody:
   m_ObjectHideFlags: 0

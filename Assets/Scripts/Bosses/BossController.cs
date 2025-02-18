@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
+using static UnityEditor.PlayerSettings;
 
 public class BossController : MonoBehaviour, IDamageable
 {
@@ -483,7 +486,7 @@ public class BossController : MonoBehaviour, IDamageable
                 RaycastHit hitInfo;
 
                 
-                if (Physics.SphereCast(rayOrigin, sphereCastRadius, ahead, out hitInfo, avoidanceDistance))
+                /*if (Physics.SphereCast(rayOrigin, sphereCastRadius, ahead, out hitInfo, avoidanceDistance))
                 {
                     //if we hit ourselves or the player ignore them for collision avoidance.
                     //also if we hit an object we already calculated avoidance forces for,
@@ -502,6 +505,133 @@ public class BossController : MonoBehaviour, IDamageable
 
                     steering += avoidanceForce;
                     break;
+                }*/
+
+
+                Vector3 playerPos = Vector3.zero;
+
+                //number of rays to shoot out in our cone like shape
+                int rayCount = 10;
+
+                //the total
+                //degrees that make 
+                //up our FOV
+                //as an enemy.
+                float fovAngle = 90;
+
+                for (int j = 0; j < rayCount; j++)
+                {
+                    //we want the left most
+                    //angle to start
+                    //on the left side
+                    //of the up vector
+                    //and end on the ride side,
+                    //so we need to do (180 - fovAngle) / 2
+                    //to get our offset in the 2 quadrant range
+                    //where we want to shoot rays.
+                    //then we add that offset
+                    //to our character's current rotation
+                    //angle to get a start angle.
+                    //then we use our start angle
+                    //plus our current angle along
+                    //the FOV to generate the desired
+                    //direction vector for the ray.
+                    float startAngle = transform.rotation.eulerAngles.y + 180f + fovAngle / 2f;
+                    float angle = (fovAngle) * j / rayCount;
+                    Vector2 dir2 = LDUtil.AngleToDir2D(-1 * (startAngle + angle)).normalized;
+                    Vector3 dir3 = new Vector3(dir2.x, 0f, dir2.y);
+                    //Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance * 2, Color.green, 1f);
+
+                    //ContactFilter2D contactFilter = new ContactFilter2D();
+
+                    //List<RaycastHit2D> results = new List<RaycastHit2D>();
+
+                    //Raycast while ignoring
+                    //Player and Ignore Raycast layers.
+                    //bossCollider.Raycast(dir3, contactFilter, results, distance * 2);
+                    RaycastHit[] hits = Physics.RaycastAll(rayOrigin, dir3, avoidanceDistance, ~LayerMask.GetMask("Player", "Ignore Raycast"));
+
+                    //loop through all objects that were hit by the raycastAll
+                    for (int k =  0; k < hits.Length; k++)
+                    {
+                        //if we hit ourselves ignore for collision avoidance. 
+                        if (hits[k].collider.gameObject == gameObject)
+                        { continue; }
+
+
+                        //Draw a ray that matches the distance
+                        //of what we hit.
+                        Debug.DrawRay(transform.position, dir3 * hits[k].distance, Color.green);
+
+                        //add to the list of hit objects.
+                        hitObjs.Add(hits[k].collider.gameObject);
+                        
+                        //avoidance force is the 
+                        //vector from the end of the ray hit for the current direction,
+                        //to the position of the hit object
+                        //and this will give us a direction to push away from the object.
+                        Vector3 avoidanceForce = (rayOrigin + dir3) - hits[k].collider.gameObject.transform.position;
+                        avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
+                        //remove y component.
+                        avoidanceForce.y = 0;
+                        Debug.DrawRay(rayOrigin, avoidanceForce, Color.cyan);
+
+                        //add avoidance force to our steering.
+                        steering += avoidanceForce;
+                    }
+
+                   /* if (Physics.Raycast(rayOrigin, dir3, out hitInfo, avoidanceDistance))
+                    {
+                        //if we hit ourselves or the player ignore them for collision avoidance.
+                        //also if we hit an object we already calculated avoidance forces for,
+                        //then skip it so we don't add multiple avoidances for one object.
+                        if (!hitObjs.Contains(hitInfo.collider.gameObject) && hitInfo.collider.gameObject.layer == LayerMask.GetMask("Player") || hitInfo.collider.gameObject == gameObject)
+                        { continue; }
+
+
+                        //Draw a ray that matches the distance
+                        //of what we hit.
+                        Debug.DrawRay(transform.position, dir3 * hitInfo.distance, Color.green);
+
+                        hitObjs.Add(hitInfo.collider.gameObject);
+
+                        Vector3 avoidanceForce = (rayOrigin + dir3) - hitInfo.collider.gameObject.transform.position;
+                        avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
+                        //remove y component.
+                        avoidanceForce.y = 0;
+                        Debug.DrawRay(rayOrigin, avoidanceForce, Color.cyan);
+
+                        steering += avoidanceForce;
+                        break;
+                    }
+                    else
+                    {
+                        //if we didn't hit anything draw a red ray.
+                        Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance, Color.red);
+                    }*/
+
+                   /* //Only check the first object we hit as the
+                    //intention is to stop at any obstacle because
+                    //we can't see through it.
+                    if (results.Count > 0)
+                    {
+                        //Draw a ray that matches the distance
+                        //of what we hit.
+                        Debug.DrawRay(transform.position, dir * results[0].distance, Color.green, 1f);
+                        if (results[0].collider.CompareTag("Player") && results[0].collider.GetComponent<Character>().isSlave == true)
+                        {
+                            //Yes, we can currently see the player.
+                            pos = results[0].transform.position;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        //if we didn't hit anything draw a red ray.
+                        Debug.DrawRay(transform.position, dir3 * avoidanceDistance * 2, Color.red, 1f);
+                    }*/
+
+
                 }
             }
 
@@ -509,6 +639,7 @@ public class BossController : MonoBehaviour, IDamageable
 
             #endregion
 
+            //remove y component.
             steering.y = 0;
             //add steering to current velocity.
             rb.linearVelocity += steering;

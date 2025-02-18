@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 3928630742250186411}
   - component: {fileID: 6390207258511137637}
   - component: {fileID: 635771316896607275}
-  m_Layer: 6
+  m_Layer: 2
   m_Name: TestWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,6 +389,7 @@ MonoBehaviour:
   cooldownTime: 0.45
   canAttack: 1
   attackDistance: 7
+  player: {fileID: 0}
 --- !u!114 &6390207258511137637
 MonoBehaviour:
   m_ObjectHideFlags: 0
