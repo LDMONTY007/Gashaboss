@@ -548,9 +548,9 @@ MonoBehaviour:
   weapon: {fileID: 6818133242696300460}
   lookTransform: {fileID: 410040115047980711}
   playerObject: {fileID: 0}
-  avoidanceForceMultiplier: 50
-  avoidanceDistance: 30
-  sphereCastRadius: 3
+  avoidanceForceMultiplier: 25
+  avoidanceDistance: 5
+  avoidanceAngle: 90
 --- !u!54 &6498016807078793078
 Rigidbody:
   m_ObjectHideFlags: 0

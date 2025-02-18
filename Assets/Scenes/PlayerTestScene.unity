@@ -3854,14 +3854,6 @@ PrefabInstance:
       propertyPath: bossCollider
       value: 
       objectReference: {fileID: 94356272}
-    - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
-      propertyPath: avoidanceDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 801408831168734246, guid: de465297baa736a44a184f91857bb267, type: 3}
-      propertyPath: avoidanceForceMultiplier
-      value: 25
-      objectReference: {fileID: 0}
     - target: {fileID: 3599179308196730325, guid: de465297baa736a44a184f91857bb267, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.807951

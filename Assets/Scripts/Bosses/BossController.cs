@@ -121,6 +121,11 @@ public class BossController : MonoBehaviour, IDamageable
 
     public float rotationSpeed = 20f;
 
+    [Header("Collision Avoidance Parameters")]
+    public float avoidanceForceMultiplier = 50f;
+    public float avoidanceDistance = 30f;
+    public float avoidanceAngle = 75f;
+    
     bool isMoving = false;
 
     bool isShaking = false;
@@ -444,9 +449,6 @@ public class BossController : MonoBehaviour, IDamageable
         SwitchToIdle(idleTime);
     }
 
-    public float avoidanceForceMultiplier = 50f;
-    public float avoidanceDistance = 30f;
-    public float sphereCastRadius = 3f;
 
     public IEnumerator GetCloseForAttack(float speed)
     {
@@ -483,41 +485,8 @@ public class BossController : MonoBehaviour, IDamageable
 
                 Debug.DrawRay(rayOrigin, ahead, Color.red);
 
-                RaycastHit hitInfo;
-
-                
-                /*if (Physics.SphereCast(rayOrigin, sphereCastRadius, ahead, out hitInfo, avoidanceDistance))
-                {
-                    //if we hit ourselves or the player ignore them for collision avoidance.
-                    //also if we hit an object we already calculated avoidance forces for,
-                    //then skip it so we don't add multiple avoidances for one object.
-                    if (!hitObjs.Contains(hitInfo.collider.gameObject) && hitInfo.collider.gameObject.layer == LayerMask.GetMask("Player") || hitInfo.collider.gameObject == gameObject)
-                    { continue; }
-
-
-                    hitObjs.Add(hitInfo.collider.gameObject);
-
-                    Vector3 avoidanceForce = aheadWorld - hitInfo.collider.gameObject.transform.position;
-                    avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
-                    //remove y component.
-                    avoidanceForce.y = 0;
-                    Debug.DrawRay(transform.position, avoidanceForce, Color.cyan, 1f);
-
-                    steering += avoidanceForce;
-                    break;
-                }*/
-
-
-                Vector3 playerPos = Vector3.zero;
-
                 //number of rays to shoot out in our cone like shape
                 int rayCount = 10;
-
-                //the total
-                //degrees that make 
-                //up our FOV
-                //as an enemy.
-                float fovAngle = 90;
 
                 for (int j = 0; j < rayCount; j++)
                 {
@@ -526,7 +495,7 @@ public class BossController : MonoBehaviour, IDamageable
                     //on the left side
                     //of the up vector
                     //and end on the ride side,
-                    //so we need to do (180 - fovAngle) / 2
+                    //so we need to do (180 - avoidanceAngle) / 2
                     //to get our offset in the 2 quadrant range
                     //where we want to shoot rays.
                     //then we add that offset
@@ -536,8 +505,8 @@ public class BossController : MonoBehaviour, IDamageable
                     //plus our current angle along
                     //the FOV to generate the desired
                     //direction vector for the ray.
-                    float startAngle = transform.rotation.eulerAngles.y + 180f + fovAngle / 2f;
-                    float angle = (fovAngle) * j / rayCount;
+                    float startAngle = transform.rotation.eulerAngles.y + 180f + avoidanceAngle / 2f;
+                    float angle = (avoidanceAngle) * j / rayCount;
                     Vector2 dir2 = LDUtil.AngleToDir2D(-1 * (startAngle + angle)).normalized;
                     Vector3 dir3 = new Vector3(dir2.x, 0f, dir2.y);
                     //Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance * 2, Color.green, 1f);
@@ -579,59 +548,6 @@ public class BossController : MonoBehaviour, IDamageable
                         //add avoidance force to our steering.
                         steering += avoidanceForce;
                     }
-
-                   /* if (Physics.Raycast(rayOrigin, dir3, out hitInfo, avoidanceDistance))
-                    {
-                        //if we hit ourselves or the player ignore them for collision avoidance.
-                        //also if we hit an object we already calculated avoidance forces for,
-                        //then skip it so we don't add multiple avoidances for one object.
-                        if (!hitObjs.Contains(hitInfo.collider.gameObject) && hitInfo.collider.gameObject.layer == LayerMask.GetMask("Player") || hitInfo.collider.gameObject == gameObject)
-                        { continue; }
-
-
-                        //Draw a ray that matches the distance
-                        //of what we hit.
-                        Debug.DrawRay(transform.position, dir3 * hitInfo.distance, Color.green);
-
-                        hitObjs.Add(hitInfo.collider.gameObject);
-
-                        Vector3 avoidanceForce = (rayOrigin + dir3) - hitInfo.collider.gameObject.transform.position;
-                        avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
-                        //remove y component.
-                        avoidanceForce.y = 0;
-                        Debug.DrawRay(rayOrigin, avoidanceForce, Color.cyan);
-
-                        steering += avoidanceForce;
-                        break;
-                    }
-                    else
-                    {
-                        //if we didn't hit anything draw a red ray.
-                        Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance, Color.red);
-                    }*/
-
-                   /* //Only check the first object we hit as the
-                    //intention is to stop at any obstacle because
-                    //we can't see through it.
-                    if (results.Count > 0)
-                    {
-                        //Draw a ray that matches the distance
-                        //of what we hit.
-                        Debug.DrawRay(transform.position, dir * results[0].distance, Color.green, 1f);
-                        if (results[0].collider.CompareTag("Player") && results[0].collider.GetComponent<Character>().isSlave == true)
-                        {
-                            //Yes, we can currently see the player.
-                            pos = results[0].transform.position;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        //if we didn't hit anything draw a red ray.
-                        Debug.DrawRay(transform.position, dir3 * avoidanceDistance * 2, Color.red, 1f);
-                    }*/
-
-
                 }
             }
 
