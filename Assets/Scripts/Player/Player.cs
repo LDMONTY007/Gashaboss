@@ -907,7 +907,7 @@ public class Player : MonoBehaviour, IDamageable
                 break;
             }*/
 
-            Debug.LogWarning("FLICKER: " + curTime);
+            //Debug.LogWarning("FLICKER: " + curTime);
 
             //wait until the cooldown to do the sprite flicker again.
             yield return null;

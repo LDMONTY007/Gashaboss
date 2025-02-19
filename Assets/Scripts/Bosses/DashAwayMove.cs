@@ -11,7 +11,7 @@ public class DashAwayMove : BossAction
 
         Vector3 dirFromPlayer = boss.playerObject.transform.position - boss.transform.position;
         Vector3 dashAwayPos = -1f * dirFromPlayer.normalized * dashDist;
-        boss.curState = BossController.BossState.move;
+        //boss.curState = BossController.BossState.move;
 
         //just yield and return the move to position
         //call.

@@ -145,7 +145,27 @@ public class BossController : MonoBehaviour, IDamageable
     //whenever it changes just to make sure that it
     //changes only when appropriate.
     //it also lets me change the debug info text to display the state.
-    public BossState curState { get { return _curState; } set { Debug.LogWarning("State switched from " + _curState + " to " + value);  _curState = value; debugInfoTextMesh.text = _curState.ToString(); } }
+    public BossState curState { 
+        get { 
+            return _curState; 
+        } 
+        set { 
+            Debug.LogWarning("State switched from " + _curState + " to " + value);  
+            _curState = value; 
+            debugInfoTextMesh.text = _curState.ToString(); 
+
+            //last resort for stopping the getCloseForAttackCoroutine,
+            //which should be able to stop itself, and doesn't
+            //because another coroutine starts which ends up changing the
+            //state to stun and then from stun to move before getCloseForAttackCoroutine
+            //gets control again, so it never gets a chance to check if it should stop.
+            /*if (getCloseForAttackCoroutine != null && _curState == BossState.stun)
+            {
+                StopCoroutine(getCloseForAttackCoroutine);
+                getCloseForAttackCoroutine = null;
+            }*/
+        } 
+    }
 
     public GameObject animatedModel;
 
@@ -295,20 +315,29 @@ public class BossController : MonoBehaviour, IDamageable
         MeleeAttack meleeAttack = new MeleeAttack();
         StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
 
-        //at the end of an attack coroutine
-        //always set the state back to idle
-        //curState = BossState.idle;
+        
 
     }
+
+    private Coroutine getCloseForAttackCoroutine = null;
 
     public void HandleMove()
     {
         if (!isMoving)
         {
+            //if the coroutine already ended
+            //(isMoving has to be false to reach this conclusion)
+            //then we need to kill the old coroutine
+            //and start the new one.
+            if (getCloseForAttackCoroutine != null)
+            {
+                StopCoroutine(getCloseForAttackCoroutine);
+                getCloseForAttackCoroutine = null;
+            }
             //Debug.Log("Boss is moving to player!".Color("Red"));
             //for now just move towards the player
             //StartCoroutine(MoveToPosition(playerObject.transform.position));
-            StartCoroutine(GetCloseForAttack(moveSpeed));
+            getCloseForAttackCoroutine = StartCoroutine(GetCloseForAttack(moveSpeed));
         }
     }
 
@@ -486,9 +515,10 @@ public class BossController : MonoBehaviour, IDamageable
     /// <returns></returns>
     public IEnumerator MoveToPosition(Vector3 targetPos, float speed = 10f, float targetAccuracy = 5f, float idleTime = 0f)
     {
+        isMoving = true;
+        
         curState = BossState.move;
 
-        isMoving = true;
 
         float moveTime = 0f;
 
@@ -520,6 +550,8 @@ public class BossController : MonoBehaviour, IDamageable
             //anymore than stop moving.
             if (curState != BossState.move)
             {
+                //Stop moving.
+                rb.linearVelocity = Vector3.zero;
                 isMoving = false;
                 yield break;
             }
@@ -593,6 +625,18 @@ public class BossController : MonoBehaviour, IDamageable
         //walk closer to them.
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
+            //if we're not in the move state
+            //anymore than stop moving.
+            //this is usually caused when a player
+            //hits us and we end up entering stun.
+            if (curState != BossState.move)
+            {
+                //Stop moving.
+                rb.linearVelocity = Vector3.zero;
+                isMoving = false;
+                yield break;
+            }
+
             //calculate initial steering
             Vector3 steering = CalculateSteering(playerObject.transform.position, speed);
             
@@ -616,9 +660,12 @@ public class BossController : MonoBehaviour, IDamageable
         rb.linearVelocity = Vector3.zero;
         isMoving = false;
 
+        Debug.Log("Move to attack finished");
+
         //when they are in the attack range,
         //switch to the attack state.
         curState = BossState.attack;
+        //Debug.Break();
     }
 
     //Just a small shake 
@@ -702,6 +749,10 @@ public class BossController : MonoBehaviour, IDamageable
         //idle for a few moments before moving again.
         //SwitchToIdle(1f);
 
+
+        //print out data about the boss taking damage.
+        Debug.Log("Boss Took: ".Color("Orange") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
+
         //When the boss takes damage,
         //put them in the stun state
         //to cancel any movements.
@@ -725,8 +776,8 @@ public class BossController : MonoBehaviour, IDamageable
         {
             Debug.LogError("PREVIOUS IFRAMES HAVEN'T FINISHED");
         }
+
         
-       
     }
 
     Coroutine curIFramesRoutine = null;
@@ -745,7 +796,19 @@ public class BossController : MonoBehaviour, IDamageable
         //LD Montello
         //dash away from the player.
         DashAwayMove dashAwayMove = new DashAwayMove();
-/*        dashAwayMove.Execute(this, 1f);*/
+        /*        dashAwayMove.Execute(this, 1f);*/
+
+        //we need to wait for 
+        //other code to check state changes
+        //since the state changed to stun earlier.
+        //This is because we return the dash move
+        //which changes back to the move state,
+        //so if we don't give control back to other
+        //coroutines and update then they never
+        //get a chance to see we are in stun
+        //and need to stop execution.
+        yield return new WaitForFixedUpdate();
+
         yield return dashAwayMove.ActionCoroutine(this, 1f);
 
         float total = iFrameTime;
