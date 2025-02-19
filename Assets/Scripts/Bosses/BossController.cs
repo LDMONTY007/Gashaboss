@@ -355,6 +355,127 @@ public class BossController : MonoBehaviour, IDamageable
         GUI.skin.label.fontSize = oldFontSize;
     }
 
+
+    /// <summary>
+    /// LD Montello
+    /// calculates the initial steering
+    /// vector used for our steering algorithm.
+    /// </summary>
+    /// <param name="targetPos">position to move towards</param>
+    /// <param name="speed">speed to move at</param>
+    /// <returns></returns>
+    public Vector3 CalculateSteering(Vector3 targetPos, float speed)
+    {
+        //calculate desired velocity
+        Vector3 desiredVelocity = (targetPos - transform.position).normalized * speed;
+
+        Vector3 steering = desiredVelocity - rb.linearVelocity;
+
+        //remove y component.
+        steering.y = 0;
+
+        return steering;
+    }
+
+    //LD Montello
+    //Calculates the collision
+    //avoidance force rule
+    //which is used in our steering algorithm.
+    public Vector3 CollisionAvoidance()
+    {
+        Vector3 collisionAvoidanceForce = Vector3.zero;
+
+        #region collision avoidance
+
+        Vector3 ahead = rb.linearVelocity.normalized * avoidanceDistance;
+        ahead.y = 0;
+        Vector3 aheadWorld = transform.position + ahead;
+
+        List<GameObject> hitObjs = new List<GameObject>();
+
+        //we want to do the entire vertical size of the boss collider
+        for (int i = 0; i < bossCollider.bounds.size.y; i++)
+        {
+            Vector3 rayOrigin = transform.position + new Vector3(0, i - bossCollider.bounds.size.y / 2, 0);
+
+            Debug.DrawRay(rayOrigin, ahead, Color.red);
+
+            //number of rays to shoot out in our cone like shape
+            int rayCount = 10;
+
+            for (int j = 0; j < rayCount; j++)
+            {
+                //we want the left most
+                //angle to start
+                //on the left side
+                //of the up vector
+                //and end on the ride side,
+                //so we need to do (180 - avoidanceAngle) / 2
+                //to get our offset in the 2 quadrant range
+                //where we want to shoot rays.
+                //then we add that offset
+                //to our character's current rotation
+                //angle to get a start angle.
+                //then we use our start angle
+                //plus our current angle along
+                //the FOV to generate the desired
+                //direction vector for the ray.
+                float startAngle = transform.rotation.eulerAngles.y + 180f + avoidanceAngle / 2f;
+                float angle = (avoidanceAngle) * j / rayCount;
+                Vector2 dir2 = LDUtil.AngleToDir2D(-1 * (startAngle + angle)).normalized;
+                Vector3 dir3 = new Vector3(dir2.x, 0f, dir2.y);
+                //Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance * 2, Color.green, 1f);
+
+                //ContactFilter2D contactFilter = new ContactFilter2D();
+
+                //List<RaycastHit2D> results = new List<RaycastHit2D>();
+
+                //Raycast while ignoring
+                //Player and Ignore Raycast layers.
+                //bossCollider.Raycast(dir3, contactFilter, results, distance * 2);
+                RaycastHit[] hits = Physics.RaycastAll(rayOrigin, dir3, avoidanceDistance, ~LayerMask.GetMask("Player", "Ignore Raycast"));
+
+                //loop through all objects that were hit by the raycastAll
+                for (int k = 0; k < hits.Length; k++)
+                {
+                    //if we hit ourselves ignore for collision avoidance. 
+                    if (hits[k].collider.gameObject == gameObject)
+                    { continue; }
+
+
+                    //Draw a ray that matches the distance
+                    //of what we hit.
+                    Debug.DrawRay(transform.position, dir3 * hits[k].distance, Color.green);
+
+                    //add to the list of hit objects.
+                    hitObjs.Add(hits[k].collider.gameObject);
+
+                    //avoidance force is the 
+                    //vector from the end of the ray hit for the current direction,
+                    //to the position of the hit object
+                    //and this will give us a direction to push away from the object.
+                    Vector3 avoidanceForce = (rayOrigin + dir3) - hits[k].collider.gameObject.transform.position;
+                    avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
+                    //remove y component.
+                    avoidanceForce.y = 0;
+                    Debug.DrawRay(rayOrigin, avoidanceForce, Color.cyan);
+
+                    //add avoidance force to our steering.
+                    collisionAvoidanceForce += avoidanceForce;
+                }
+            }
+        }
+
+
+
+        #endregion
+
+        //remove y component.
+        collisionAvoidanceForce.y = 0;
+
+        return collisionAvoidanceForce;
+    }
+
     //LD Montello
     /// <summary>
     /// Moves from current position to target position given a speed value. 
@@ -403,7 +524,17 @@ public class BossController : MonoBehaviour, IDamageable
                 yield break;
             }
             moveTime += Time.deltaTime;
-            rb.linearVelocity = (targetPos - transform.position).normalized * speed;
+
+            //calculate initial steering
+            Vector3 steering = CalculateSteering(targetPos, speed);
+
+            //Add the collision avoidance rule
+            steering += CollisionAvoidance();
+
+            //add steering to current velocity.
+            rb.linearVelocity += steering;
+            //clamp linear velocity to the current given speed.
+            rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, speed);
 
             //LD Montello,
             //for movement to be consistent we need to wait
@@ -450,6 +581,8 @@ public class BossController : MonoBehaviour, IDamageable
     }
 
 
+    //continously moves towards player until 
+    //the boss is in attack range.
     public IEnumerator GetCloseForAttack(float speed)
     {
         curState = BossState.move;
@@ -460,105 +593,15 @@ public class BossController : MonoBehaviour, IDamageable
         //walk closer to them.
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
-            //List<GameObject> obstacles = weapon.collisionSensor.ScanForObjects();
-
-            Vector3 desiredVelocity = (playerObject.transform.position - transform.position).normalized * speed;
-
-            Vector3 steering = desiredVelocity - rb.linearVelocity;
+            //calculate initial steering
+            Vector3 steering = CalculateSteering(playerObject.transform.position, speed);
             
-            //remove y component.
-            steering.y = 0;
+            //Add the collision avoidance rule
+            steering += CollisionAvoidance();
 
-
-            #region collision avoidance
-
-            Vector3 ahead = rb.linearVelocity.normalized * avoidanceDistance;
-            ahead.y = 0;
-            Vector3 aheadWorld = transform.position + ahead;
-
-            List<GameObject> hitObjs = new List<GameObject>();
-
-            //we want to do the entire vertical size of the boss collider
-            for (int i = 0; i < bossCollider.bounds.size.y; i++)
-            {
-                Vector3 rayOrigin = transform.position + new Vector3(0, i - bossCollider.bounds.size.y / 2, 0);
-
-                Debug.DrawRay(rayOrigin, ahead, Color.red);
-
-                //number of rays to shoot out in our cone like shape
-                int rayCount = 10;
-
-                for (int j = 0; j < rayCount; j++)
-                {
-                    //we want the left most
-                    //angle to start
-                    //on the left side
-                    //of the up vector
-                    //and end on the ride side,
-                    //so we need to do (180 - avoidanceAngle) / 2
-                    //to get our offset in the 2 quadrant range
-                    //where we want to shoot rays.
-                    //then we add that offset
-                    //to our character's current rotation
-                    //angle to get a start angle.
-                    //then we use our start angle
-                    //plus our current angle along
-                    //the FOV to generate the desired
-                    //direction vector for the ray.
-                    float startAngle = transform.rotation.eulerAngles.y + 180f + avoidanceAngle / 2f;
-                    float angle = (avoidanceAngle) * j / rayCount;
-                    Vector2 dir2 = LDUtil.AngleToDir2D(-1 * (startAngle + angle)).normalized;
-                    Vector3 dir3 = new Vector3(dir2.x, 0f, dir2.y);
-                    //Debug.DrawRay(rayOrigin, dir3 * avoidanceDistance * 2, Color.green, 1f);
-
-                    //ContactFilter2D contactFilter = new ContactFilter2D();
-
-                    //List<RaycastHit2D> results = new List<RaycastHit2D>();
-
-                    //Raycast while ignoring
-                    //Player and Ignore Raycast layers.
-                    //bossCollider.Raycast(dir3, contactFilter, results, distance * 2);
-                    RaycastHit[] hits = Physics.RaycastAll(rayOrigin, dir3, avoidanceDistance, ~LayerMask.GetMask("Player", "Ignore Raycast"));
-
-                    //loop through all objects that were hit by the raycastAll
-                    for (int k =  0; k < hits.Length; k++)
-                    {
-                        //if we hit ourselves ignore for collision avoidance. 
-                        if (hits[k].collider.gameObject == gameObject)
-                        { continue; }
-
-
-                        //Draw a ray that matches the distance
-                        //of what we hit.
-                        Debug.DrawRay(transform.position, dir3 * hits[k].distance, Color.green);
-
-                        //add to the list of hit objects.
-                        hitObjs.Add(hits[k].collider.gameObject);
-                        
-                        //avoidance force is the 
-                        //vector from the end of the ray hit for the current direction,
-                        //to the position of the hit object
-                        //and this will give us a direction to push away from the object.
-                        Vector3 avoidanceForce = (rayOrigin + dir3) - hits[k].collider.gameObject.transform.position;
-                        avoidanceForce = avoidanceForce.normalized * avoidanceForceMultiplier;
-                        //remove y component.
-                        avoidanceForce.y = 0;
-                        Debug.DrawRay(rayOrigin, avoidanceForce, Color.cyan);
-
-                        //add avoidance force to our steering.
-                        steering += avoidanceForce;
-                    }
-                }
-            }
-
-
-
-            #endregion
-
-            //remove y component.
-            steering.y = 0;
             //add steering to current velocity.
             rb.linearVelocity += steering;
+            //clamp linear velocity to the current given speed.
             rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, speed);
 
             yield return new WaitForFixedUpdate();
