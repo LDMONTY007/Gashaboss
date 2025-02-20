@@ -948,7 +948,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66207d9fd9283664ba57e0e7312bef33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerUIManager: {fileID: 935736555}
+  playerUIManager: {fileID: 935736561}
+  bossUIManager: {fileID: 935736555}
   inGameUI: {fileID: 935736553}
   pauseMenuPanel: {fileID: 935736554}
 --- !u!4 &285490386
@@ -2811,6 +2812,17 @@ GameObject:
   m_PrefabInstance: {fileID: 935736552}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &935736555 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7239826743129091189, guid: 2d9f76ef625fc9d4093de2b91f00cfad, type: 3}
+  m_PrefabInstance: {fileID: 935736552}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d395679fd92ca74bb4eeaf53f12d7ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &935736561 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5632593529852677317, guid: 2d9f76ef625fc9d4093de2b91f00cfad, type: 3}
   m_PrefabInstance: {fileID: 935736552}

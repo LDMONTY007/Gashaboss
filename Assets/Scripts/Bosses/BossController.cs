@@ -12,6 +12,9 @@ using static UnityEditor.PlayerSettings;
 
 public class BossController : MonoBehaviour, IDamageable
 {
+    [Header("Boss Specific Info")]
+    public string bossName = "BaseBoss";
+
     [Header("Manually assigned variables")]
     public TextMeshPro debugInfoTextMesh;
 
@@ -54,6 +57,11 @@ public class BossController : MonoBehaviour, IDamageable
         set
         {
             _curHealth = Mathf.Clamp(value, 0, maxHealth);
+
+            //LD Montello
+            //Update the current health in the UI for the boss.
+            UIManager.Instance.bossUIManager.UpdateHealthBar(_curHealth, maxHealth);
+
             if (curHealth == 0)
             {
                 Die();
@@ -88,7 +96,11 @@ public class BossController : MonoBehaviour, IDamageable
 
         //TODO:
         //play the death animation for the boss.
-        
+
+
+        //turn off the boss UI.
+        UIManager.Instance.SetBossUI(false);
+
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
         Destroy(gameObject);
@@ -192,9 +204,26 @@ public class BossController : MonoBehaviour, IDamageable
         return false;
     }
 
+    //LD Montello
+    //called on start
+    //to initialize all the base data in the UI.
+    public void StartUI()
+    {
+        //turn on the boss UI.
+        UIManager.Instance.SetBossUI(true);
+
+        //LD Montello
+        //Update the current health in the UI for the boss.
+        UIManager.Instance.bossUIManager.UpdateHealthBar(curHealth, maxHealth);
+
+        UIManager.Instance.bossUIManager.SetBossName(bossName);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        StartUI();
+
         playerObject = Player.instance.gameObject;
 
         bossRenderer = animatedModel.GetComponent<MeshRenderer>();

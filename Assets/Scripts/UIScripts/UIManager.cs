@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
 
     [Header("UI Managers")]
     public PlayerUIManager playerUIManager;
+    public BossUIManager bossUIManager;
 
     [Header("UI Panels")]
     public GameObject inGameUI;
@@ -114,6 +115,16 @@ public class UIManager : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("Game Quit! (Only works in a built game)");
+    }
+
+    //LD Montello
+    //will disable the boss ui
+    //object when false. 
+    //used to hide/display the boss UI if a boss is alive or dead.
+    //called form the boss itself.
+    public void SetBossUI(bool visible)
+    {
+        bossUIManager.gameObject.SetActive(visible);
     }
 }
 
