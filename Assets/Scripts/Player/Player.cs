@@ -80,6 +80,10 @@ public class Player : MonoBehaviour, IDamageable
         set
         {
             _curHealth = Mathf.Clamp(value, 0, maxHealth);
+
+            //LD Montello
+            //Update the current health in the UI for the player.
+            UIManager.Instance.playerUIManager.UpdateCoins(_curHealth);
             if (curHealth == 0)
             {
                 Die();
@@ -202,9 +206,21 @@ public class Player : MonoBehaviour, IDamageable
         instance = this;
     }
 
+    //LD Montello
+    //called on start
+    //to initialize all the base data in the UI.
+    public void StartUI()
+    {
+        //LD Montello
+        //Update the current health in the UI for the player.
+        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        StartUI();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 

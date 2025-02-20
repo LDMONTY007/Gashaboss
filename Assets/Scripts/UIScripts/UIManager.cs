@@ -4,6 +4,7 @@
 // The InGameUI currently also displays the BOSS health bar at all times, this needs to be set to only display during the boss fight
 // However, the boss fight is not implemented yet, so this is a placeholder
 
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,9 @@ public class UIManager : MonoBehaviour
 {
     // Singleton instance
     public static UIManager Instance;
+
+    [Header("UI Managers")]
+    public PlayerUIManager playerUIManager;
 
     [Header("UI Panels")]
     public GameObject inGameUI;
