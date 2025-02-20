@@ -61,6 +61,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //LD Montello
+    //unlocks the cursor and makes it visible
+    //when the game is paused,
+    //and then locks the cursor to the center
+    //and makes it invisible while in game play.
+    public void HandleCursorStates()
+    {
+        Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = !isPaused;
+    }
+
     // Toggle Pause Menu (Pause Game)
     public void TogglePause()
     {
@@ -68,6 +79,7 @@ public class UIManager : MonoBehaviour
         pauseMenuPanel.SetActive(isPaused);
         inGameUI.SetActive(!isPaused);
         Time.timeScale = isPaused ? 0 : 1;
+        HandleCursorStates();
     }
 
     // Resume Game
@@ -77,6 +89,7 @@ public class UIManager : MonoBehaviour
         pauseMenuPanel.SetActive(false);
         inGameUI.SetActive(true);
         Time.timeScale = 1;
+        HandleCursorStates();
     }
 
     // Quit to Title Screen (Load Title Scene)
@@ -85,6 +98,11 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1;  // Ensure normal speed
         SceneManager.LoadScene("TitleScreen"); // Load the Title Screen scene
         Destroy(gameObject); // Remove UIManager from memory since it's not needed in TitleScreen
+
+        //LD Montello.
+        //unlock the cursor and make it visible.
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     // Quit Game
