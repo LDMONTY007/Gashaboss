@@ -130,6 +130,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinsText: {fileID: 8807388656088480960}
+  capsText: {fileID: 4329747348379209925}
+  attackImage: {fileID: 6499674782212981356}
+  dashImage: {fileID: 984602502769160165}
 --- !u!1 &644339764836672709
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,7 +1095,7 @@ GameObject:
   - component: {fileID: 2818992217505078955}
   - component: {fileID: 984602502769160165}
   m_Layer: 5
-  m_Name: DodgeIndicator
+  m_Name: DashIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

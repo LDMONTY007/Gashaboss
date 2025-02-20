@@ -43,6 +43,29 @@ public class Player : MonoBehaviour, IDamageable
 
     public ParticleSystem dashParticles;
 
+    #region caps vars
+
+    private int _caps = 0;
+
+    public int caps
+    {
+        get
+        {
+            return _caps;
+        }
+
+        set
+        {
+            _caps = value;
+
+            //LD Montello
+            //Update the caps in the UI for the player.
+            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+        }
+    }
+
+    #endregion
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -145,6 +168,8 @@ public class Player : MonoBehaviour, IDamageable
     private int dashCount = 1;
     public bool dashing = false;
     public float dashDist = 10f;
+    [SerializeField] private bool isDashCooldown = false;
+    public float dashCooldown = 0.67f;
 
     [Header("Jump Parameters")]
     public float groundCheckDist = 0.1f;
@@ -214,6 +239,10 @@ public class Player : MonoBehaviour, IDamageable
         //LD Montello
         //Update the current health in the UI for the player.
         UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+
+        //LD Montello
+        //Update the caps in the UI for the player.
+        UIManager.Instance.playerUIManager.UpdateCaps(caps);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -370,7 +399,7 @@ public class Player : MonoBehaviour, IDamageable
             jumping = false;
         }
 
-        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing;
+        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown;
 
         #region attacking
 
@@ -422,7 +451,21 @@ public class Player : MonoBehaviour, IDamageable
         HandleDashing();
         HandleMovement();
         HandleJumping();
-        
+
+        HandleUI();
+    }
+
+    //LD Montello.
+    //Make sure to accurately update
+    //the weapon UI.
+    //change this so it isn't called every frame
+    //and instead has a callback from the weapon.
+    public void HandleUI()
+    {
+        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+
+        //if we are dashing or cooling down we want the dash indicator to be greyed out.
+        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
@@ -705,10 +748,22 @@ public class Player : MonoBehaviour, IDamageable
         //dashing
         dashing = false;
 
-        
+        //start cooling down from the dash.
+        StartCoroutine(DashCooldownCoroutine());
     }
 
-    
+    //cooldown for dashing.
+    public IEnumerator DashCooldownCoroutine()
+    {
+        isDashCooldown = true;
+
+        //wait out the entire cooldown.
+        yield return new WaitForSeconds(dashCooldown);
+        isDashCooldown = false;
+    }
+
+
+
 
     void LateUpdate()
     {

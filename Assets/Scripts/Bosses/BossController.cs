@@ -14,6 +14,8 @@ public class BossController : MonoBehaviour, IDamageable
 {
     [Header("Boss Specific Info")]
     public string bossName = "BaseBoss";
+    public int coinsRewarded = 3;
+    public int capsRewarded = 1;
 
     [Header("Manually assigned variables")]
     public TextMeshPro debugInfoTextMesh;
@@ -100,6 +102,11 @@ public class BossController : MonoBehaviour, IDamageable
 
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
+
+        //reward the player with the loot
+        //from this boss.
+        playerObject.GetComponent<Player>().caps += capsRewarded;
+        playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
