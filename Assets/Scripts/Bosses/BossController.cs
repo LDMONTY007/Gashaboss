@@ -578,6 +578,8 @@ public class BossController : MonoBehaviour, IDamageable
             yield return null;
         }
 
+
+
         //Loop till we reach our position
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
@@ -630,18 +632,6 @@ public class BossController : MonoBehaviour, IDamageable
         isMoving = false;
 
         Debug.LogWarning(moveTime);
-
-        //if we're not in the move state
-        //anymore than stop moving.
-        //this prevents the following
-        //"SwitchToIdle" call from breaking
-        //an ongoing "SwitchToIdle" call
-        //which is meant to cancel this movement.
-        if (curState != BossState.move)
-        {
-            isMoving = false;
-            yield break;
-        }
 
         //say we are no longer moving
         //and need to make a decision.
