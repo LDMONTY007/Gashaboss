@@ -41,9 +41,19 @@ public class CollisionSensor : MonoBehaviour
         //get the objects in our 
         //arc.
         List<GameObject> _objects = new List<GameObject>();
-        foreach (Transform t in transforms)
+
+
+        for (int i = 0; i < transforms.Count; i++)
         {
-            _objects.Add(t.gameObject);
+            //if the transform is now null,
+            //remove it from the list and skip
+            //adding it to the objects list.
+            if (transforms[i] == null)
+            {
+                transforms.Remove(transforms[i]);
+                continue;
+            }
+            _objects.Add(transforms[i].gameObject);
         }
         
         return _objects;
@@ -149,7 +159,7 @@ public class CollisionSensor : MonoBehaviour
 
         //print out the height distance from the arc's center to the point
         //we are checking for the arc to see if it's within our height range. 
-        Debug.Log(Vector3.Dot(arcCenter - point, upTransform));
+        //Debug.Log(Vector3.Dot(arcCenter - point, upTransform));
 
         //Check if angle is within arc range and height is within height range
         //for the height range, we're just projecting the point onto the arc's up

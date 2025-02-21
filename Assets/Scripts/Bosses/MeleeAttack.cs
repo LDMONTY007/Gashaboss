@@ -1,8 +1,9 @@
+using System.Collections;
 using UnityEngine;
 
 public class MeleeAttack : BossAction
 {
-    public override void Execute(BossController boss, float duration)
+    public override IEnumerator ActionCoroutine(BossController boss, float duration)
     {
         //if the boss's weapon is null,
         //then we need to throw an error
@@ -17,6 +18,13 @@ public class MeleeAttack : BossAction
         }
 
         DashAwayMove dashAwayMove = new DashAwayMove();
-        dashAwayMove.Execute(boss, 1f);
+
+        //boss.SwitchToIdle(0f);
+
+        //yield return null;
+
+        //return the dash away coroutine so we
+        //just reuse the dash away move at the end of our attack.
+        yield return dashAwayMove.ActionCoroutine(boss, duration);
     }
 }
