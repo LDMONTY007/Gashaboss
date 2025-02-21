@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq; 
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class SaveDataManager: MonoBehaviour{
     [SerializeField] private bool isProfileOverridden = false;
     [SerializeField] private string testSelectedProfile;
     private GameData gameData;
-    private List<IDataPersistance> dataPersistenceObjects;
+    private List<IDataPersistence> dataPersistenceObjects;
     private FileDataHandler dataHandler;
     private string selectedProfile;
     private Coroutine autoSaveCoroutine;
@@ -24,7 +25,7 @@ public class SaveDataManager: MonoBehaviour{
         DontDestroyOnLoad(this.gameObject);
         if(isDataDisabled) Debug.LogWarning("Save Data is currently disabled.");
         // Application.persistentDataPath gives off the file directory for the app
-        this.dataHandler = newFileDataHandler(Application.persistentDataPath, fileName);
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.selectedProfile = dataHandler.GetMostRecentlyUpdatedProfileId();
         if (isProfileOverridden){
             this.selectedProfile = testSelectedProfile;
@@ -56,16 +57,16 @@ public class SaveDataManager: MonoBehaviour{
         foreach (IDataPersistence dPObj in dataPersistenceObjects){
             dPObj.SaveData(gameData);
         }
-        gameData.lastUpdated = System.DataTime.Now.ToBinary();
+        gameData.lastUpdated = System.DateTime.Now.ToBinary();
         // save data using data handler
         dataHandler.Save(gameData, selectedProfile);
     }
     private List<IDataPersistence> FindAllDataPersistenceObjects(){
         //Find all the objects that implement IDataPersistence in the scene (Requires all the objects to also extend MonoBehaviour)
-        IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>(true).OfType<IDataPersistence>();
+        IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).OfType<IDataPersistence>();
         return new List<IDataPersistence>(dataPersistenceObjects);
     }
     public Dictionary<string, GameData> GetDataAllProfiles(){
-        return dataHandler.LoadAllProfiles();
+        return dataHandler.LoadAll();
     }
 }

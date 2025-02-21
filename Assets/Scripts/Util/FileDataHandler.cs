@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class FileDataHandler{
     private string dirPath = "";
@@ -19,7 +21,7 @@ public class FileDataHandler{
             if (gameData == null) continue;
             if (mostRecentProfileId == null) mostRecentProfileId = profileId;
             else{   
-                DateTime mostRecentTime = DateTime.FromBinary(profilesGameData[mostRecentProfileId].lastUpdated);
+                DateTime mostRecentTime = DateTime.FromBinary(profiles[mostRecentProfileId].lastUpdated);
                 DateTime newDateTime = DateTime.FromBinary(gameData.lastUpdated);
                 if (newDateTime > mostRecentTime) mostRecentProfileId = profileId;
             }
@@ -32,12 +34,14 @@ public class FileDataHandler{
 
         // Used to avoid os differences
         string fullPath = Path.Combine(dirPath, saveID, fileName);
-        GameData loadedData;
+        GameData loadedData = null;
         if (File.Exists(fullPath)){
             try{
-                string dataToLoad;
+                string dataToLoad = "";
                 using(FileStream stream = new FileStream(fullPath, FileMode.Open)){
-                    dataToLoad = reader.ReadToEnd();
+                    using (StreamReader reader = new StreamReader(stream)){
+                        dataToLoad = reader.ReadToEnd();
+                    }
                 }
                 //deserialize the data
                 //TODO: Replace with Json.NET Utility
@@ -52,7 +56,7 @@ public class FileDataHandler{
         Dictionary<string, GameData> profileDictionary = new Dictionary<string, GameData>();
 
         //Loop over all directory names in save folder
-        IEnumerable<DirectoryInfo> dirInfos = new DirectoryInfo(dataDirPath).EnumerateDirectories();
+        IEnumerable<DirectoryInfo> dirInfos = new DirectoryInfo(dirPath).EnumerateDirectories();
         foreach (DirectoryInfo dirInfo in dirInfos){
             string profileId = dirInfo.Name;
             //check if datafile exists, if not it should be skipped as it's not a profile
@@ -80,7 +84,7 @@ public class FileDataHandler{
         string fullPath = Path.Combine(dirPath, saveID, fileName);
         try{
             // make save file if not already made
-            Directory.CreateDriectory(Path.GetDirectoryName(fullPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
             // Serialize into Json file
             //TODO: Replace with Json.NET Utility
             string dataToStore = JsonUtility.ToJson(data, true);
