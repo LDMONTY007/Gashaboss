@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class FileDataHandler{
     private string dirPath = "";
@@ -44,8 +45,7 @@ public class FileDataHandler{
                     }
                 }
                 //deserialize the data
-                //TODO: Replace with Json.NET Utility
-                loadedData = JsonUtility.FromJson<GameData>(dataToLoad);
+                loadedData = JsonConvert.DeserializeObject<GameData>(dataToLoad);
             }catch(Exception e){
                 Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
             }
@@ -74,7 +74,6 @@ public class FileDataHandler{
                 profileDictionary.Add(profileId, profileData);
             }
         }
-        
         return profileDictionary;
     }
     public void Save(GameData data, string saveID){
@@ -86,15 +85,13 @@ public class FileDataHandler{
             // make save file if not already made
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
             // Serialize into Json file
-            //TODO: Replace with Json.NET Utility
-            string dataToStore = JsonUtility.ToJson(data, true);
+            string dataToStore = JsonConvert.SerializeObject(data);
             // using Create Mode to make or overwrite given file
             using (FileStream stream = new FileStream(fullPath, FileMode.Create)){
                 using (StreamWriter writer = new StreamWriter(stream)){
                     writer.Write(dataToStore);
                 }
             }
-
         }catch(Exception e){
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
         }
