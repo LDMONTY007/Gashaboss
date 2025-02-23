@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq; 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+// The SaveDataManager handles savedata for the game
+// This is the class that will mostly be called from the gamemanager/UI manager
+// All objects that need save data need to implemnet the IDataPersistence Interface
 public class SaveDataManager: MonoBehaviour{
     [SerializeField] private string fileName;
     [SerializeField] private bool isDataDisabled = false;
@@ -60,6 +64,7 @@ public class SaveDataManager: MonoBehaviour{
         gameData.lastUpdated = System.DateTime.Now.ToBinary();
         // save data using data handler
         dataHandler.Save(gameData, selectedProfile);
+        Debug.Log("Saving Game");
     }
     private List<IDataPersistence> FindAllDataPersistenceObjects(){
         //Find all the objects that implement IDataPersistence in the scene (Requires all the objects to also extend MonoBehaviour)
@@ -68,5 +73,18 @@ public class SaveDataManager: MonoBehaviour{
     }
     public Dictionary<string, GameData> GetDataAllProfiles(){
         return dataHandler.LoadAll();
+    }
+    
+    public void ChangeLoadedProfile(string ProfileId){
+        Debug.Log("Changing Loaded Profile" + ProfileId);
+        selectedProfile = ProfileId;
+        //go ahead and load gameData for the new profile
+        LoadGame();
+    }
+    public bool HasData(){
+        foreach (KeyValuePair<string, GameData> pair in GetDataAllProfiles()){
+            if(pair.Key != null) return true;
+        }
+        return false;
     }
 }

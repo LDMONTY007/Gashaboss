@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
+//The FildDataHandler handles the actual reading and writing of files and file management
+//This class is called almost exclusively from SaveDataManager
+//Be careful calling this class from other spots
+//you almost always want to make a SaveDataManager call
 public class FileDataHandler{
     private string dirPath = "";
     private string fileName = "";
