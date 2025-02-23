@@ -36,8 +36,18 @@ public class SaveDataManager: MonoBehaviour{
             Debug.LogWarning("Overriding selected profile with : " + testSelectedProfile);
         } 
     }
-    private void Start(){
+    private void OnEnable(){
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    private void OnDisable(){
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    private void OnApplicationQuit(){
+        SaveGame();
+    }
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode){
         this.dataPersistenceObjects = FindAllDataPersistenceObjects();
+        LoadGame();
     }
     public void NewGame(){
         this.gameData = new GameData();
@@ -64,7 +74,7 @@ public class SaveDataManager: MonoBehaviour{
         gameData.lastUpdated = System.DateTime.Now.ToBinary();
         // save data using data handler
         dataHandler.Save(gameData, selectedProfile);
-        Debug.Log("Saving Game");
+        Debug.Log("Saved Game");
     }
     private List<IDataPersistence> FindAllDataPersistenceObjects(){
         //Find all the objects that implement IDataPersistence in the scene (Requires all the objects to also extend MonoBehaviour)

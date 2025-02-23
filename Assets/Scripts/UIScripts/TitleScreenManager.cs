@@ -54,7 +54,8 @@ public class TitleScreenManager : MonoBehaviour
         SaveDataManager.instance.ChangeLoadedProfile(saveslot.GetProfileId());
         //overwrite data with new game data if not loading
         if(!isLoading)SaveDataManager.instance.NewGame();
-        SceneManager.LoadScene("GameUIScene"); //TODO: Change to load Gameplay Scene
+        SaveDataManager.instance.SaveGame();
+        SceneManager.LoadSceneAsync("GameUIScene"); //TODO: Change to load Gameplay Scene
     }
     public void StartGame()
     {
