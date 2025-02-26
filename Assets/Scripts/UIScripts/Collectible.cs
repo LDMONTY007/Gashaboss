@@ -6,13 +6,22 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
-    public GameObject weaponModelPrefab; // Assign the weapon’s 3D prefab in the Inspector
-    public string weaponName; // Set the name of the weapon in the Inspector
+    public GameObject weaponModelPrefab; // Assign in Inspector
+    public string weaponName; // Assign the name in the Inspector
 
-    // This function is called when the player chooses to view the collected weapon
-    public void ViewWeapon()
+    private bool collected = false; // Prevents duplicate collection
+
+    private void OnTriggerEnter(Collider other)
     {
-        // Calls the Object Viewer Singleton to display the selected weapon
-        ObjectViewer.Instance.OpenViewer(weaponModelPrefab, weaponName);
+        if (other.CompareTag("Player") && !collected)
+        {
+            collected = true; // Mark as collected
+
+            // Add weapon to the Collection
+            CollectionManager.Instance.AddToCollection(weaponModelPrefab, weaponName);
+
+            // Destroy the physical object after collection
+            Destroy(gameObject);
+        }
     }
 }
