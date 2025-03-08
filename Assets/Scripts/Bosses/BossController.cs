@@ -354,20 +354,26 @@ public class BossController : MonoBehaviour, IDamageable
         }
     }
 
+
+    MeleeAttack meleeAttack = new MeleeAttack();
+
     public void HandleAttack()
     {
-        Debug.Log("Boss wants to attack here!".Color("Red"));
+
 
         //TODO:
         //choose the attack based on our pattern
         //and execute it.
         //attacks should be a seperate script to make modular bosses and boss design easier.
-        
 
 
-        MeleeAttack meleeAttack = new MeleeAttack();
-        StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
-
+        //if the boss isn't already in a melee attack,
+        //then start one.
+        if (!meleeAttack.active)
+        {
+            Debug.Log("Boss wants to attack here!".Color("Red"));
+            StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+        }
         
 
     }

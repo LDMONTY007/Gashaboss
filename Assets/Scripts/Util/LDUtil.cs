@@ -90,4 +90,44 @@ public class LDUtil : MonoBehaviour
         //Reset to previous color
         m.material.color = prevColor;
     }
+
+    /// <summary>
+    /// Coroutine that helps
+    /// for waiting for an animation to 
+    /// finish.
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerator WaitForAnimationFinish(Animator animator)
+    {
+        //For some reason we need
+        //to wait while the normalized time is > 1
+        //because if an animation plays multiple times
+        //the normalized time will be greater than 1. 
+        //This is dumb.
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || animator.IsInTransition(0))
+        {
+            yield return null;
+        }
+
+        //Wait until the animation is done and we aren't transitioning
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1 || animator.IsInTransition(0))
+        {
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that helps
+    /// for waiting for an animation to 
+    /// finish.
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerator WaitForAnimationFinish(Animator animator, string animation)
+    {
+        //Wait until the animation is done
+        while (animator.GetCurrentAnimatorStateInfo(0).IsName(animation))
+        {
+            yield return null;
+        }
+    }
 }
