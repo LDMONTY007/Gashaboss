@@ -22,6 +22,8 @@ public class BossController : MonoBehaviour, IDamageable
 
     public Collider bossCollider;
 
+    public Animator animator;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -93,7 +95,11 @@ public class BossController : MonoBehaviour, IDamageable
         isDead = true;
 
         //set color to be red when dead.
-        bossRenderer.material.color = Color.red;
+        //bossRenderer.material.color = Color.red;
+        //TODO:
+        //Play a death animation here.
+
+
         rb.constraints = RigidbodyConstraints.None;
 
         //TODO:
@@ -132,8 +138,8 @@ public class BossController : MonoBehaviour, IDamageable
     public float attackCheckRadius = 10f;
 
 
-
-    Rigidbody rb;
+    [HideInInspector]
+    public Rigidbody rb;
 
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
@@ -205,6 +211,7 @@ public class BossController : MonoBehaviour, IDamageable
         //return true. 
         if (objs.Any<Collider>(c => c.GetComponent<Player>() != null))
         {
+            
             return true;
         }
 
@@ -246,6 +253,9 @@ public class BossController : MonoBehaviour, IDamageable
 
             
         }
+
+        //Handle the animations.
+        HandleAnimation();
     }
 
     private void FixedUpdate()
@@ -264,7 +274,7 @@ public class BossController : MonoBehaviour, IDamageable
         curState = BossState.idle;
     }
 
-    public void HandleStateMachine()
+    public virtual void HandleStateMachine()
     {
         #region boss state switching
 
@@ -303,6 +313,13 @@ public class BossController : MonoBehaviour, IDamageable
         }
 
         #endregion
+    }
+
+    //LD Montello
+    public virtual void HandleAnimation()
+    {
+        //This is where you'd check if rb.velocity is greater than some value and if it is, set the 
+        //boss to walk animation.
     }
 
     //Here we decide if we want to attack,
@@ -851,7 +868,12 @@ public class BossController : MonoBehaviour, IDamageable
         {
             curTime += Time.deltaTime;
 
-            bossRenderer.enabled = !bossRenderer.enabled;
+            //used to directly turn off the renderer
+            //but now we'll turn off the animated model gameobject itself.
+            //bossRenderer.enabled = !bossRenderer.enabled;
+            animatedModel.gameObject.SetActive(!animatedModel.gameObject.activeSelf);
+
+
             //wait until the cooldown to do the sprite flicker again.
             yield return new WaitForSeconds(flickerCooldown);
             //add the flicker cooldown to account for the time
@@ -870,19 +892,20 @@ public class BossController : MonoBehaviour, IDamageable
             yield return null;
         }
 
-        bossRenderer.enabled = true;
+        //set the animated model to be visible again.
+        animatedModel.gameObject.SetActive(true);
 
 
-        
 
-        
 
-/*        //while we are dashing away, 
-        //wait before leaving i-frames.
-        while (isMoving)
-        {
-            yield return null;
-        }*/
+
+
+        /*        //while we are dashing away, 
+                //wait before leaving i-frames.
+                while (isMoving)
+                {
+                    yield return null;
+                }*/
 
         //after the stun the boss is no longer
         //invincible. 

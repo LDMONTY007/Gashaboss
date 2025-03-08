@@ -131,6 +131,8 @@ MonoBehaviour:
   dashTotal: 1
   dashing: 0
   dashDist: 35
+  isDashCooldown: 0
+  dashCooldown: 0.67
   groundCheckDist: 0.97
   jumpCount: 3
   jumpTotal: 1
@@ -427,7 +429,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 7
+  m_Radius: 3.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7340001647599122808
 GameObject:

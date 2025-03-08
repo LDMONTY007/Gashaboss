@@ -51,7 +51,7 @@ public class Weapon : MonoBehaviour
         //set the collision sensor 
         //collider radius to be
         //the same as our attack distance
-        collisionSensor.triggerCollider.radius = attackDistance;
+        collisionSensor.triggerCollider.radius = attackDistance / 2;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -60,7 +60,7 @@ public class Weapon : MonoBehaviour
         //set the collision sensor 
         //collider radius to be
         //the same as our attack distance
-        collisionSensor.triggerCollider.radius = attackDistance;
+        collisionSensor.triggerCollider.radius = attackDistance / 2;
 
         //get original mesh color
         ogMeshColor = collisionSensor.sensorColor;
