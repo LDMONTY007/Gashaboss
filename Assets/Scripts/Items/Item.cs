@@ -4,14 +4,15 @@ using UnityEngine;
 public abstract class Item: MonoBehaviour
 {
     // the time till the effect happens again
-    // Set this to something in subclasses if needed 
+    // set this to something in subclasses during the start method if needed 
+    // I put it in the abstract because I expect this to be used often enough
+    // that it would be useful to not have to add the code in every subclass   
     protected int timeTillReapply;
     public string name;
-    public bool isUnlocked;
     void Update(){
         if (timeTillReapply == null) return;
         if (timeTillReapply > 0) timeTillReapply -= Time.deltaTime;
         if (timeTillReapply <= 0) ApplyEffect();
     }
-    public override void ApplyEffect();
+    public abstract void ApplyEffect();
 }
