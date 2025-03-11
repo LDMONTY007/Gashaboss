@@ -43,6 +43,8 @@ public class Player : MonoBehaviour, IDamageable
 
     public ParticleSystem dashParticles;
 
+    public List<StackModifier> modifiers = new List<StackModifier>();
+
     #region caps vars
 
     private int _caps = 0;
@@ -68,28 +70,6 @@ public class Player : MonoBehaviour, IDamageable
 
     #region health vars
     [Header("Health Variables")]
-    public int _maxHealth = 3;
-
-    public int maxHealth
-    {
-        get
-        {
-            //Calc the health when we access it.
-            //Also make sure that if we 
-            //leveled up and got more health
-            //that we reset the player's health.
-            //if (_maxHealth != CalcHealth(level))
-            //{
-            //    _maxHealth = CalcHealth(level);
-            //    /*                if (_health < 9)
-            //                    {
-            //                        _health = 10;
-            //                    }*/
-            //    curHealth = CalcHealth(level);
-            //}
-            return _maxHealth;
-        }
-    }
 
     private int _curHealth = 3;
 
@@ -102,7 +82,7 @@ public class Player : MonoBehaviour, IDamageable
 
         set
         {
-            _curHealth = Mathf.Clamp(value, 0, maxHealth);
+            _curHealth = Mathf.Max(value, 0);
 
             //LD Montello
             //Update the current health in the UI for the player.
@@ -119,6 +99,7 @@ public class Player : MonoBehaviour, IDamageable
     [Header("Damage Variables")]
     //the force at which we bounce off of the object that damaged us. 
     public float bounceForce = 5f;
+    public event Action onPlayerHit;
 
     public bool invincible = false;
 
@@ -913,6 +894,8 @@ public class Player : MonoBehaviour, IDamageable
 
         //Start iFrames here.
         StartIFrames();
+
+        onPlayerHit?.Invoke(); // Send out signal that player was hit
 
         //TODO:
         //change the layer of the visual model for the player to be
