@@ -226,7 +226,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -5109,6 +5109,7 @@ MonoBehaviour:
   debugInfoTextMesh: {fileID: 8360802870174635090}
   bossCollider: {fileID: 8846168522096661766}
   animator: {fileID: 6610936195214905957}
+  movementParticles: {fileID: 3234350318697314325}
   _maxHealth: 3
   isDead: 0
   curIdleTime: 0

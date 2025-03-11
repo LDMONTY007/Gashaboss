@@ -24,6 +24,8 @@ public class BossController : MonoBehaviour, IDamageable
 
     public Animator animator;
 
+    public ParticleSystem movementParticles;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -254,6 +256,9 @@ public class BossController : MonoBehaviour, IDamageable
             
         }
 
+        //Handle the particle FX
+        HandleParticles();
+
         //Handle the animations.
         HandleAnimation();
     }
@@ -320,6 +325,21 @@ public class BossController : MonoBehaviour, IDamageable
     {
         //This is where you'd check if rb.velocity is greater than some value and if it is, set the 
         //boss to walk animation.
+    }
+
+    public virtual void HandleParticles()
+    {
+        if (movementParticles != null)
+        {
+            if (!movementParticles.isPlaying && (isMoving || curState == BossState.move))
+            {
+                movementParticles.Play();
+            }
+            else if (movementParticles.isPlaying && !isMoving && curState != BossState.move)
+            {
+                movementParticles.Stop();
+            }
+        }
     }
 
     //Here we decide if we want to attack,
