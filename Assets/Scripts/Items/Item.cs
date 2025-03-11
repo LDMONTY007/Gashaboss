@@ -7,7 +7,7 @@ public abstract class Item: MonoBehaviour
     // set this to something in subclasses during the start method if needed 
     // I put it in the abstract because I expect this to be used often enough
     // that it would be useful to not have to add the code in every subclass   
-    protected int timeTillReapply;
+    protected float timeTillReapply;
     public string name;
     void Update(){
         if (timeTillReapply == null) return;
