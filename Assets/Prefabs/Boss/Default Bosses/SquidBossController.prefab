@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5838bdd5a2169994da0faf46ba50786a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossName: BaseBoss
+  bossName: Squid
   coinsRewarded: 3
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 8360802870174635090}
