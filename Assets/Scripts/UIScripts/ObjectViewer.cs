@@ -13,6 +13,7 @@ public class ObjectViewer : MonoBehaviour
 
     [Header("3D Model Holder")]
     public Transform modelHolder;
+    public Camera viewerCamera;
 
     private GameObject currentModel; // Stores the currently displayed 3D model
     private Vector2 rotationInput; // Stores mouse/touch movement for rotation
@@ -58,26 +59,30 @@ public class ObjectViewer : MonoBehaviour
         }
     }
 
-    // Opens the Object Viewer and displays the selected 3D model
-    public void OpenViewer(GameObject modelPrefab, string objectName)
+    public void OpenViewer(GameObject collectiblePrefab, string collectibleName)
     {
-        // If there's already a model being viewed, destroy it
         if (currentModel != null)
             Destroy(currentModel);
 
-        // Instantiate (spawn) the selected model inside the modelHolder
-        currentModel = Instantiate(modelPrefab, modelHolder);
-
-        // Reset model position & rotation to keep it centered
+        // Instantiate the selected collectible inside modelHolder
+        currentModel = Instantiate(collectiblePrefab, modelHolder);
         currentModel.transform.localPosition = Vector3.zero;
         currentModel.transform.localRotation = Quaternion.identity;
 
-        // Update the UI text to display the object's name
-        objectNameText.text = objectName;
+        // Update UI with collectible name
+        objectNameText.text = collectibleName;
 
-        // Show the Object Viewer UI panel
+        // Show the Object Viewer UI
         objectViewerPanel.SetActive(true);
+
+        // Enable Viewer Camera when opening
+        if (viewerCamera != null)
+        {
+            viewerCamera.gameObject.SetActive(true);
+        }
+
     }
+
 
     // Closes the Object Viewer and removes the 3D model
     public void CloseViewer()
@@ -87,5 +92,11 @@ public class ObjectViewer : MonoBehaviour
         // Destroy the currently displayed model (if any)
         if (currentModel != null)
             Destroy(currentModel);
+
+        // Disable Viewer Camera when closing
+        if (viewerCamera != null)
+        {
+            viewerCamera.gameObject.SetActive(false);
+        }
     }
 }
