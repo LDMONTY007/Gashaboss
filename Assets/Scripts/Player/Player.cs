@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
@@ -43,7 +45,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public ParticleSystem dashParticles;
 
-    public List<StackModifier> modifiers = new List<StackModifier>();
+    public List<StatModifier> modifiers = new List<StatModifier>();
 
     #region caps vars
 

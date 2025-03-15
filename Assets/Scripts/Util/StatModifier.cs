@@ -1,3 +1,4 @@
+using UnityEngine;
 public enum StatModifierType{Add, Subtract, PercentageMul, PercentageDiv}
 public enum StatModified{
     // Add more as needed, only add if item needs it
@@ -8,22 +9,18 @@ public enum StatModified{
 }
 public class StatModifier{
     public StatModified stat { get; private set; }
-    public T modValue { get; private set; }
+    public float modValue { get; private set; }
     public StatModifierType type { get; private set; }
     public object source { get; private set; } // Track what added the modifier
 
-    public StatModifier(StatModified stat, T value, StatModifierType type, object source = null){
-        stat = stat;
-        modValue = value;
-        type = type;
-        source = source;
+    public StatModifier(StatModified stat, float value, StatModifierType type, object source = null){
+        this.stat = stat;
+        this.modValue = value;
+        this.type = type;
+        this.source = source;
     }
-    public T makeModifications(T value){
-        if((value is string)){
-            Debug.LogError("Tried to modify a string value! Check Modifier: " + object);
-            return null;
-        }
-        T result = value;
+    public float makeModifications(float value){
+        float result = value;
         switch (this.type){
                 case StatModifierType.Add:
                     result += this.modValue;
@@ -37,9 +34,6 @@ public class StatModifier{
                 case StatModifierType.PercentageDiv:
                     result /= this.modValue;
                     break;
-                case default:
-                    Debug.LogError("Modifier does not have appropriate modifcation type, Source: " + object);
-                    return null;
             }
         return result;
     }
