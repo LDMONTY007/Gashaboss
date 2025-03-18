@@ -44,9 +44,10 @@ public class Player : MonoBehaviour, IDamageable
     public Weapon curWeapon;
 
     public ParticleSystem dashParticles;
-
+    #region Items and Modifier vars
     public List<StatModifier> modifiers = new List<StatModifier>();
-
+    public List<Item> inventory = new List<Item>();
+    #endregion
     #region caps vars
 
     private int _caps = 0;
@@ -1076,5 +1077,11 @@ public class Player : MonoBehaviour, IDamageable
         Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
+    }
+
+    void OnTriggerEnter(Collider other){
+        if (other.gameObject.CompareTag("Item")){
+            other.GetComponent<Item>().OnPickup();
+        }
     }
 }
