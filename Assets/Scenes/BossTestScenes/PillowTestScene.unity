@@ -2687,18 +2687,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PillowBossController
       objectReference: {fileID: 0}
-    - target: {fileID: 3788949792542946111, guid: 6f02b4c5a8e7d0943b654727c18bdd10, type: 3}
-      propertyPath: moveSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788949792542946111, guid: 6f02b4c5a8e7d0943b654727c18bdd10, type: 3}
-      propertyPath: doStateMachine
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788949792542946111, guid: 6f02b4c5a8e7d0943b654727c18bdd10, type: 3}
-      propertyPath: avoidanceDistance
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 8442317322446862765, guid: 6f02b4c5a8e7d0943b654727c18bdd10, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.436726
