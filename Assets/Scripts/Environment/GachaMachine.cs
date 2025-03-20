@@ -31,7 +31,13 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     public SetRandomSeed setRandomSeedAnimated;
 
+    public AudioClip gachaRollClip;
+
+    private AudioSource gachaAudioSource;
+
     public void Start(){
+        gachaAudioSource = GetComponent<AudioSource>();
+
         //loadDrops();
         totalWeights = 0;
         foreach (GameObject drop in drops){
@@ -107,6 +113,9 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     public void PlayDispenseAnimation()
     {
+        //play the audio for the gacha roll
+        gachaAudioSource.PlayOneShot(gachaRollClip);
+
         //this animation has an event that will call the "SpawnCapsule" method when it ends.
         gachaAnimator.SetTrigger("drop");
     }
