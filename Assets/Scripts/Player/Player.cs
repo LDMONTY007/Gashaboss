@@ -222,11 +222,11 @@ public class Player : MonoBehaviour, IDamageable
     {
         //LD Montello
         //Update the current health in the UI for the player.
-        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+        //UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
 
         //LD Montello
         //Update the caps in the UI for the player.
-        UIManager.Instance.playerUIManager.UpdateCaps(caps);
+        //UIManager.Instance.playerUIManager.UpdateCaps(caps);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -446,10 +446,10 @@ public class Player : MonoBehaviour, IDamageable
     //and instead has a callback from the weapon.
     public void HandleUI()
     {
-        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+        //UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
 
         //if we are dashing or cooling down we want the dash indicator to be greyed out.
-        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
+        //UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
