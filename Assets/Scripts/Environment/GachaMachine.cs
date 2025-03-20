@@ -29,6 +29,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     //exists.
     bool bossExists => FindAnyObjectByType<BossController>() != null;
 
+    public SetRandomSeed setRandomSeedAnimated;
+
     public void Start(){
         //loadDrops();
         totalWeights = 0;
@@ -62,6 +64,9 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
         if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
+            //Generate a new color for the capsule
+            setRandomSeedAnimated.GenRandomSeed();
+
             //after the animation finishes playing it will spawn the capsule.
             PlayDispenseAnimation();
         }
@@ -79,6 +84,9 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //instantiate the capsule at the spawn position for capsules.
         GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
         intCapsule.GetComponent<Capsule>().SetObjectHeld(drop.gameObject);
+
+        //copy the seed color from the animated capsule's color seed to the new instanced capsule.
+        intCapsule.GetComponentInChildren<SetRandomSeed>().seed = setRandomSeedAnimated.seed;
 
         //set a reference to our current capsule.
         currentCapsule = intCapsule;

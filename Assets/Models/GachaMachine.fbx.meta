@@ -3,7 +3,32 @@ guid: b189c5ba2e964284fa532deb89328b41
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EdgeRibbon
+    second: {fileID: 2100000, guid: b0adb1205b5752149b7aa1e4dd29d1de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Gold
+    second: {fileID: 2100000, guid: e30c93016db72f04ab5d721b554e17f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Gold.001
+    second: {fileID: 2100000, guid: 58f2f1a9c4fd67842ba8cae71563ddfb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Plastic
+    second: {fileID: 2100000, guid: 460c1814370883242b435ab64f607f3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TransparentPlastic
+    second: {fileID: 2100000, guid: 4ecf13746acabec4eb4fd484d565fbd8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
