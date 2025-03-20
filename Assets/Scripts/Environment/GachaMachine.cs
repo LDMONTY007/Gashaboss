@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.SearchService;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     private int totalWeights;
 
     public Transform capsuleSpawnTransform;
+
+    public Animator gachaAnimator;
 
     private GameObject currentCapsule;
 
@@ -55,13 +58,12 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     }
 
     public void TakeDamage(int damage, GameObject other){
-        //TODO: Play Gacha Animation for drawing a capsule
-
         
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
         if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
-            SpawnCapsule();
+            //after the animation finishes playing it will spawn the capsule.
+            PlayDispenseAnimation();
         }
     }
 
@@ -93,5 +95,11 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //player didn't have enough coins.
         return false;
 
+    }
+
+    public void PlayDispenseAnimation()
+    {
+        //this animation has an event that will call the "SpawnCapsule" method when it ends.
+        gachaAnimator.SetTrigger("drop");
     }
 }
