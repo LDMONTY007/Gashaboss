@@ -41,6 +41,31 @@ public class Player : MonoBehaviour, IDamageable
 
     public Weapon curWeapon;
 
+    public ParticleSystem dashParticles;
+
+    #region caps vars
+
+    private int _caps = 0;
+
+    public int caps
+    {
+        get
+        {
+            return _caps;
+        }
+
+        set
+        {
+            _caps = value;
+
+            //LD Montello
+            //Update the caps in the UI for the player.
+            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+        }
+    }
+
+    #endregion
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -78,6 +103,10 @@ public class Player : MonoBehaviour, IDamageable
         set
         {
             _curHealth = Mathf.Clamp(value, 0, maxHealth);
+
+            //LD Montello
+            //Update the current health in the UI for the player.
+            UIManager.Instance.playerUIManager.UpdateCoins(_curHealth);
             if (curHealth == 0)
             {
                 Die();
@@ -132,6 +161,16 @@ public class Player : MonoBehaviour, IDamageable
     public Vector3 lastMoveVector = Vector3.zero;
     Vector3 moveVector;
 
+    [Header("Dash Parameters")]
+    public bool doDash = false;
+    public float dashSpeed = 10f;
+    public int dashTotal = 1;
+    private int dashCount = 1;
+    public bool dashing = false;
+    public float dashDist = 10f;
+    [SerializeField] private bool isDashCooldown = false;
+    public float dashCooldown = 0.67f;
+
     [Header("Jump Parameters")]
     public float groundCheckDist = 0.1f;
     [SerializeField] private int jumpCount = 1;
@@ -179,7 +218,8 @@ public class Player : MonoBehaviour, IDamageable
     InputAction moveAction;
     InputAction jumpAction;
     InputAction attackAction;
-    InputAction sprintAction;
+    InputAction altAttackAction;
+    InputAction dashAction;
 
     //Raycast vars
 
@@ -191,9 +231,25 @@ public class Player : MonoBehaviour, IDamageable
         instance = this;
     }
 
+    //LD Montello
+    //called on start
+    //to initialize all the base data in the UI.
+    public void StartUI()
+    {
+        //LD Montello
+        //Update the current health in the UI for the player.
+        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+
+        //LD Montello
+        //Update the caps in the UI for the player.
+        UIManager.Instance.playerUIManager.UpdateCaps(caps);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        StartUI();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -211,7 +267,8 @@ public class Player : MonoBehaviour, IDamageable
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
-        sprintAction = playerInput.actions["Sprint"];
+        altAttackAction = playerInput.actions["AltAttack"];
+        dashAction = playerInput.actions["Dash"];
 
         //disable the ragdoll after
         //it is done initializing the joints.
@@ -242,20 +299,10 @@ public class Player : MonoBehaviour, IDamageable
         //isGrounded = GetComponent<Collider>().Raycast(ray, out RaycastHit hitinfo, groundCheckDist);
         #endregion
 
-        //Check if the player is wanting to sprint
-
-        if (isGrounded)
-        {
-            isSprinting = sprintAction.IsPressed();
-        }
-        else
-        {
-            isSprinting = false;
-        }
-
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
 
+        //TODO: Remove isSprinting because we don't want sprint anymore.
         moveSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         //Get the forward vector using player up and the camera right vector
@@ -298,17 +345,25 @@ public class Player : MonoBehaviour, IDamageable
 
         if (isGrounded)
         {
+            //reset jump count and jump canceled, and gravity
+            //when not jumping and grounded.
             if (!jumping)
             {
                 jumpCount = jumpTotal;
                 jumpCanceled = false;
                 //set gravity back to base.
                 gravity = baseGravity;
-                Debug.Log("BACK TO BASE".Color("Green"));
+                //Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
+            }
+            //reset dash count when grounded, and not dashing.
+            if (!dashing)
+            {
+                dashCount = dashTotal;
             }
         }
 
+        //increase jump time while jumping
         if (jumping)
         {
             jumpTime += Time.deltaTime;
@@ -344,13 +399,18 @@ public class Player : MonoBehaviour, IDamageable
             jumping = false;
         }
 
-        //dashPressed |= Input.GetKeyDown(KeyCode.LeftShift);
+        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown;
 
         #region attacking
 
         if (attackAction.WasPressedThisFrame())
         {
             curWeapon.Attack();
+        }
+
+        if (altAttackAction.WasPressedThisFrame())
+        {
+            curWeapon.AltAttack();
         }
 
         #endregion
@@ -388,22 +448,52 @@ public class Player : MonoBehaviour, IDamageable
         
         HandleRbRotation();
 
+        HandleDashing();
         HandleMovement();
         HandleJumping();
+
+        HandleUI();
+    }
+
+    //LD Montello.
+    //Make sure to accurately update
+    //the weapon UI.
+    //change this so it isn't called every frame
+    //and instead has a callback from the weapon.
+    public void HandleUI()
+    {
+        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+
+        //if we are dashing or cooling down we want the dash indicator to be greyed out.
+        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
     {
-        //rotate towards the velocity direction but don't rotate upwards.
-        if (moveVector != Vector3.zero)
-            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+        //when dashing we want to rotate to face the dash direction
+        if (dashing)
+        {
+            return;
+            //rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
+        }
+        else //otherwise we want to face the input direction.
+        {
+            //rotate towards the velocity direction but don't rotate upwards.
+            if (moveVector != Vector3.zero)
+                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+        }
+
+        
 
         
     }
 
     public void HandleMovement()
     {
-
+        if (dashing)
+        {
+            return;
+        }
 
         //We need to store the accumulated velocity and just take that and use vector projection on the normalized input to 
         //get some sort of accumulation going where we can just have the actual speed be moving in the direction of our input.
@@ -513,7 +603,10 @@ public class Player : MonoBehaviour, IDamageable
 
     public void HandleJumping()
     {
-
+        if (dashing)
+        {
+            return;
+        }
 
         if (doJump)
         {
@@ -558,6 +651,120 @@ public class Player : MonoBehaviour, IDamageable
         }
     }
 
+    //used when doing heavy attacks which will propel the player,
+    //for example a heavy downward slash from the sword will push the player
+    //up into the air without counting as a jump.
+    //TODO: Make this more configureable than it is with the time code from the jump function
+    public void LaunchPlayer(Vector3 direction, float force)
+    {
+
+        //I did the work out and 2 * h / t = gravity so I'm going to do that.
+        gravity = 2 * jumpHeight / timeToApex;
+        fallGravity = 2 * jumpHeight / timeToFall;
+
+        float projectedHeight = timeToApex * gravity / 2f;
+        Debug.Log(timeToApex + " " + projectedHeight + " " + gravity);
+        Debug.Log(("Projected Height " + projectedHeight).ToString().Color("Cyan"));
+
+        //doJump = false;
+        //jumpCount--;
+        float launchForce;
+
+        launchForce = Mathf.Sqrt(2f * gravity * jumpHeight) * rb.mass; //multiply by mass at the
+                                                                     //end so that it reaches the height regardless of weight.
+
+        //divide by 2 so we get the amount of time to reach the apex of the jump.
+        buttonTime = (launchForce / (rb.mass * gravity));
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(transform.up * launchForce, ForceMode.Impulse);
+
+        //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+    }
+
+    public void HandleDashing()
+    {
+        if (doDash)
+        {
+            doDash = false;
+            //rb.AddForce(transform.forward.normalized * dashSpeed, ForceMode.Impulse);
+            //StartCoroutine(MoveToPosition(transform.forward.normalized * dashDist, dashSpeed, 0.1f));
+            dashing = true;
+            dashCount--;
+            StartCoroutine(DashCoroutine());
+           
+        }
+    }
+
+    //LD Montello
+    //dash given speed
+    //and distance.
+    public IEnumerator DashCoroutine()
+    {
+        //set the dash particles to play
+        dashParticles.Play();
+
+        //cancel out all momentum accept for jumping.
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        Vector3 startPos = transform.position;
+
+
+        //acceleration = (finalVelocity^2 - initialVelocity^2) / (2 * distance)
+        float acceleration = (dashSpeed * dashSpeed - 0 * 0) / (2 * dashDist);
+       
+
+        //Time = distance / speed
+        float dashTime = dashDist / dashSpeed;
+
+        //rb.AddForce(transform.forward * dashSpeed, ForceMode.Impulse);
+
+        //move at the dashSpeed
+        //until we have reached the full
+        //calculated dash time.
+        while (dashTime > 0)
+        {
+            //rb.AddForce(transform.forward * dashSpeed, ForceMode.Force);
+            dashTime -= Time.deltaTime;
+            rb.linearVelocity = transform.forward.normalized * dashSpeed;
+
+            //we wait for fixed update as yielding null here will cause
+            //movements to be inconsistent. All rigidbody velocity modifications
+            //should always occur in the fixed (also known as physics) step.
+            yield return new WaitForFixedUpdate();
+        }
+
+
+        //set the dash particles to stop
+        dashParticles.Stop();
+
+        //reset the x and z velocity but don't reset y velocity in case they jumped and dashed.
+        //this simulates an instantaneous stop.
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        //Debug the total distance to make sure it is consistent
+        //Debug.LogWarning("Final Distance = " + (Vector3.Distance(transform.position, startPos)));
+
+        //say we are no longer
+        //dashing
+        dashing = false;
+
+        //start cooling down from the dash.
+        StartCoroutine(DashCooldownCoroutine());
+    }
+
+    //cooldown for dashing.
+    public IEnumerator DashCooldownCoroutine()
+    {
+        isDashCooldown = true;
+
+        //wait out the entire cooldown.
+        yield return new WaitForSeconds(dashCooldown);
+        isDashCooldown = false;
+    }
+
+
+
+
     void LateUpdate()
     {
         ApplyFinalMovements();
@@ -570,7 +777,7 @@ public class Player : MonoBehaviour, IDamageable
     public void ApplyFinalMovements()
     {
         //We need to check that the desiredMoveDirection vector isn't zero because otherwise it can zero out our velocity.
-        if (isGrounded && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
+        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
         {
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
@@ -743,10 +950,48 @@ public class Player : MonoBehaviour, IDamageable
     public IEnumerator IFramesCoroutine()
     {
         invincible = true;
-        //wait for 0.67 seconds while invincible.
-        yield return new WaitForSeconds(iFrameTime);
-        //after 0.67 seconds become hittable again.
+
+        float total = iFrameTime;
+        float curTime = 0f;
+
+        //cooldown for the sprite flickering.
+        float flickerCooldown = 0.2f;
+
+
+        //wait for the total iFrame time before
+        //leaving invincibility.
+        //Also flicker the 3D model while we do this.
+        while (curTime < total)
+        {
+            curTime += Time.deltaTime;
+
+            animatedModel.SetActive(!animatedModel.activeSelf);
+            //wait until the cooldown to do the sprite flicker again.
+            yield return new WaitForSeconds(flickerCooldown);
+            //add the flicker cooldown to account for the time
+            //we waited.
+            curTime += flickerCooldown;
+
+            /*//If we died, stop blinking.
+            if (isDead)
+            {
+                break;
+            }*/
+
+            //Debug.LogWarning("FLICKER: " + curTime);
+
+            //wait until the cooldown to do the sprite flicker again.
+            yield return null;
+        }
+
+        //always make the animated model
+        //visible after we finish flickering.
+        animatedModel.SetActive(true);
+
+        //after hitframes become hittable again.
         invincible = false;
+
+
 
         //set iframes routine to null 
         //to indicate we have finished

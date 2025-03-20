@@ -6,12 +6,7 @@ public class JumpAttack : BossAction
     public float height;
     public bool stopAtApex;
 
-    public override void Execute(BossController boss, float duration)
-    {
-        boss.StartCoroutine(PerformJump(boss, duration));
-    }
-
-    private IEnumerator PerformJump(BossController boss, float duration)
+    public override IEnumerator ActionCoroutine(BossController boss, float duration)
     {
         // Handle the jump physics using height and stopAtApex.
         Debug.Log("JUMP ATTACK".Color("Yellow"));
