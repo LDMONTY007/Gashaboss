@@ -1,11 +1,10 @@
 using UnityEngine;
 
-//LD Montello
-public class CrocodileBossController : BossController
+public class SquidBossController : BossController
 {
     public override void HandleStateMachine()
     {
-        
+
 
         #region handling individual states
 

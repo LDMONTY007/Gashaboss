@@ -24,6 +24,8 @@ public class BossController : MonoBehaviour, IDamageable
 
     public Animator animator;
 
+    public ParticleSystem movementParticles;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -254,6 +256,9 @@ public class BossController : MonoBehaviour, IDamageable
             
         }
 
+        //Handle the particle FX
+        HandleParticles();
+
         //Handle the animations.
         HandleAnimation();
     }
@@ -322,6 +327,21 @@ public class BossController : MonoBehaviour, IDamageable
         //boss to walk animation.
     }
 
+    public virtual void HandleParticles()
+    {
+        if (movementParticles != null)
+        {
+            if (!movementParticles.isPlaying && (isMoving || curState == BossState.move))
+            {
+                movementParticles.Play();
+            }
+            else if (movementParticles.isPlaying && !isMoving && curState != BossState.move)
+            {
+                movementParticles.Stop();
+            }
+        }
+    }
+
     //Here we decide if we want to attack,
     //or if we want to try and get closer to the player.
     public void HandleIdle()
@@ -354,20 +374,26 @@ public class BossController : MonoBehaviour, IDamageable
         }
     }
 
+
+    MeleeAttack meleeAttack = new MeleeAttack();
+
     public void HandleAttack()
     {
-        Debug.Log("Boss wants to attack here!".Color("Red"));
+
 
         //TODO:
         //choose the attack based on our pattern
         //and execute it.
         //attacks should be a seperate script to make modular bosses and boss design easier.
-        
 
 
-        MeleeAttack meleeAttack = new MeleeAttack();
-        StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
-
+        //if the boss isn't already in a melee attack,
+        //then start one.
+        if (!meleeAttack.active)
+        {
+            Debug.Log("Boss wants to attack here!".Color("Red"));
+            StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+        }
         
 
     }
