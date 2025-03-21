@@ -12,6 +12,7 @@ public class PlayerUIManager : MonoBehaviour
     [Header("Image Indicators")]
     public Image attackImage;
     public Image dashImage;
+    public Image weaponImage; // Chris Li - Added weaponImage for displaying the current weapon icon
 
     //LD Montello
     //updates the visual for how many coins the player has.
@@ -58,6 +59,17 @@ public class PlayerUIManager : MonoBehaviour
         else
         {
             dashImage.color = Color.grey;
+        }
+    }
+
+    //Chris Li
+    //updates the visual for the currently equipped weapon.
+    //This method sets the weapon image's sprite, similar to how other UI indicators are updated.
+    public void UpdateWeaponImage(Sprite newWeaponSprite)
+    {
+        if (weaponImage != null)
+        {
+            weaponImage.sprite = newWeaponSprite;
         }
     }
 }
