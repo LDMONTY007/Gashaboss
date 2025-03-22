@@ -53,6 +53,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //we find the weight we want
         //We should never have a case where we reach the end and haven't found our rolled object
         foreach (DropData drop in drops){
+            currDrop += drop.weight;
             if (currDrop >= dropRoll){
                 if (drop.isRemovedAfterDrop){
                     drops.Remove(drop);
@@ -60,8 +61,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
                 }
                 return drop.droppedObject;
             }
-            currDrop += drop.weight;
         }
+        Debug.LogError("DropRoll: " + dropRoll + "\ncurrDrop: " + currDrop);
         return null;
     }
 
@@ -70,6 +71,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
         if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
+            
+
             //Generate a new color for the capsule
             setRandomSeedAnimated.GenRandomSeed();
 
@@ -80,10 +83,12 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     public void SpawnCapsule()
     {
+        Debug.LogWarning("TRY SPAWN DROP");
         GameObject drop = GetRandomDrop();
         if (drop == null)
         {
             // TODO: Handle Error <- Shouldn't be possible
+            Debug.LogError("DROP WAS NULL");
             return;
         }
         Debug.Log("Spawning Drop...");
