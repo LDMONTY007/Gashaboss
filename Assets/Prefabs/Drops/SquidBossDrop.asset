@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
+  m_Name: SquidBossDrop
+  m_EditorClassIdentifier: 
+  droppedObject: {fileID: 6520624465326032014, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
+  weight: 5
+  isRemovedAfterDrop: 0

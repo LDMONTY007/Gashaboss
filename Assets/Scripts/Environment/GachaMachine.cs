@@ -9,7 +9,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     //will be prefabs with the CapsuleDrop class on them.
     //this is also how we can have specific models for different
     //capsules for different machines or even bosses.
-    [SerializeField] private List<GameObject> drops;
+    [SerializeField] private List<DropData> drops;
     [SerializeField] private GameObject capsule;
     private int totalWeights;
 
@@ -40,8 +40,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
         //loadDrops();
         totalWeights = 0;
-        foreach (GameObject drop in drops){
-            totalWeights += drop.GetComponent<CapsuleDrop>().weight;
+        foreach (DropData drop in drops){
+            totalWeights += drop.weight;
         }
 
     }
@@ -52,15 +52,15 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //Go through the objects in the list adding their weights up until
         //we find the weight we want
         //We should never have a case where we reach the end and haven't found our rolled object
-        foreach (GameObject drop in drops){
+        foreach (DropData drop in drops){
             if (currDrop >= dropRoll){
-                if (drop.GetComponent<CapsuleDrop>().isRemovedAfterDrop){
+                if (drop.isRemovedAfterDrop){
                     drops.Remove(drop);
-                    totalWeights -= drop.GetComponent<CapsuleDrop>().weight;
+                    totalWeights -= drop.weight;
                 }
-                return drop.GetComponent<CapsuleDrop>().droppedObject;
+                return drop.droppedObject;
             }
-            currDrop += drop.GetComponent<CapsuleDrop>().weight;
+            currDrop += drop.weight;
         }
         return null;
     }
@@ -89,7 +89,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         Debug.Log("Spawning Drop...");
         //instantiate the capsule at the spawn position for capsules.
         GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
-        intCapsule.GetComponent<Capsule>().SetObjectHeld(drop.gameObject);
+        intCapsule.GetComponent<Capsule>().SetObjectHeld(drop);
 
         //copy the seed color from the animated capsule's color seed to the new instanced capsule.
         intCapsule.GetComponentInChildren<SetRandomSeed>().seed = setRandomSeedAnimated.seed;

@@ -4310,15 +4310,15 @@ PrefabInstance:
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[0]'
       value: 
-      objectReference: {fileID: 6324120585729423647, guid: 39ac2e8065181a94fa9f6e6c5ecc6b58, type: 3}
+      objectReference: {fileID: 11400000, guid: e5179402f07374245a78f25ee96e2b05, type: 2}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[1]'
       value: 
-      objectReference: {fileID: 2371254658438214469, guid: 53a27a76f0898da44953ac915ac7525f, type: 3}
+      objectReference: {fileID: 11400000, guid: 500dde9cbe9ae994eb580fb06ea54cd0, type: 2}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[2]'
       value: 
-      objectReference: {fileID: 5784776091899977015, guid: 37e650fb42e7cd440b41cf000a35b5f5, type: 3}
+      objectReference: {fileID: 11400000, guid: 843efc63262e21b4ba52340bb5ae8bca, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
