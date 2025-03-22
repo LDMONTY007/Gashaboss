@@ -1,18 +1,15 @@
-using UnityEngine;
 using System;
-
-public class StopWatch: Item{
-    
+using UnityEngine;
+[CreateAssetMenu(fileName = "New StopWatch", menuName = "Items/StopWatch")]
+public class StopWatch: ItemData{
     public override void OnPickup(){
-        transform.SetParent(null); // Detach from game object to prevent destruction
-
-        Player.instance.inventory.Add(this);
+        this.name = "StopWatch";
+        this.description = "The StopWatch will help you freeze time when you really need it. Use it to avoid the enemies for longer!";
         Player.instance.onPlayerHit += ApplyEffect;
         ApplyEffect();
-        Destroy(gameObject); // Destroy only the physical object, not the script
     }
     public override void RemoveItem(){
-        Player.instance.inventory.Add(this);
+        Player.instance.inventory.Remove(this);
         Player.instance.onPlayerHit -= ApplyEffect;
     }
     public override void ApplyEffect(){

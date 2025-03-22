@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 8516731381036568195}
   - component: {fileID: 2101275289917559504}
   - component: {fileID: 4903503076016496453}
-  - component: {fileID: 925386567136370806}
+  - component: {fileID: 8394267489829093488}
   m_Layer: 0
-  m_Name: Stopwatch
+  m_Name: StopWatch
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,7 +109,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &925386567136370806
+--- !u!114 &8394267489829093488
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,6 +118,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5489800404765948044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b0e46c3ef3b6fa4d80ce51a6ac8eaa1, type: 3}
+  m_Script: {fileID: 11500000, guid: 22505acdcc2864647b815c9fd53a244b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 8f83b8eea01f62f41962784b19cf6e4c, type: 2}

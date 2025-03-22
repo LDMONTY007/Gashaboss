@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -46,7 +47,7 @@ public class Player : MonoBehaviour, IDamageable
     public ParticleSystem dashParticles;
     #region Items and Modifier vars
     public List<StatModifier> modifiers = new List<StatModifier>();
-    public List<Item> inventory = new List<Item>();
+    public List<ItemData> inventory = new List<ItemData>();
     #endregion
     #region caps vars
 
@@ -936,9 +937,13 @@ public class Player : MonoBehaviour, IDamageable
     public IEnumerator IFramesCoroutine()
     {
         invincible = true;
-
         float total = iFrameTime;
         float curTime = 0f;
+
+        // Make modifications to IFrameTime as needed
+        foreach(StatModifier mod in modifiers.Where(m => m.stat == StatModified.iFrameTime).ToList()){
+            total = mod.makeModifications(total);
+        }
 
         //cooldown for the sprite flickering.
         float flickerCooldown = 0.2f;

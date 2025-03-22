@@ -1,10 +1,19 @@
 using System;
 using UnityEngine;
-//abstract used for any item in the game
-//If the Item made modifies a stat make sure to add it
-// to the StatModified enum over in Util/StatModifier.cs
-public abstract class Item: MonoBehaviour{
-    public abstract void OnPickup();
-    public abstract void RemoveItem();
-    public abstract void ApplyEffect();
+// Used to attach to the game object prefabs for items
+// Passes logic to the ScriptableObject for that item
+// Primarily handles adding to inventory and gameobject deletion
+public class Item: MonoBehaviour{
+    [SerializeField] private ItemData item; // Assign scriptable object via inspector
+    public void OnPickup(){
+        if(item == null) {
+            Debug.LogError("Item Instance Has No Object Assigned: Please Add One.\n Aborting Item Pickup.");
+            Destroy(gameObject);
+            return;
+        }
+        Player.instance.inventory.Add(item);
+        item.OnPickup();
+        Destroy(gameObject); // Destroy only the physical object, not the script
+        Debug.Log("Deleting Item Prefab, Successfully added to inventory.");
+    }
 }
