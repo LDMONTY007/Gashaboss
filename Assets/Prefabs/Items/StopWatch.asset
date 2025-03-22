@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b0e46c3ef3b6fa4d80ce51a6ac8eaa1, type: 3}
   m_Name: StopWatch
   m_EditorClassIdentifier: 
-  description: 
+  description: The StopWatch will help you freeze time when you really need it. Use
+    it to avoid the enemies for longer!
