@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0e46c3ef3b6fa4d80ce51a6ac8eaa1, type: 3}
+  m_Name: StopWatch
+  m_EditorClassIdentifier: 
+  description: The StopWatch will help you freeze time when you really need it. Use
+    it to avoid the enemies for longer!

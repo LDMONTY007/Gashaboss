@@ -529,6 +529,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SaveDataManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7800656468939081803, guid: cf5841f5b30400240af88e1d5f9ad5a1, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -650,6 +654,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenuUI
       objectReference: {fileID: 0}
+    - target: {fileID: 2954932779275787074, guid: b41379ab1ee2196419a2b7bb0d1e3962, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4224335422889173386, guid: b41379ab1ee2196419a2b7bb0d1e3962, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4224335422889173386, guid: b41379ab1ee2196419a2b7bb0d1e3962, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -666,6 +678,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 3191258405868212840}
+    - target: {fileID: 6448616935478661505, guid: b41379ab1ee2196419a2b7bb0d1e3962, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6448616935478661505, guid: b41379ab1ee2196419a2b7bb0d1e3962, type: 3}
       propertyPath: m_IsActive
       value: 0

@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -42,7 +45,10 @@ public class Player : MonoBehaviour, IDamageable
     public Weapon curWeapon;
 
     public ParticleSystem dashParticles;
-
+    #region Items and Modifier vars
+    public List<StatModifier> modifiers = new List<StatModifier>();
+    public List<ItemData> inventory = new List<ItemData>();
+    #endregion
     #region caps vars
 
     private int _caps = 0;
@@ -60,7 +66,7 @@ public class Player : MonoBehaviour, IDamageable
 
             //LD Montello
             //Update the caps in the UI for the player.
-            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+            //UIManager.Instance.playerUIManager.UpdateCaps(_caps);
         }
     }
 
@@ -68,28 +74,6 @@ public class Player : MonoBehaviour, IDamageable
 
     #region health vars
     [Header("Health Variables")]
-    public int _maxHealth = 3;
-
-    public int maxHealth
-    {
-        get
-        {
-            //Calc the health when we access it.
-            //Also make sure that if we 
-            //leveled up and got more health
-            //that we reset the player's health.
-            //if (_maxHealth != CalcHealth(level))
-            //{
-            //    _maxHealth = CalcHealth(level);
-            //    /*                if (_health < 9)
-            //                    {
-            //                        _health = 10;
-            //                    }*/
-            //    curHealth = CalcHealth(level);
-            //}
-            return _maxHealth;
-        }
-    }
 
     private int _curHealth = 3;
 
@@ -102,7 +86,7 @@ public class Player : MonoBehaviour, IDamageable
 
         set
         {
-            _curHealth = Mathf.Clamp(value, 0, maxHealth);
+            _curHealth = Mathf.Max(value, 0);
 
             //LD Montello
             //Update the current health in the UI for the player.
@@ -119,6 +103,7 @@ public class Player : MonoBehaviour, IDamageable
     [Header("Damage Variables")]
     //the force at which we bounce off of the object that damaged us. 
     public float bounceForce = 5f;
+    public event Action onPlayerHit;
 
     public bool invincible = false;
 
@@ -238,11 +223,11 @@ public class Player : MonoBehaviour, IDamageable
     {
         //LD Montello
         //Update the current health in the UI for the player.
-        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+        //UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
 
         //LD Montello
         //Update the caps in the UI for the player.
-        UIManager.Instance.playerUIManager.UpdateCaps(caps);
+        //UIManager.Instance.playerUIManager.UpdateCaps(caps);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -462,10 +447,10 @@ public class Player : MonoBehaviour, IDamageable
     //and instead has a callback from the weapon.
     public void HandleUI()
     {
-        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+        //UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
 
         //if we are dashing or cooling down we want the dash indicator to be greyed out.
-        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
+        //UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
@@ -914,6 +899,8 @@ public class Player : MonoBehaviour, IDamageable
         //Start iFrames here.
         StartIFrames();
 
+        onPlayerHit?.Invoke(); // Send out signal that player was hit
+
         //TODO:
         //change the layer of the visual model for the player to be
         //the lowres layer,
@@ -950,9 +937,13 @@ public class Player : MonoBehaviour, IDamageable
     public IEnumerator IFramesCoroutine()
     {
         invincible = true;
-
         float total = iFrameTime;
         float curTime = 0f;
+
+        // Make modifications to IFrameTime as needed
+        foreach(StatModifier mod in modifiers.Where(m => m.stat == StatModified.iFrameTime).ToList()){
+            total = mod.makeModifications(total);
+        }
 
         //cooldown for the sprite flickering.
         float flickerCooldown = 0.2f;
@@ -1091,5 +1082,11 @@ public class Player : MonoBehaviour, IDamageable
         Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
+    }
+
+    void OnTriggerEnter(Collider other){
+        if (other.gameObject.CompareTag("Item")){
+            other.GetComponent<Item>().OnPickup();
+        }
     }
 }
