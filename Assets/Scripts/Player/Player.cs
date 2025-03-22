@@ -65,7 +65,7 @@ public class Player : MonoBehaviour, IDamageable
 
             //LD Montello
             //Update the caps in the UI for the player.
-            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+            //UIManager.Instance.playerUIManager.UpdateCaps(_caps);
         }
     }
 

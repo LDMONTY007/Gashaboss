@@ -1759,9 +1759,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4903503076016496453, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903503076016496453, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903503076016496453, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5489800404765948044, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
       propertyPath: m_Name
       value: Stopwatch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5489800404765948044, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
+      propertyPath: m_TagString
+      value: Item
       objectReference: {fileID: 0}
     - target: {fileID: 5585252350679617069, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
       propertyPath: m_LocalPosition.x
