@@ -1071,9 +1071,10 @@ public class Player : MonoBehaviour, IDamageable
         Gizmos.matrix = prevMatrix;
     }
 
+    //Old, do not use --LD Montello
     //draw health
     //for debug.
-    void OnGUI()
+/*    void OnGUI()
     {
         string text = curHealth.ToString();
         int oldFontSize = GUI.skin.label.fontSize;
@@ -1083,7 +1084,7 @@ public class Player : MonoBehaviour, IDamageable
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
     }
-
+*/
     void OnTriggerEnter(Collider other){
         if (other.gameObject.CompareTag("Collectable")){
             other.GetComponent<ICollectable>().OnCollect();

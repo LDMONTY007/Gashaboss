@@ -261,6 +261,22 @@ public class BossController : MonoBehaviour, IDamageable
 
         //Handle the animations.
         HandleAnimation();
+
+        //Debug test for the GetPathablePosition algorithm
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Vector3 foundPos = Vector3.zero;
+            //pause the editor so that we can step through the search algorithm.
+            Debug.Break();
+            if (GetPathablePosition(50f, ref foundPos))
+            {
+                Debug.Log("FOUND PATHABLE POSITION");
+            }
+            else
+            {
+               
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -451,8 +467,9 @@ public class BossController : MonoBehaviour, IDamageable
         Gizmos.color = prevColor;
     }
 
+    //old, do not use --LD Montello.
     //draw health for debug.
-    void OnGUI()
+/*    void OnGUI()
     {
         string text = curHealth.ToString();
         int oldFontSize = GUI.skin.label.fontSize;
@@ -461,7 +478,7 @@ public class BossController : MonoBehaviour, IDamageable
         Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
-    }
+    }*/
 
 
     /// <summary>
@@ -582,6 +599,98 @@ public class BossController : MonoBehaviour, IDamageable
         collisionAvoidanceForce.y = 0;
 
         return collisionAvoidanceForce;
+    }
+
+    //LD Montello
+    //finds a position 
+    //that the boss can path to 
+    //from their current position
+    //from the current angle
+    public bool GetPathablePosition(float desiredDist, ref Vector3 foundPos)
+    {
+
+        float angleIncrement = 10f;
+
+        float leftAngle = 0f;
+        float rightAngle = 0f;
+
+        bool checkLeftAngle = false;
+
+        while (leftAngle < 180 && rightAngle < 180)
+        {
+
+            Vector2 tempVec = Vector2.zero;
+
+            //switch between which angle we are checking
+            //based off of the current side we check.
+            //so we're alternating the side we check on.
+            if (checkLeftAngle)
+            {
+                //we subtract the left angle
+                //from the current rotation to find 
+                //the world rotation.
+                //LD Note: we subtract 90 from the y angle 
+                //because the boss's forward looking angle is 180 
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) - leftAngle);
+                //increment search angle.
+                leftAngle += angleIncrement;
+            }
+            else
+            {
+                //we add the right angle
+                //from the current rotation to find 
+                //the world rotation.
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) + rightAngle);
+                //increment search angle.
+                rightAngle += angleIncrement;
+            }
+
+
+            //get the angle as a direction vector.
+            Vector3 dir = new Vector3(tempVec.x, 0f, tempVec.y);
+            //get the point relative to the boss's position 
+            //at the distance to check if there is anything colliding there.
+            //Vector3 pointToCheck = transform.position + dir.normalized * desiredDist;
+
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, (bossCollider as CapsuleCollider).radius, dir, desiredDist);
+
+            if (hits.Length > 0)
+            {
+                //if we hit ourself and nothing else, then
+                //we consider this a pathable position.
+                if (hits.Length == 1 && hits[0].collider.gameObject == gameObject)
+                {
+                    //set the found position
+                    foundPos = transform.position + dir.normalized * desiredDist;
+
+                    //Draw debug ray
+                    Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                    //say we found a position successfully. 
+                    return true;
+                }
+                Debug.DrawLine(transform.position, hits[0].point, checkLeftAngle ? Color.red : Color.blue);
+            }
+            //We didn't hit anything so this point is valid for pathing.
+            else
+            {
+                //set the found position
+                foundPos = transform.position + dir.normalized * desiredDist;
+
+                //Draw debug ray
+                Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                //say we found a position successfully. 
+                return true;
+            }
+
+            checkLeftAngle = !checkLeftAngle;
+        }
+
+        //return false when we haven't
+        //found a proper position.
+        foundPos = Vector3.zero;
+        return false;
     }
 
     //LD Montello

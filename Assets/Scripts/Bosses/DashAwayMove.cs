@@ -14,7 +14,7 @@ public class DashAwayMove : BossAction
         Vector3 dashAwayPos = -1f * dirFromPlayer.normalized * dashDist;
         dashAwayPos = boss.transform.position + dashAwayPos;
         Vector3 ogDashAwayPos = dashAwayPos;
-        
+
         //boss.curState = BossController.BossState.move;
 
         #region collision avoidance
@@ -26,6 +26,8 @@ public class DashAwayMove : BossAction
         //direction. 
         //basically we scan an arc and find the closest position
         //in the arc that is unobstructed to our original desired target position which is ogDashAwayPos
+
+        float searchAngle = 360f;
 
         //we want to do the entire vertical size of the boss collider
         for (int i = 0; i < boss.bossCollider.bounds.size.y; i++)
@@ -52,7 +54,7 @@ public class DashAwayMove : BossAction
                 //plus our current angle along
                 //the FOV to generate the desired
                 //direction vector for the ray.
-                float startAngle = boss.transform.rotation.eulerAngles.y + boss.avoidanceAngle / 2f;
+                float startAngle = boss.transform.rotation.eulerAngles.y + searchAngle / 2f;
                 float angle = (boss.avoidanceAngle) * j / rayCount;
                 Vector2 dir2 = LDUtil.AngleToDir2D(-1 * (startAngle + angle)).normalized;
                 Vector3 dir3 = new Vector3(dir2.x, 0f, dir2.y);
@@ -65,12 +67,20 @@ public class DashAwayMove : BossAction
                 //Raycast while ignoring
                 //Player and Ignore Raycast layers.
                 //bossCollider.Raycast(dir3, contactFilter, results, distance * 2);
-                RaycastHit[] hits = Physics.RaycastAll(rayOrigin, dir3, dashDist * 2, ~LayerMask.GetMask("Ignore Raycast"));
+                RaycastHit[] hits = Physics.RaycastAll(rayOrigin, dir3, dashDist, ~LayerMask.GetMask("Ignore Raycast"));
 
                 //if we didn't hit anything, 
-                //then we can dash in that direction.
+                //check that there's enough room for us to go there.
                 if (hits.Length < 1)
                 {
+                    //if we hit something, we need to move onto the next angle.
+                    //ignore the ground layer.
+                    if (Physics.OverlapSphere(rayOrigin + dir3 * dashDist, 5, ~LayerMask.GetMask("Ground")).Length > 0)
+                    {
+                        Debug.Log("MOVING TO NEXT ANGLE");
+                        continue;
+                    }
+
                     //if the new dash away position is closer
                     //than the current dash away position
                     //to our original desired position,
