@@ -8,6 +8,6 @@ public class InventoryUI : MonoBehaviour
     public void ViewSelectedItem(GameObject weaponPrefab, string weaponName)
     {
         // Calls the Object Viewer Singleton to display the selected weapon
-        ObjectViewer.Instance.OpenViewer(weaponPrefab, weaponName);
+        ObjectViewer.instance.OpenViewer(weaponPrefab, weaponName);
     }
 }
