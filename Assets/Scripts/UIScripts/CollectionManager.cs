@@ -23,8 +23,8 @@ public class CollectionManager : MonoBehaviour
     private void Awake()
     {
         // Ensure only one instance exists (Singleton)
-        if (Instance == null)
-            Instance = this;
+        if (instance == null)
+            instance = this;
         else
         {
             Destroy(gameObject);
@@ -62,7 +62,7 @@ public class CollectionManager : MonoBehaviour
 
 
         // Set button to open Object Viewer when clicked
-        button.GetComponent<Button>().onClick.AddListener(() => ObjectViewer.Instance.OpenViewer(collectiblePrefab, collectibleName));
+        button.GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
     }
 
 

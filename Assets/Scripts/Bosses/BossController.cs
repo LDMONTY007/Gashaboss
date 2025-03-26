@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
-public class BossController : MonoBehaviour, IDamageable
+public class BossController : MonoBehaviour, IDamageable, ICollectable
 {
     [Header("Boss Specific Info")]
     public string bossName = "BaseBoss";
@@ -244,6 +244,7 @@ public class BossController : MonoBehaviour, IDamageable
 
         bossRenderer = animatedModel.GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
+        OnCollect();
     }
 
     // Update is called once per frame
@@ -991,5 +992,8 @@ public class BossController : MonoBehaviour, IDamageable
         lowResRoutine = null;
 
         yield return null;
+    }
+    public void OnCollect(){
+        
     }
 }
