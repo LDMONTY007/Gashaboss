@@ -8,7 +8,7 @@ using TMPro;
 
 public class CollectionManager : MonoBehaviour
 {
-    public static CollectionManager Instance; // Singleton for easy access
+    public static CollectionManager instance; // Singleton for easy access
 
     [Header("UI Elements")]
     public GameObject collectionPanel; // The UI panel for the collection menu

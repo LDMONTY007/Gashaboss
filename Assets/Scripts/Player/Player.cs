@@ -9,9 +9,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class Player : MonoBehaviour, IDamageable
+public class Player : MonoBehaviour, IDamageable, IDataPersistence
 {
-
     public static Player instance;
 
     //private references 
@@ -1088,5 +1087,11 @@ public class Player : MonoBehaviour, IDamageable
         if (other.gameObject.CompareTag("Collectable")){
             other.GetComponent<ICollectable>().OnCollect();
         }
+    }
+    public void LoadData(GameData gameData){
+        
+    }
+    public void SaveData(GameData gameData){
+        
     }
 }

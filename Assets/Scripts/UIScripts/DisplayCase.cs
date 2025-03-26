@@ -54,17 +54,7 @@ public class DisplayCase : MonoBehaviour
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.E)) // Press "E" to interact
         {
-            OpenCollection();
-        }
-    }
-
-    //  Opens the Collection UI when triggered
-    public void OpenCollection()
-    {
-        if (collectionPanelUI != null)
-        {
-            collectionPanelUI.SetActive(true); // Show Collection UI
-            Debug.Log("Collection UI Opened.");
+            CollectionManager.instance.OpenCollection();
         }
     }
 }
