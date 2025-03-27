@@ -110,6 +110,9 @@ public class Player : MonoBehaviour, IDamageable
     //terraria uses this number for iframes as do most games.
     public float iFrameTime = 0.67f;
 
+    //radius from a weapon we need to enter in order to pick it up.
+    public float weaponPickupRadius = 2f;
+
     [Header("Movement Variables")]
     
     public float groundCheckScale = 0.8f;
@@ -1096,7 +1099,7 @@ public class Player : MonoBehaviour, IDamageable
         if (other.gameObject.CompareTag("Weapon"))
         {
             //if it's within a 2 meter radius
-            if (Vector3.Distance(other.transform.position, transform.position) < 2f)
+            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
             {
                 //collect the weapon.
                 other.GetComponent<ICollectable>().OnCollect();
