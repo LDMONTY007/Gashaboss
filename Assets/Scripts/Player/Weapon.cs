@@ -356,7 +356,7 @@ public class Weapon : MonoBehaviour, ICollectable
     }
     public void OnCollect(){
         if (name == null || icon == null){
-            Debub.LogError("Weapon isn't set up properly, aborting pickup.");
+            Debug.LogError("Weapon isn't set up properly, aborting pickup.");
             return;
         }
         CollectionManager.instance.AddToCollection(this.gameObject, weaponName, icon);

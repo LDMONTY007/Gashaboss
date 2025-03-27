@@ -17,8 +17,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     public Button closeCollectionButton; // Button to close the collection UI
 
     [Header("Collected Collectibles")]
-    private List<GameObject> collectedCollectibles = new List<GameObject>(); // Stores collected collectible prefabs
-    private List<string> collectibleNames = new List<string>(); // Stores collectible names
+    private Dictionary<string, GameObject> collectedCollectibles = new Dictionary<string, GameObject>();
 
     private void Awake()
     {
@@ -38,11 +37,26 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
 
     public void AddToCollection(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon)
     {
-        if (collectibleNames.Contains(collectibleName)) return; // Avoid duplicates
+        if (collectedCollectibles.ContainsKey(collectibleName)) return; // Avoid duplicates
 
-        collectedCollectibles.Add(collectiblePrefab);
-        collectibleNames.Add(collectibleName);
+        collectedCollectibles.Add(collectibleName, collectiblePrefab);
 
+        LoadMenuItem(collectiblePrefab, collectibleName, collectibleIcon);
+    }
+
+    // Opens the Collection UI
+    public void OpenCollection()
+    {
+        collectionPanel.SetActive(true);
+    }
+
+    // Closes the Collection UI
+    public void CloseCollection()
+    {
+        collectionPanel.SetActive(false);
+    }
+
+    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon){
         GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
 
         // Set collectible name dynamically
@@ -60,27 +74,16 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
             collectibleImage.preserveAspect = true;  // Ensures the image isn't stretched
         }
 
-
         // Set button to open Object Viewer when clicked
         button.GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
     }
-
-
-    // Opens the Collection UI
-    public void OpenCollection()
-    {
-        collectionPanel.SetActive(true);
-    }
-
-    // Closes the Collection UI
-    public void CloseCollection()
-    {
-        collectionPanel.SetActive(false);
-    }
     public void LoadData(GameData gameData){
-        
+        this.collectedCollectibles = gameData.collectedCollectibles;
+        foreach(KeyValuePair<string,GameObject> collectible in this.collectedCollectibles){
+            LoadMenuItem(collectible.Key, collectible.Value, collectible.Value.icon);
+        }
     }
     public void SaveData(GameData gameData){
-        
+        gameData.collectedCollectibles = this.collectedCollectibles;
     }
 }

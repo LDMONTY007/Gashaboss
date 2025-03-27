@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 //This class holds the datastructure used for saves
 //All things that need to persist between runs should go in here
 //TODO: Add Data needed to persist across saves
@@ -15,9 +16,7 @@ public class GameData{
     public Weapon playerWeapon;
     public List<StatModifier> modifiers;
     public List<ItemData> inventory;
-    public List<GameObject> collectedCollectibles;
-    public List<string> collectibleNames;
-    
+    public Dictionary<string, GameObject> collectedCollectibles;
     
     //These are the default values the game starts with when no data to load
     public GameData(){
@@ -26,6 +25,6 @@ public class GameData{
         playerWeapon = new Weapon();
         modifiers = new List<StatModifier>();
         inventory = new List<ItemData>();
-
+        collectedCollectibles = new Dictionary<string, GameObject>();
     }
 }
