@@ -18,7 +18,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
 
     [Header("Collected Collectibles")]
     // Dictionary to tie data together, using a tuple as the value, so the dict can be self containing
-    private Dictionary<string, DropData data> collectedCollectibles;
+    private Dictionary<string, DropData> collectedCollectibles;
 
     private void Awake()
     {
@@ -30,12 +30,11 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(this.gameObject);
 
         collectionPanel.SetActive(false); // Ensure Collection UI starts hidden
 
         closeCollectionButton.onClick.AddListener(CloseCollection); // Attach close function to button
-        collectedCollectibles = new Dictionary<string, DropData data>();//Initalize the dictionary
+        collectedCollectibles = new Dictionary<string, DropData>();//Initalize the dictionary
     }
 
     public void AddToCollection(Collectible collectible)
@@ -73,8 +72,8 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     }
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
-        foreach(KeyValuePair<string, DropData data> collectible in this.collectedCollectibles){
-            LoadMenuItem(collectible.Value.data.droppedObject, collectible.Key);
+        foreach(KeyValuePair<string, DropData> collectible in this.collectedCollectibles){
+            LoadMenuItem(collectible.Value.droppedObject, collectible.Key);
         }
     }
     public void SaveData(GameData gameData){

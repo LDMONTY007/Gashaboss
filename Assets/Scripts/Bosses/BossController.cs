@@ -95,6 +95,7 @@ public class BossController : Collectible, IDamageable
         //where it falls to the ground then fades away
 
         isDead = true;
+        OnCollect(); // add to collections before destroying
 
         //set color to be red when dead.
         //bossRenderer.material.color = Color.red;
@@ -118,7 +119,6 @@ public class BossController : Collectible, IDamageable
 
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
-        OnCollect(); // add to collections before destroying
         Destroy(gameObject);
     }
 
