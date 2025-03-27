@@ -1089,4 +1089,42 @@ public class Player : MonoBehaviour, IDamageable
             other.GetComponent<ICollectable>().OnCollect();
         }
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        //if the collider is a weapon
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            //if it's within a 2 meter radius
+            if (Vector3.Distance(other.transform.position, transform.position) < 2f)
+            {
+                //collect the weapon.
+                other.GetComponent<ICollectable>().OnCollect();
+            }
+        }
+    }
+
+    public void SwapCurrentWeapon(Weapon w)
+    {
+        DropCurrentWeapon();
+        //set the weapons parent transform to be this player.
+        w.transform.SetParent(transform, false);
+        //set the position to be zero locally
+        //so that it is zero relative to the parent as well.
+        w.transform.localPosition = Vector3.zero;
+    }
+
+    void DropCurrentWeapon()
+    {
+        if (curWeapon != null)
+        {
+            //set parent to be null
+            //so that we can disconnect it from the player.
+            curWeapon.transform.parent = null;
+            //put the old weapon in front of the player.
+            //TODO:
+            //Write a quick function so the weapon can't be placed in an object.
+            curWeapon.transform.position = transform.position + transform.forward * 15f;
+        }
+    }
 }

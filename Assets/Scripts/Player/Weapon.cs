@@ -6,7 +6,7 @@ using UnityEngine;
 //Note: Make sure this
 //object's collider excludes
 //the player layer.
-public class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour, ICollectable
 {
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
@@ -351,5 +351,11 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(cooldownTime);
 
         canAttack = true;
+    }
+
+    public void OnCollect()
+    {
+        //swap the weapon on the player for ourselves.
+        Player.instance.SwapCurrentWeapon(this);
     }
 }

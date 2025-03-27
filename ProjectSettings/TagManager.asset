@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Collectable
+  - Weapon
   layers:
   - Default
   - TransparentFX
