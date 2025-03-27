@@ -7,7 +7,7 @@ public class ObjectViewer : MonoBehaviour
     public static ObjectViewer instance; // Singleton instance 
 
     [Header("UI Elements")]
-    public GameObject objectViewerPanel; 
+    public CanvasGroup objectViewerPanel; 
     public TextMeshProUGUI objectNameText; 
     public Button closeButton; 
 
@@ -31,17 +31,20 @@ public class ObjectViewer : MonoBehaviour
             return;
         }
 
-        // Object Viewer starts hidden
-        objectViewerPanel.SetActive(false);
-
         // Attach the CloseViewer() function to the close button click event
         closeButton.onClick.AddListener(CloseViewer);
+
+        // Object Viewer starts hidden
+        // can't set inactive, need it active to run listeners on objectveiwer
+        objectViewerPanel.alpha = 0f;
+        objectViewerPanel.blocksRaycasts = false;
+        objectViewerPanel.interactable = false;
     }
 
     private void Update()
     {
         // Check if the Object Viewer panel is open
-        if (objectViewerPanel.activeSelf)
+        if (objectViewerPanel.alpha != 0f)
         {
             // Rotate model using mouse drag (left-click)
             if (Input.GetMouseButton(0)) // 0 = Left Mouse Button
@@ -66,6 +69,9 @@ public class ObjectViewer : MonoBehaviour
 
         // Instantiate the selected collectible inside modelHolder
         currentModel = Instantiate(collectiblePrefab, modelHolder);
+        foreach(MonoBehaviour script in currentModel.GetComponentsInChildren<MonoBehaviour>()){
+            script.enabled = false;
+        }
         currentModel.transform.localPosition = Vector3.zero;
         currentModel.transform.localRotation = Quaternion.identity;
 
@@ -73,7 +79,9 @@ public class ObjectViewer : MonoBehaviour
         objectNameText.text = collectibleName;
 
         // Show the Object Viewer UI
-        objectViewerPanel.SetActive(true);
+        objectViewerPanel.alpha = 1f;
+        objectViewerPanel.blocksRaycasts = true;
+        objectViewerPanel.interactable = true;
 
         // Enable Viewer Camera when opening
         if (viewerCamera != null)
@@ -87,7 +95,10 @@ public class ObjectViewer : MonoBehaviour
     // Closes the Object Viewer and removes the 3D model
     public void CloseViewer()
     {
-        objectViewerPanel.SetActive(false); // Hide the UI panel
+        // Hide the UI panel again
+        objectViewerPanel.alpha = 0f;
+        objectViewerPanel.blocksRaycasts = false;
+        objectViewerPanel.interactable = false;
 
         // Destroy the currently displayed model (if any)
         if (currentModel != null)

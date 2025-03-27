@@ -41,19 +41,23 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     {
         if (collectedCollectibles.ContainsKey(collectible.collectibleName)) return; // Avoid duplicates
         collectedCollectibles.Add(collectible.collectibleName, collectible.collectibleData);
-
-        LoadMenuItem(collectible.collectibleData.droppedObject, collectible.collectibleName);
     }
 
     // Opens the Collection UI
     public void OpenCollection()
     {
         collectionPanel.SetActive(true);
+        foreach(KeyValuePair<string, DropData> collectible in this.collectedCollectibles){
+            LoadMenuItem(collectible.Value.droppedObject, collectible.Key);
+        }
     }
 
     // Closes the Collection UI
     public void CloseCollection()
     {
+        foreach(Transform child in collectionContent){
+            Destroy(child.gameObject);
+        }
         collectionPanel.SetActive(false);
     }
 
@@ -72,9 +76,6 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     }
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
-        foreach(KeyValuePair<string, DropData> collectible in this.collectedCollectibles){
-            LoadMenuItem(collectible.Value.droppedObject, collectible.Key);
-        }
     }
     public void SaveData(GameData gameData){
         gameData.collectedCollectibles = this.collectedCollectibles;

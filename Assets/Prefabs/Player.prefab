@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8598562192510087795}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -59,7 +59,7 @@ MonoBehaviour:
   playerInput: {fileID: 8598562192510087795}
   curWeapon: {fileID: 3928630742250186411}
   dashParticles: {fileID: 7108178822967578991}
-  _maxHealth: 5
+  inventory: []
   bounceForce: 5
   invincible: 0
   iFrameTime: 0.67
@@ -385,6 +385,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 0}
+  collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 6390207258511137637}
   hasCooldown: 1
@@ -5440,6 +5442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
 --- !u!1 &1994643146490466401 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2796492743467506607, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -5457,6 +5461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
 --- !u!1 &4504709472043449387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8943384222130669595, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -5474,6 +5480,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
 --- !u!1 &4538182874680901660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -259972160606440404, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -5491,6 +5499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
 --- !u!4 &4977604073444299739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -5518,6 +5528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
 --- !u!1 &8957652176504814157 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4696901722147074435, guid: c13ab1be796b51a4ba2154a334b6551b, type: 3}
@@ -5535,3 +5547,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47476a77031ee9c4691af2f811f2cd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setSeed: 1
+  seed: 0
