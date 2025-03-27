@@ -6,13 +6,10 @@ using UnityEngine;
 //Note: Make sure this
 //object's collider excludes
 //the player layer.
-public class Weapon : MonoBehaviour, ICollectable
+public class Weapon : Collectible
 {
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
-    public string weaponName;
-    public Sprite icon; // sprite used in collections menu
-
     public ParticleSystem hitParticles;
 
     public CollisionSensor collisionSensor;
@@ -355,11 +352,7 @@ public class Weapon : MonoBehaviour, ICollectable
         canAttack = true;
     }
     public void OnCollect(){
-        if (name == null || icon == null){
-            Debug.LogError("Weapon isn't set up properly, aborting pickup.");
-            return;
-        }
-        CollectionManager.instance.AddToCollection(this.gameObject, weaponName, icon);
+        CollectionManager.instance.AddToCollection(this);
         Player.instance.curWeapon = this;
     }
 }

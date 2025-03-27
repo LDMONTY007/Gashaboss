@@ -3,7 +3,7 @@ using UnityEngine;
 // Used to attach to the game object prefabs for items
 // Passes logic to the ScriptableObject for that item
 // Primarily handles adding to inventory and gameobject deletion
-public class Item: Collectable
+public class Item: Collectible
 {
     [SerializeField] private ItemData item; // Assign scriptable object via inspector
 

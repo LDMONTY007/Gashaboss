@@ -17,7 +17,8 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     public Button closeCollectionButton; // Button to close the collection UI
 
     [Header("Collected Collectibles")]
-    private Dictionary<string, Collectible> collectedCollectibles = new Dictionary<string, Collectible>();
+    // Dictionary to tie data together, using a tuple as the value, so the dict can be self containing
+    private Dictionary<string, (DropData data, Sprite icon)> collectedCollectibles;
 
     private void Awake()
     {
@@ -29,18 +30,20 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
             Destroy(gameObject);
             return;
         }
+        DontDestroyOnLoad(this.gameObject);
 
         collectionPanel.SetActive(false); // Ensure Collection UI starts hidden
 
         closeCollectionButton.onClick.AddListener(CloseCollection); // Attach close function to button
+        collectedCollectibles = new Dictionary<string, (DropData data, Sprite icon)>();//Initalize the dictionary
     }
 
     public void AddToCollection(Collectible collectible)
     {
         if (collectedCollectibles.ContainsKey(collectible.collectibleName)) return; // Avoid duplicates
-        collectedCollectibles.Add(collectible.collectibleName, collectible.gameObject);
+        collectedCollectibles.Add(collectible.collectibleName, (collectible.collectibleData, collectible.icon));
 
-        LoadMenuItem(collectible.gameObject, collectible.collectibleName, collectible.icon);
+        LoadMenuItem(collectible.collectibleData.droppedObject, collectible.collectibleName, collectible.icon);
     }
 
     // Opens the Collection UI
@@ -55,7 +58,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
         collectionPanel.SetActive(false);
     }
 
-    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon){
+    public void LoadMenuItem(DropData collectiblePrefab, string collectibleName, Sprite collectibleIcon){
         GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
 
         // Set collectible name dynamically
@@ -79,7 +82,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
         foreach(KeyValuePair<string,Collectible> collectible in this.collectedCollectibles){
-            LoadMenuItem(collectible.Key, collectible.Value, collectible.Value.icon);
+            LoadMenuItem(collectible.Value.data.droppedObject, collectible.Key, collectible.Value.icon);
         }
     }
     public void SaveData(GameData gameData){

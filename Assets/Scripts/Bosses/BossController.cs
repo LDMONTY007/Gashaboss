@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
-public class BossController : MonoBehaviour, IDamageable, ICollectable
+public class BossController : Collectible, IDamageable
 {
     [Header("Boss Specific Info")]
     public string bossName = "BaseBoss";

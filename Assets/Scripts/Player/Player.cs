@@ -1084,7 +1084,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     }
 
     void OnTriggerEnter(Collider other){
-        if (other.gameObject.CompareTag("Collectable")){
+        if (other.gameObject.CompareTag("Collectible")){
             other.GetComponent<Collectible>().OnCollect();
         }
     }
