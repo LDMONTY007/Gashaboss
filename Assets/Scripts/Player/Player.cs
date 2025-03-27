@@ -1089,9 +1089,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
     public void LoadData(GameData gameData){
-        
+        this.curHealth = gameData.coins;
+        this.caps = gameData.caps;
+        this.curWeapon = gameData.playerWeapon;
+        this.modifiers = gameData.modifiers;
+        this.inventory = gameData.inventory;
     }
     public void SaveData(GameData gameData){
-        
+        gameData.coins = this.curHealth;
+        gameData.caps = this.caps;
+        gameData.playerWeapon = this.curWeapon;
+        gameData.modifiers = this.modifiers;
+        gameData.inventory = this.inventory;
     }
 }

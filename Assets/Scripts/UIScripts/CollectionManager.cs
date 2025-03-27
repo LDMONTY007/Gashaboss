@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CollectionManager : MonoBehaviour
+public class CollectionManager : MonoBehaviour, IDataPersistence
 {
     public static CollectionManager instance; // Singleton for easy access
 
@@ -76,5 +76,11 @@ public class CollectionManager : MonoBehaviour
     public void CloseCollection()
     {
         collectionPanel.SetActive(false);
+    }
+    public void LoadData(GameData gameData){
+        
+    }
+    public void SaveData(GameData gameData){
+        
     }
 }
