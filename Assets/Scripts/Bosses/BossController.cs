@@ -16,6 +16,7 @@ public class BossController : MonoBehaviour, IDamageable, ICollectable
     public string bossName = "BaseBoss";
     public int coinsRewarded = 3;
     public int capsRewarded = 1;
+    public Sprite icon; // sprite used in collections menu
 
     [Header("Manually assigned variables")]
     public TextMeshPro debugInfoTextMesh;
@@ -118,6 +119,7 @@ public class BossController : MonoBehaviour, IDamageable, ICollectable
 
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
+        OnCollect(); // add to collections before destroying
         Destroy(gameObject);
     }
 
@@ -244,7 +246,6 @@ public class BossController : MonoBehaviour, IDamageable, ICollectable
 
         bossRenderer = animatedModel.GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
-        OnCollect();
     }
 
     // Update is called once per frame
@@ -994,6 +995,6 @@ public class BossController : MonoBehaviour, IDamageable, ICollectable
         yield return null;
     }
     public void OnCollect(){
-        
+        CollectionManager.instance.AddToCollection(this.gameObject, bossName, icon);
     }
 }

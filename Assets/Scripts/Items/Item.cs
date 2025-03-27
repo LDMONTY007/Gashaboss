@@ -9,6 +9,10 @@ public class Item: MonoBehaviour, ICollectable
 
     [SerializeField] private GameObject itemModel; // Assign item model via inspector.
 
+    [SerializeField] private Sprite icon; // sprite used in collections menu
+
+    [SerializeField] private string itemName;
+
     //turn table that is used to rotate the object
     //and then used in the animation when the item is picked up.
     private TurnTable turnTable;
@@ -19,7 +23,7 @@ public class Item: MonoBehaviour, ICollectable
             Destroy(gameObject);
             return;
         }
-
+        CollectionManager.instance.AddToCollection(this.gameObject, itemName, icon);
         //Start the animation for the item being picked up.
         StartCoroutine(PickupAnimationCoroutine());
     }

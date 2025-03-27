@@ -6,10 +6,12 @@ using UnityEngine;
 //Note: Make sure this
 //object's collider excludes
 //the player layer.
-public class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour, ICollectable
 {
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
+    public string weaponName;
+    public Sprite icon; // sprite used in collections menu
 
     public ParticleSystem hitParticles;
 
@@ -351,5 +353,9 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(cooldownTime);
 
         canAttack = true;
+    }
+    public void OnCollect(){
+        CollectionManager.instance.AddToCollection(this.gameObject, weaponName, icon);
+        Player.instance.curWeapon = this;
     }
 }

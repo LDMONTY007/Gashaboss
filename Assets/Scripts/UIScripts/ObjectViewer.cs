@@ -4,7 +4,7 @@ using TMPro; // Required for using TextMeshPro UI
 
 public class ObjectViewer : MonoBehaviour
 {
-    public static ObjectViewer Instance; // Singleton instance 
+    public static ObjectViewer instance; // Singleton instance 
 
     [Header("UI Elements")]
     public GameObject objectViewerPanel; 
@@ -22,8 +22,8 @@ public class ObjectViewer : MonoBehaviour
     private void Awake()
     {
         // Implement Singleton pattern: If an instance doesn't exist, assign this one.
-        if (Instance == null)
-            Instance = this;
+        if (instance == null)
+            instance = this;
         else
         {
             // If another instance exists, destroy this one to prevent duplicates
