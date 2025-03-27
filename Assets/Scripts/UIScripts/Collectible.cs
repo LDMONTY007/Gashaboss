@@ -8,7 +8,6 @@ public abstract class Collectible : MonoBehaviour
 {
     public DropData collectibleData; // Assign in Inspector, use drop data scriptable for all the items. 
     public string collectibleName; // Assign the name in Inspector
-    public Sprite icon; // Assign the collectible icon in Inspector
 
     public abstract void OnCollect();
 }

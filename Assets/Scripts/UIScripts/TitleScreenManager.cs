@@ -28,7 +28,7 @@ public class TitleScreenManager : MonoBehaviour
 
         foreach(SaveSlot saveslot in saveSlots){
             GameData profileData = null;
-            //get data from dict, in not will be null and button will be set to empty
+            //get data from dict, if not will be null and button will be set to empty
             profiles.TryGetValue(saveslot.GetProfileId(), out profileData);
             saveslot.SetData(profileData);
             //change slots so you can't interact with them while loading if empty
@@ -55,12 +55,7 @@ public class TitleScreenManager : MonoBehaviour
         //overwrite data with new game data if not loading
         if(!isLoading)SaveDataManager.instance.NewGame();
         SaveDataManager.instance.SaveGame();
-        SceneManager.LoadSceneAsync("GameUIScene"); //TODO: Change to load Gameplay Scene
-    }
-    public void StartGame()
-    {
-        // Handle New Game Loading
-        SceneManager.LoadScene("GameUIScene"); // Load the main game scene
+        SceneManager.LoadSceneAsync("GatchaMachine_test"); //TODO: Change to load Gameplay Scene
     }
     public void QuitGame()
     {

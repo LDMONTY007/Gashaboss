@@ -16,7 +16,7 @@ public class GameData{
     public Weapon playerWeapon;
     public List<StatModifier> modifiers;
     public List<ItemData> inventory;
-    public Dictionary<string, (DropData data, Sprite icon)> collectedCollectibles;
+    public Dictionary<string, DropData data> collectedCollectibles;
     
     //These are the default values the game starts with when no data to load
     public GameData(){
@@ -25,6 +25,6 @@ public class GameData{
         playerWeapon = new Weapon();
         modifiers = new List<StatModifier>();
         inventory = new List<ItemData>();
-        collectedCollectibles = new Dictionary<string, (DropData data, Sprite icon)>();
+        collectedCollectibles = new Dictionary<string, DropData data>();
     }
 }

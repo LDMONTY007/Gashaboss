@@ -18,7 +18,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
 
     [Header("Collected Collectibles")]
     // Dictionary to tie data together, using a tuple as the value, so the dict can be self containing
-    private Dictionary<string, (DropData data, Sprite icon)> collectedCollectibles;
+    private Dictionary<string, DropData data> collectedCollectibles;
 
     private void Awake()
     {
@@ -35,15 +35,15 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
         collectionPanel.SetActive(false); // Ensure Collection UI starts hidden
 
         closeCollectionButton.onClick.AddListener(CloseCollection); // Attach close function to button
-        collectedCollectibles = new Dictionary<string, (DropData data, Sprite icon)>();//Initalize the dictionary
+        collectedCollectibles = new Dictionary<string, DropData data>();//Initalize the dictionary
     }
 
     public void AddToCollection(Collectible collectible)
     {
         if (collectedCollectibles.ContainsKey(collectible.collectibleName)) return; // Avoid duplicates
-        collectedCollectibles.Add(collectible.collectibleName, (collectible.collectibleData, collectible.icon));
+        collectedCollectibles.Add(collectible.collectibleName, collectible.collectibleData);
 
-        LoadMenuItem(collectible.collectibleData.droppedObject, collectible.collectibleName, collectible.icon);
+        LoadMenuItem(collectible.collectibleData.droppedObject, collectible.collectibleName);
     }
 
     // Opens the Collection UI
@@ -58,7 +58,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
         collectionPanel.SetActive(false);
     }
 
-    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon){
+    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName){
         GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
 
         // Set collectible name dynamically
@@ -68,21 +68,13 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
             collectibleText.text = collectibleName;
         }
 
-        // Set collectible image dynamically
-        Image collectibleImage = button.transform.Find("CollectibleImage").GetComponent<Image>();
-        if (collectibleImage != null)
-        {
-            collectibleImage.sprite = collectibleIcon;
-            collectibleImage.preserveAspect = true;  // Ensures the image isn't stretched
-        }
-
         // Set button to open Object Viewer when clicked
         button.GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
     }
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
-        foreach(KeyValuePair<string, (DropData data, Sprite icon)> collectible in this.collectedCollectibles){
-            LoadMenuItem(collectible.Value.data.droppedObject, collectible.Key, collectible.Value.icon);
+        foreach(KeyValuePair<string, DropData data> collectible in this.collectedCollectibles){
+            LoadMenuItem(collectible.Value.data.droppedObject, collectible.Key);
         }
     }
     public void SaveData(GameData gameData){
