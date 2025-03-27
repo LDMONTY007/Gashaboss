@@ -58,7 +58,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
         collectionPanel.SetActive(false);
     }
 
-    public void LoadMenuItem(DropData collectiblePrefab, string collectibleName, Sprite collectibleIcon){
+    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon){
         GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
 
         // Set collectible name dynamically
@@ -81,7 +81,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     }
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
-        foreach(KeyValuePair<string,Collectible> collectible in this.collectedCollectibles){
+        foreach(KeyValuePair<string, (DropData data, Sprite icon)> collectible in this.collectedCollectibles){
             LoadMenuItem(collectible.Value.data.droppedObject, collectible.Key, collectible.Value.icon);
         }
     }

@@ -351,7 +351,7 @@ public class Weapon : Collectible
 
         canAttack = true;
     }
-    public void OnCollect(){
+    public override void OnCollect(){
         CollectionManager.instance.AddToCollection(this);
         Player.instance.curWeapon = this;
     }

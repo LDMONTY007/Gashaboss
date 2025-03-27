@@ -13,7 +13,7 @@ public class Item: Collectible
     //and then used in the animation when the item is picked up.
     private TurnTable turnTable;
 
-    public void OnCollect(){
+    public override void OnCollect(){
         if(item == null) {
             Debug.LogError("Item Instance Has No Object Assigned: Please Add One.\n Aborting Item Pickup.");
             Destroy(gameObject);

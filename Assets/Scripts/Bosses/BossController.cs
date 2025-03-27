@@ -16,7 +16,6 @@ public class BossController : Collectible, IDamageable
     public string bossName = "BaseBoss";
     public int coinsRewarded = 3;
     public int capsRewarded = 1;
-    public Sprite icon; // sprite used in collections menu
 
     [Header("Manually assigned variables")]
     public TextMeshPro debugInfoTextMesh;
@@ -994,7 +993,7 @@ public class BossController : Collectible, IDamageable
 
         yield return null;
     }
-    public void OnCollect(){
-        CollectionManager.instance.AddToCollection(this.gameObject, bossName, icon);
+    public override void OnCollect(){
+        CollectionManager.instance.AddToCollection(this);
     }
 }
