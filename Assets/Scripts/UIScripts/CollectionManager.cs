@@ -17,7 +17,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     public Button closeCollectionButton; // Button to close the collection UI
 
     [Header("Collected Collectibles")]
-    private Dictionary<string, GameObject> collectedCollectibles = new Dictionary<string, GameObject>();
+    private Dictionary<string, Collectible> collectedCollectibles = new Dictionary<string, Collectible>();
 
     private void Awake()
     {
@@ -35,13 +35,12 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
         closeCollectionButton.onClick.AddListener(CloseCollection); // Attach close function to button
     }
 
-    public void AddToCollection(GameObject collectiblePrefab, string collectibleName, Sprite collectibleIcon)
+    public void AddToCollection(Collectible collectible)
     {
-        if (collectedCollectibles.ContainsKey(collectibleName)) return; // Avoid duplicates
+        if (collectedCollectibles.ContainsKey(collectible.collectibleName)) return; // Avoid duplicates
+        collectedCollectibles.Add(collectible.collectibleName, collectible.gameObject);
 
-        collectedCollectibles.Add(collectibleName, collectiblePrefab);
-
-        LoadMenuItem(collectiblePrefab, collectibleName, collectibleIcon);
+        LoadMenuItem(collectible.gameObject, collectible.collectibleName, collectible.icon);
     }
 
     // Opens the Collection UI
@@ -79,7 +78,7 @@ public class CollectionManager : MonoBehaviour, IDataPersistence
     }
     public void LoadData(GameData gameData){
         this.collectedCollectibles = gameData.collectedCollectibles;
-        foreach(KeyValuePair<string,GameObject> collectible in this.collectedCollectibles){
+        foreach(KeyValuePair<string,Collectible> collectible in this.collectedCollectibles){
             LoadMenuItem(collectible.Key, collectible.Value, collectible.Value.icon);
         }
     }
