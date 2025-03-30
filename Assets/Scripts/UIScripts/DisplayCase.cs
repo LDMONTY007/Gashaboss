@@ -5,18 +5,18 @@
  * 
  *     Purpose:
  *     - Allows the player to interact with a display case.
- *     - When the player is near, they can press [E] (or whatever button we decide on) to open the Collection UI.
+ *     - When the player is near, they can press [E] to open the Collection UI.
  * 
  *     How to Use:
- *     - Attach this script to a **new "DisplayCase" GameObject** in the scene.
- *     - Assign `CollectionPanelUI` in the **Inspector**.
- *     - Add a **Box Collider** to the `DisplayCase` and set it as **"Is Trigger"**.
+ *     - Attach this script to a "DisplayCase" GameObject in the scene.
+ *     - Assign `collectionPanelUI` in the Inspector.
+ *     - Add a Box Collider to the `DisplayCase` and set it as "Is Trigger".
  *     - Adjust the collider size so the player can walk into it.
- *     - Test by pressing **"E"** near the Display Case to open the Collection UI.
+ *     - Test by pressing [E] near the display case to open the Collection UI.
  * 
  *     Expected Behavior:
- *     - Walking near the display case shows a **message in the Console**.
- *     - Pressing **[E]** **opens the Collection UI**.
+ *     - Walking near the display case shows a message in the Console.
+ *     - Pressing [E] opens the Collection UI.
  *     - Walking away stops interaction.
  */
 
@@ -49,13 +49,18 @@ public class DisplayCase : MonoBehaviour
 
     private void Update()
     {
-        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+        // 1) Make sure UIManager is present
+        if (UIManager.Instance == null) return;
 
-        if (playerInRange && Input.GetKeyDown(KeyCode.E)) // Press "E" to interact
+        // 2) Only allow "E" if no other UI is open.
+        //    i.e., only if currentUIState is None
+        if (UIManager.Instance.currentUIState != UIManager.UIState.None)
+            return;
+
+        // 3) Only open collection if the player is in range and pressed E
+        if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
             CollectionManager.instance.OpenCollection();
         }
     }
-
 }
-
