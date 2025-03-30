@@ -2,14 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro; // Required for using TextMeshPro UI
 
-public class ObjectViewer : MonoBehaviour
+public class ObjectViewer : UIInputHandler
 {
     public static ObjectViewer instance; // Singleton instance 
 
     [Header("UI Elements")]
-    public CanvasGroup objectViewerPanel; 
-    public TextMeshProUGUI objectNameText; 
-    public Button closeButton; 
+    public CanvasGroup objectViewerPanel;
+    public TextMeshProUGUI objectNameText;
+    public Button closeButton;
 
     [Header("3D Model Holder")]
     public Transform modelHolder;
@@ -21,21 +21,16 @@ public class ObjectViewer : MonoBehaviour
 
     private void Awake()
     {
-        // Implement Singleton pattern: If an instance doesn't exist, assign this one.
         if (instance == null)
             instance = this;
         else
         {
-            // If another instance exists, destroy this one to prevent duplicates
             Destroy(gameObject);
             return;
         }
 
-        // Attach the CloseViewer() function to the close button click event
         closeButton.onClick.AddListener(CloseViewer);
 
-        // Object Viewer starts hidden
-        // can't set inactive, need it active to run listeners on objectveiwer
         objectViewerPanel.alpha = 0f;
         objectViewerPanel.blocksRaycasts = false;
         objectViewerPanel.interactable = false;
@@ -43,71 +38,107 @@ public class ObjectViewer : MonoBehaviour
 
     private void Update()
     {
-        // Check if the Object Viewer panel is open
         if (objectViewerPanel.alpha != 0f)
         {
-            // Rotate model using mouse drag (left-click)
-            if (Input.GetMouseButton(0)) // 0 = Left Mouse Button
+            /*
+            // COMMENTED OUT: We no longer check Escape here because UIManager handles it centrally.
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                // Get mouse movement values for X and Y axis
+                CloseViewer();
+                return; 
+            }
+            */
+
+            // --- Rotation ---
+            if (Input.GetMouseButton(0))
+            {
                 float rotationX = Input.GetAxis("Mouse X") * rotationSpeed;
                 float rotationY = Input.GetAxis("Mouse Y") * rotationSpeed;
 
-                // Rotate the modelHolder in World Space (left/right rotation)
                 modelHolder.Rotate(Vector3.up, -rotationX, Space.World);
-
-                // Rotate the modelHolder in Local Space (up/down rotation)
                 modelHolder.Rotate(Vector3.right, rotationY, Space.World);
             }
         }
     }
+
 
     public void OpenViewer(GameObject collectiblePrefab, string collectibleName)
     {
         if (currentModel != null)
             Destroy(currentModel);
 
-        // Instantiate the selected collectible inside modelHolder
         currentModel = Instantiate(collectiblePrefab, modelHolder);
-        foreach(MonoBehaviour script in currentModel.GetComponentsInChildren<MonoBehaviour>()){
+        foreach (MonoBehaviour script in currentModel.GetComponentsInChildren<MonoBehaviour>())
+        {
             script.enabled = false;
         }
         currentModel.transform.localPosition = Vector3.zero;
         currentModel.transform.localRotation = Quaternion.identity;
 
-        // Update UI with collectible name
         objectNameText.text = collectibleName;
 
-        // Show the Object Viewer UI
         objectViewerPanel.alpha = 1f;
         objectViewerPanel.blocksRaycasts = true;
         objectViewerPanel.interactable = true;
 
-        // Enable Viewer Camera when opening
         if (viewerCamera != null)
         {
             viewerCamera.gameObject.SetActive(true);
         }
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 0f;
+
+        // State-based
+        UIManager.Instance.currentUIState = UIManager.UIState.ObjectViewer;
     }
 
 
-    // Closes the Object Viewer and removes the 3D model
     public void CloseViewer()
     {
-        // Hide the UI panel again
         objectViewerPanel.alpha = 0f;
         objectViewerPanel.blocksRaycasts = false;
         objectViewerPanel.interactable = false;
 
-        // Destroy the currently displayed model (if any)
         if (currentModel != null)
             Destroy(currentModel);
 
-        // Disable Viewer Camera when closing
         if (viewerCamera != null)
         {
             viewerCamera.gameObject.SetActive(false);
         }
+
+        if (CollectionManager.instance.collectionPanel.activeSelf)
+        {
+            // If collection panel is still open
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Time.timeScale = 0f;
+            UIManager.Instance.currentUIState = UIManager.UIState.Collection;
+        }
+        else
+        {
+            // Fully exit UI mode
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1f;
+            UIManager.Instance.currentUIState = UIManager.UIState.None;
+        }
     }
+
+
+
+    // Check if object viewer is open
+    protected override bool IsUIActive()
+    {
+        return objectViewerPanel.alpha != 0f;
+    }
+
+    // What happens when Escape is pressed while Object Viewer is open
+    protected override void OnEscapePressed()
+    {
+        CloseViewer();
+    }
+
 }

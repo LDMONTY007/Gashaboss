@@ -29,7 +29,6 @@ public class DisplayCase : MonoBehaviour
 
     private bool playerInRange = false; // Tracks if the player is near the display case
 
-    //  Detects when the player enters the trigger zone, update E to whatever the interact input is
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -39,7 +38,6 @@ public class DisplayCase : MonoBehaviour
         }
     }
 
-    //  Detects when the player leaves the trigger zone
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -49,12 +47,15 @@ public class DisplayCase : MonoBehaviour
         }
     }
 
-    //  Checks for player input to open the Collection UI
     private void Update()
     {
+        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+
         if (playerInRange && Input.GetKeyDown(KeyCode.E)) // Press "E" to interact
         {
             CollectionManager.instance.OpenCollection();
         }
     }
+
 }
+

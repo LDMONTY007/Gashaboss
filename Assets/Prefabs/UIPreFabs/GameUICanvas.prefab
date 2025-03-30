@@ -33,8 +33,8 @@ RectTransform:
   m_Children:
   - {fileID: 4088038133910991126}
   - {fileID: 5521253880827341576}
-  - {fileID: 918083779610744506}
   - {fileID: 8487303742708654461}
+  - {fileID: 918083779610744506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -482,6 +482,18 @@ PrefabInstance:
     - target: {fileID: 1385902264514434443, guid: efccac17edc130842bef77d0b1c56588, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5457478460233315530, guid: efccac17edc130842bef77d0b1c56588, type: 3}
+      propertyPath: m_Value
+      value: 0.0000035903033
+      objectReference: {fileID: 0}
+    - target: {fileID: 7802547403468577715, guid: efccac17edc130842bef77d0b1c56588, type: 3}
+      propertyPath: m_Size
+      value: 0.3333333
+      objectReference: {fileID: 0}
+    - target: {fileID: 7802547403468577715, guid: efccac17edc130842bef77d0b1c56588, type: 3}
+      propertyPath: m_Value
+      value: 0.9999999
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

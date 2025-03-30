@@ -960,9 +960,33 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3667628991268059494, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1782145153}
+    - target: {fileID: 3667628991268059494, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResumeGame
+      objectReference: {fileID: 0}
     - target: {fileID: 3948688920133332187, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Name
       value: GameUICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439301021956016692, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1782145153}
+    - target: {fileID: 4439301021956016692, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: QuitToTitle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439301021956016692, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4439301021956016692, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5616444058686173197, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -3545,6 +3569,8 @@ MonoBehaviour:
   bossUIManager: {fileID: 853423133}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
+  uiBlock: 0
+  currentUIState: 0
 --- !u!4 &1782145154
 Transform:
   m_ObjectHideFlags: 0
