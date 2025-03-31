@@ -78,7 +78,7 @@ public class Weapon : MonoBehaviour, ICollectable
         
     }
 
-    public void Attack()
+    public virtual void Attack()
     {
         //if we can't attack,
         //print a message in case something
@@ -107,7 +107,7 @@ public class Weapon : MonoBehaviour, ICollectable
         StartCoroutine(AltAttackCoroutine());
     }
 
-    public IEnumerator AttackCoroutine()
+    public virtual IEnumerator AttackCoroutine()
     {
         //don't allow other attacks during our current attack.
         canAttack = false;

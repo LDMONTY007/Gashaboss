@@ -1115,6 +1115,11 @@ public class Player : MonoBehaviour, IDamageable
         //set the position to be zero locally
         //so that it is zero relative to the parent as well.
         w.transform.localPosition = Vector3.zero;
+        //set to no rotation (0, 0, 0);
+        w.transform.localRotation = Quaternion.identity;
+
+        //assign the new current weapon.
+        curWeapon = w;
     }
 
     void DropCurrentWeapon()
