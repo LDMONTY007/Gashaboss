@@ -52,8 +52,8 @@ MonoBehaviour:
   destroyOnCollision: 1
   damage: 1
   launchOnStart: 1
-  launchSpeed: 20
-  gravity: 9.81
+  launchSpeed: 80
+  gravity: 156.96
   rb: {fileID: 0}
 --- !u!135 &3493703411128624093
 SphereCollider:
