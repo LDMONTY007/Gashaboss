@@ -9,9 +9,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class Player : MonoBehaviour, IDamageable
+public class Player : MonoBehaviour, IDamageable, IDataPersistence
 {
-
     public static Player instance;
 
     //private references 
@@ -268,6 +267,9 @@ public class Player : MonoBehaviour, IDamageable
     // Update is called once per frame
     void Update()
     {
+        // Checks if UI is open
+        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+
         #region isGroundedCheck
         //isGrounded = Physics.BoxCast(transform.position, this.GetComponent<Collider>().bounds.size, -transform.up, Quaternion.identity, groundCheckDist, playerMask);
         //isGrounded = Physics.Raycast(transform.position, -transform.up, this.GetComponent<Collider>().bounds.extents.y + groundCheckDist, playerMask);
@@ -422,18 +424,21 @@ public class Player : MonoBehaviour, IDamageable
 
     private void FixedUpdate()
     {
+        // Checks if UI manager is open
+        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+
         //Vector3 prevVel = rb.linearVelocity;
 
-        
+
 
         //project controls to the camera's rotation so left and right are always the left and right sides of the camera.
         //moveVector = cam.transform.right * moveInput.x + cam.transform.forward * moveInput.y;
 
-       
+
         //set the speed using move speed and the normalized movement direction vector.
         //rb.linearVelocity = moveVector.normalized * moveSpeed;
 
-        
+
         HandleRbRotation();
 
         HandleDashing();
@@ -1089,8 +1094,22 @@ public class Player : MonoBehaviour, IDamageable
 
     void OnTriggerEnter(Collider other){
         if (other.gameObject.CompareTag("Collectable")){
-            other.GetComponent<ICollectable>().OnCollect();
+            other.GetComponent<Collectible>().OnCollect();
         }
+    }
+    public void LoadData(GameData gameData){
+        this.curHealth = gameData.coins;
+        this.caps = gameData.caps;
+        this.curWeapon = gameData.playerWeapon;
+        this.modifiers = gameData.modifiers;
+        this.inventory = gameData.inventory;
+    }
+    public void SaveData(GameData gameData){
+        gameData.coins = this.curHealth;
+        gameData.caps = this.caps;
+        gameData.playerWeapon = this.curWeapon;
+        gameData.modifiers = this.modifiers;
+        gameData.inventory = this.inventory;
     }
 
     private void OnTriggerStay(Collider other)

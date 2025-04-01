@@ -5103,6 +5103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5838bdd5a2169994da0faf46ba50786a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: 843efc63262e21b4ba52340bb5ae8bca, type: 2}
+  collectibleName: Squid
   bossName: Squid
   coinsRewarded: 3
   capsRewarded: 1
@@ -5308,6 +5310,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 0}
+  collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 3482512846733107697}
   hasCooldown: 1

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 891140488979936515}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ModelHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8023781215140264142}
   - component: {fileID: 2274315176060886408}
   - component: {fileID: 7967830048314231650}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ViewerCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,13 +58,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3770726546405089855}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 1, z: -2}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7241040829912006136}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &8023781215140264142
 Camera:
   m_ObjectHideFlags: 0
@@ -98,7 +98,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -123,7 +123,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3770726546405089855}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &7967830048314231650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7241040829912006136}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ObjectViewer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

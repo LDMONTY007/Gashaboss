@@ -6,11 +6,10 @@ using UnityEngine;
 //Note: Make sure this
 //object's collider excludes
 //the player layer.
-public class Weapon : MonoBehaviour, ICollectable
+public class Weapon : Collectible
 {
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
-
     public ParticleSystem hitParticles;
 
     public CollisionSensor collisionSensor;
@@ -359,10 +358,8 @@ public class Weapon : MonoBehaviour, ICollectable
 
         canAttack = true;
     }
-
-    public void OnCollect()
-    {
-        //swap the weapon on the player for ourselves.
-        Player.instance.SwapCurrentWeapon(this);
+    public override void OnCollect(){
+        CollectionManager.instance.AddToCollection(this);
+        Player.instance.curWeapon = this;
     }
 }

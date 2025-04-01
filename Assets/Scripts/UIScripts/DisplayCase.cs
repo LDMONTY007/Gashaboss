@@ -5,18 +5,18 @@
  * 
  *     Purpose:
  *     - Allows the player to interact with a display case.
- *     - When the player is near, they can press [E] (or whatever button we decide on) to open the Collection UI.
+ *     - When the player is near, they can press [E] to open the Collection UI.
  * 
  *     How to Use:
- *     - Attach this script to a **new "DisplayCase" GameObject** in the scene.
- *     - Assign `CollectionPanelUI` in the **Inspector**.
- *     - Add a **Box Collider** to the `DisplayCase` and set it as **"Is Trigger"**.
+ *     - Attach this script to a "DisplayCase" GameObject in the scene.
+ *     - Assign `collectionPanelUI` in the Inspector.
+ *     - Add a Box Collider to the `DisplayCase` and set it as "Is Trigger".
  *     - Adjust the collider size so the player can walk into it.
- *     - Test by pressing **"E"** near the Display Case to open the Collection UI.
+ *     - Test by pressing [E] near the display case to open the Collection UI.
  * 
  *     Expected Behavior:
- *     - Walking near the display case shows a **message in the Console**.
- *     - Pressing **[E]** **opens the Collection UI**.
+ *     - Walking near the display case shows a message in the Console.
+ *     - Pressing [E] opens the Collection UI.
  *     - Walking away stops interaction.
  */
 
@@ -29,7 +29,6 @@ public class DisplayCase : MonoBehaviour
 
     private bool playerInRange = false; // Tracks if the player is near the display case
 
-    //  Detects when the player enters the trigger zone, update E to whatever the interact input is
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -39,7 +38,6 @@ public class DisplayCase : MonoBehaviour
         }
     }
 
-    //  Detects when the player leaves the trigger zone
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -49,22 +47,20 @@ public class DisplayCase : MonoBehaviour
         }
     }
 
-    //  Checks for player input to open the Collection UI
     private void Update()
     {
-        if (playerInRange && Input.GetKeyDown(KeyCode.E)) // Press "E" to interact
-        {
-            OpenCollection();
-        }
-    }
+        // 1) Make sure UIManager is present
+        if (UIManager.Instance == null) return;
 
-    //  Opens the Collection UI when triggered
-    public void OpenCollection()
-    {
-        if (collectionPanelUI != null)
+        // 2) Only allow "E" if no other UI is open.
+        //    i.e., only if currentUIState is None
+        if (UIManager.Instance.currentUIState != UIManager.UIState.None)
+            return;
+
+        // 3) Only open collection if the player is in range and pressed E
+        if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            collectionPanelUI.SetActive(true); // Show Collection UI
-            Debug.Log("Collection UI Opened.");
+            CollectionManager.instance.OpenCollection();
         }
     }
 }
