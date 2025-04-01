@@ -57,9 +57,12 @@ public class DisplayCase : MonoBehaviour
         if (UIManager.Instance.currentUIState != UIManager.UIState.None)
             return;
 
+        
+
         // 3) Only open collection if the player is in range and pressed E
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
+            Debug.Log("HERE");
             CollectionManager.instance.OpenCollection();
         }
     }

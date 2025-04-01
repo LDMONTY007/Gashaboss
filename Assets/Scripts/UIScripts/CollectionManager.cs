@@ -96,6 +96,9 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName)
     {
+
+        Debug.Log("Loading Menu Item");
+
         GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
 
         TextMeshProUGUI collectibleText = button.transform.Find("CollectibleText").GetComponent<TextMeshProUGUI>();
@@ -110,11 +113,26 @@ public class CollectionManager : UIInputHandler, IDataPersistence
     public void LoadData(GameData gameData)
     {
         //this.collectedCollectibles = gameData.collectedCollectibles;
+        collectedCollectibles.Clear();
+        foreach (string key in gameData.collectedCollectibles)
+        {
+            //get the drop using our search function
+            DropData dropToSave = SaveDataManager.instance.FindDropData(key);
+            //get the name of the collectible from the collectible itself and store
+            //the drop data.
+            collectedCollectibles.Add(dropToSave.droppedObject.GetComponent<Collectible>().collectibleName, dropToSave);
+        }
     }
 
     public void SaveData(GameData gameData)
     {
-        //gameData.collectedCollectibles = this.collectedCollectibles;
+        //loop through and save all the collected collectibles.
+        gameData.collectedCollectibles.Clear();
+        foreach (var kvp in collectedCollectibles)
+        {
+            gameData.collectedCollectibles.Add(kvp.Value.name);
+        }
+        
     }
 
     private void SetCursorState(bool uiMode)

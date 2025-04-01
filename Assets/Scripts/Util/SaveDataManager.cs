@@ -78,6 +78,30 @@ public class SaveDataManager: MonoBehaviour{
         dataHandler.Save(gameData, selectedProfile);
         Debug.Log("Saved Game");
     }
+
+
+
+    //find the prefab stored in a dropData in our global dropData scriptable object list.
+    public GameObject FindDropGameObj(string key)
+    {
+        //return the dropped object specifically.
+        return (dropDataList.soList.Find(d => d.name == key) as DropData).droppedObject;
+    }
+
+    //find the dropData in our global dropData scriptable object list.
+    public DropData FindDropData(string key)
+    {
+        //return the dropped object specifically.
+        return (dropDataList.soList.Find(d => d.name == key) as DropData);
+    }
+
+    //find the Item Data stored in the global ItemData scriptable object list.
+    public ItemData FindItemData(string key)
+    {
+        //cast to ItemData and search the list for the key.
+        return (itemDataList.soList.Find(d => d.name == key) as ItemData);
+    }
+
     private List<IDataPersistence> FindAllDataPersistenceObjects(){
         //Find all the objects that implement IDataPersistence in the scene (Requires all the objects to also extend MonoBehaviour)
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None).OfType<IDataPersistence>();

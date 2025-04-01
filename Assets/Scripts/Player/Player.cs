@@ -1106,7 +1106,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
         //if it isn't null, create the player weapon and set the reference for it.
-        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(FindDrop(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
+        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
         //this.modifiers = gameData.modifiers;
 
 
@@ -1115,24 +1115,12 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //add all saved item data to the player's inventory.
         foreach (string s in gameData.inventory)
         {
-            inventory.Add(FindItemData(s));
+            inventory.Add(SaveDataManager.instance.FindItemData(s));
         }
        
     }
 
-    //find the prefab stored in a dropData in our global dropData scriptable object list.
-    public GameObject FindDrop(string key)
-    {
-        //return the dropped object specifically.
-        return (SaveDataManager.instance.dropDataList.soList.Find(d => d.name == key) as DropData).droppedObject;
-    }
-
-    //find the Item Data stored in the global ItemData scriptable object list.
-    public ItemData FindItemData(string key)
-    {
-        //cast to ItemData and search the list for the key.
-        return (SaveDataManager.instance.itemDataList.soList.Find(d => d.name == key) as ItemData);
-    }
+    
 
     public void SaveData(GameData gameData){
         Debug.LogWarning("SAVING PLAYER DATA: " + this.curWeapon.collectibleData.name);
