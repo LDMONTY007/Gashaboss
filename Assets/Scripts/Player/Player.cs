@@ -1121,7 +1121,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
             {
                 //collect the weapon.
-                other.GetComponent<ICollectable>().OnCollect();
+                other.GetComponent<Collectible>().OnCollect();
             }
         }
     }
