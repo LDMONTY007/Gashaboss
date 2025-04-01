@@ -1133,6 +1133,9 @@ public class Player : MonoBehaviour, IDamageable
             //TODO:
             //Write a quick function so the weapon can't be placed in an object.
             curWeapon.transform.position = transform.position + transform.forward * 15f;
+
+            //Destroy the current weapon.
+            Destroy(curWeapon.gameObject);
         }
     }
 }

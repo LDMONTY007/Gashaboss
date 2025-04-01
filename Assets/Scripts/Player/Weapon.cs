@@ -54,6 +54,13 @@ public class Weapon : MonoBehaviour, ICollectable
         collisionSensor.triggerCollider.radius = attackDistance / 2;
     }
 
+    private void OnDestroy()
+    {
+        //TODO:
+        //Add the animation here where we destroy the 
+        //weapon.
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

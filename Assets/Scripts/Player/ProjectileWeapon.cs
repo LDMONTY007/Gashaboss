@@ -9,8 +9,6 @@ public class ProjectileWeapon : Weapon
     //if the launch transform's forward is angled upwards it will launch upwards.
     public Transform launchTransform;
 
-    public float launchForce = 15f;
-
     public override IEnumerator AttackCoroutine()
     {
         //don't allow other attacks during our current attack.
