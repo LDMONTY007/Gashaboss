@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6826ef798afbc3f42aebc812d3d75bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitParticles: {fileID: 563490110052858692, guid: 48243101954ad4946807755cb95c9859, type: 3}
   doesSplashDamage: 1
   splashDamageRadius: 5
   destroyOnCollision: 1

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public GameObject hitParticles;
+
     public bool doesSplashDamage = false;
 
     public float splashDamageRadius = 15f;
@@ -65,6 +67,12 @@ public class Projectile : MonoBehaviour
 
     }
 
+    private void OnDestroy()
+    {
+        //create the hit particles when we are destroyed.
+        Instantiate(hitParticles, transform.position, transform.rotation);
+    }
+
     public void DealSplashDamage()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, splashDamageRadius);
@@ -77,6 +85,20 @@ public class Projectile : MonoBehaviour
                 DealDamage(damageable);
             }
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        //draw the splash damage radius if we do splash damage.
+        //this is so we can make sure the particles played are the right radius.
+        if (doesSplashDamage)
+        {
+            Color prevColor = Gizmos.color;
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, splashDamageRadius);
+            Gizmos.color = prevColor;
+        }
+        
     }
 
     public virtual void DealDamage(IDamageable damageable)
