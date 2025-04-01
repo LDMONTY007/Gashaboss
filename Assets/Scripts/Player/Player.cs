@@ -1107,7 +1107,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         this.caps = gameData.caps;
         //if it isn't null, create the player weapon and set the reference for it.
         this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
-        //this.modifiers = gameData.modifiers;
+        
+        
+
+        this.modifiers = gameData.modifiers;
 
 
         //clear inventory
@@ -1127,7 +1130,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         gameData.coins = this.curHealth;
         gameData.caps = this.caps;
         gameData.playerWeapon = this.curWeapon.collectibleData.name;
-        //gameData.modifiers = this.modifiers;
+        gameData.modifiers = this.modifiers;
         
         //add all the inventory items to the game data as strings
         //because they are used like keys.
