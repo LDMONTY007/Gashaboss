@@ -360,6 +360,7 @@ public class Weapon : Collectible
     }
     public override void OnCollect(){
         CollectionManager.instance.AddToCollection(this);
-        Player.instance.curWeapon = this;
+        //swap the weapon on the player for ourselves.
+        Player.instance.SwapCurrentWeapon(this);
     }
 }
