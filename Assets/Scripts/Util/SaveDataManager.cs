@@ -12,6 +12,7 @@ public class SaveDataManager: MonoBehaviour{
     [SerializeField] private bool isDataDisabled = false;
     [SerializeField] private bool isProfileOverridden = false;
     [SerializeField] private string testSelectedProfile;
+    public PrefabDictionary dropDataList;
     private GameData gameData;
     private List<IDataPersistence> dataPersistenceObjects;
     private FileDataHandler dataHandler;

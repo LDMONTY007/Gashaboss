@@ -109,12 +109,12 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     public void LoadData(GameData gameData)
     {
-        this.collectedCollectibles = gameData.collectedCollectibles;
+        //this.collectedCollectibles = gameData.collectedCollectibles;
     }
 
     public void SaveData(GameData gameData)
     {
-        gameData.collectedCollectibles = this.collectedCollectibles;
+        //gameData.collectedCollectibles = this.collectedCollectibles;
     }
 
     private void SetCursorState(bool uiMode)

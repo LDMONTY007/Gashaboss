@@ -48,3 +48,4 @@ MonoBehaviour:
   isDataDisabled: 0
   isProfileOverridden: 0
   testSelectedProfile: 
+  dropDataList: {fileID: 11400000, guid: 447c50f74bcdd1b4281d7528fbeb36a7, type: 2}

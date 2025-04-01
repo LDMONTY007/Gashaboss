@@ -916,6 +916,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameUICanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3497,6 +3509,8 @@ MonoBehaviour:
   bossUIManager: {fileID: 853423133}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
+  uiBlock: 0
+  currentUIState: 0
 --- !u!4 &1782145154
 Transform:
   m_ObjectHideFlags: 0
@@ -4373,63 +4387,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6bef274511005e4c88baba1f144b83f, type: 3}
---- !u!1001 &8663635435152919473
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166560560625590128, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6673216678060324407, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
-      propertyPath: m_Name
-      value: BombProjectile
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
 --- !u!1001 &8751657143540695556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4647,4 +4604,3 @@ SceneRoots:
   - {fileID: 481854861}
   - {fileID: 701946314}
   - {fileID: 1194291924726839480}
-  - {fileID: 8663635435152919473}

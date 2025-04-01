@@ -393,15 +393,20 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         #region attacking
 
-        if (attackAction.WasPressedThisFrame())
+        if (curWeapon != null)
         {
-            curWeapon.Attack();
+            if (attackAction.WasPressedThisFrame())
+            {
+                curWeapon.Attack();
+            }
+
+            if (altAttackAction.WasPressedThisFrame())
+            {
+                curWeapon.AltAttack();
+            }
+
         }
 
-        if (altAttackAction.WasPressedThisFrame())
-        {
-            curWeapon.AltAttack();
-        }
 
         #endregion
 
@@ -1100,16 +1105,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public void LoadData(GameData gameData){
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
-        this.curWeapon = gameData.playerWeapon;
-        this.modifiers = gameData.modifiers;
-        this.inventory = gameData.inventory;
+        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.dropDataList.dropDataDictionary.Find(d => d.name == gameData.playerWeapon).droppedObject, transform).GetComponent<Weapon>() : null;
+        //this.modifiers = gameData.modifiers;
+        //this.inventory = gameData.inventory;
     }
     public void SaveData(GameData gameData){
+        Debug.LogWarning("SAVING PLAYER DATA: " + this.curWeapon.collectibleData.name);
         gameData.coins = this.curHealth;
         gameData.caps = this.caps;
-        gameData.playerWeapon = this.curWeapon;
-        gameData.modifiers = this.modifiers;
-        gameData.inventory = this.inventory;
+        gameData.playerWeapon = this.curWeapon.collectibleData.name;
+        //gameData.modifiers = this.modifiers;
+        //gameData.inventory = this.inventory;
     }
 
     private void OnTriggerStay(Collider other)

@@ -13,18 +13,18 @@ public class GameData{
     public long lastUpdated;
     public int coins;
     public int caps;
-    public Weapon playerWeapon;
-    public List<StatModifier> modifiers;
-    public List<ItemData> inventory;
-    public Dictionary<string, DropData> collectedCollectibles;
+    public string playerWeapon;
+    //public List<StatModifier> modifiers;
+    //public List<ItemData> inventory;
+    //public Dictionary<string, DropData> collectedCollectibles;
     
     //These are the default values the game starts with when no data to load
     public GameData(){
         coins = 5;
         caps = 0;
-        playerWeapon = new Weapon();
-        modifiers = new List<StatModifier>();
+        playerWeapon = string.Empty;
+        /*modifiers = new List<StatModifier>();
         inventory = new List<ItemData>();
-        collectedCollectibles = new Dictionary<string, DropData>();
+        collectedCollectibles = new Dictionary<string, DropData>();*/
     }
 }

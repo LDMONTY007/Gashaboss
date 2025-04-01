@@ -79,6 +79,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df3fc8277008db74b8b206dcfdcaf3ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: 3533069148c1ac1419a5eb26cb841a30, type: 2}
+  collectibleName: Bomb
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 2491471556628608376}
   hasCooldown: 1
@@ -88,7 +90,6 @@ MonoBehaviour:
   player: {fileID: 0}
   projectile: {fileID: 6673216678060324407, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
   launchTransform: {fileID: 2760899209391356921}
-  launchForce: 15
 --- !u!114 &2491471556628608376
 MonoBehaviour:
   m_ObjectHideFlags: 0
