@@ -1105,17 +1105,48 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public void LoadData(GameData gameData){
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
-        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.dropDataList.dropDataDictionary.Find(d => d.name == gameData.playerWeapon).droppedObject, transform).GetComponent<Weapon>() : null;
+        //if it isn't null, create the player weapon and set the reference for it.
+        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(FindDrop(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
         //this.modifiers = gameData.modifiers;
-        //this.inventory = gameData.inventory;
+
+
+        //clear inventory
+        this.inventory.Clear();
+        //add all saved item data to the player's inventory.
+        foreach (string s in gameData.inventory)
+        {
+            inventory.Add(FindItemData(s));
+        }
+       
     }
+
+    //find the prefab stored in a dropData in our global dropData scriptable object list.
+    public GameObject FindDrop(string key)
+    {
+        //return the dropped object specifically.
+        return (SaveDataManager.instance.dropDataList.soList.Find(d => d.name == key) as DropData).droppedObject;
+    }
+
+    //find the Item Data stored in the global ItemData scriptable object list.
+    public ItemData FindItemData(string key)
+    {
+        //cast to ItemData and search the list for the key.
+        return (SaveDataManager.instance.itemDataList.soList.Find(d => d.name == key) as ItemData);
+    }
+
     public void SaveData(GameData gameData){
         Debug.LogWarning("SAVING PLAYER DATA: " + this.curWeapon.collectibleData.name);
         gameData.coins = this.curHealth;
         gameData.caps = this.caps;
         gameData.playerWeapon = this.curWeapon.collectibleData.name;
         //gameData.modifiers = this.modifiers;
-        //gameData.inventory = this.inventory;
+        
+        //add all the inventory items to the game data as strings
+        //because they are used like keys.
+        gameData.inventory.Clear();
+        for (int i = 0; i < inventory.Count; i++)
+        { gameData.inventory.Add(inventory[i].name); }
+        
     }
 
     private void OnTriggerStay(Collider other)
