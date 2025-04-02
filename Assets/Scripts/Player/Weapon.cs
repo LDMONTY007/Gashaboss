@@ -63,6 +63,8 @@ public class Weapon : Collectible
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        player = Player.instance;
+
         //set the collision sensor 
         //collider radius to be
         //the same as our attack distance
@@ -108,6 +110,8 @@ public class Weapon : Collectible
             //Debug.LogWarning("Cannot attack during cooldown");
             return;
         }
+
+        Debug.Log(gameObject.name);
 
         //Start AltAttackCoroutine
         StartCoroutine(AltAttackCoroutine());

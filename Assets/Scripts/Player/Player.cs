@@ -1115,7 +1115,13 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //if it isn't null, create the player weapon and set the reference for it.
         this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
         
-        
+        //if we spawned a new weapon,
+        //set it's local posiition to be 0,0,0
+        //so that it's centered on the player.
+        if (this.curWeapon != null)
+        {
+            this.curWeapon.transform.localPosition = Vector3.zero;
+        }
 
         this.modifiers = gameData.modifiers;
 
