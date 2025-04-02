@@ -14,7 +14,7 @@ public class StopWatch: ItemData{
     }
     public override void ApplyEffect(){
         //TODO: .2 secs added arbitrarily, should probably test
-        Player.instance.modifiers.Add(new StatModifier(StatModified.iFrameTime, .2f, StatModifierType.Add, this));
+        Player.instance.modifiers.Add(new StatModifier(StatModified.iFrameTime, .2f, StatModifierType.Add, this.name));
         Debug.Log("Applied StopWatch Effect!");
     }
 }

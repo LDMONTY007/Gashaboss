@@ -1102,6 +1102,13 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             other.GetComponent<Collectible>().OnCollect();
         }
     }
+    
+    public void AddItemToInventory(ItemData item){
+        if (!inventory.Contains(item)){
+            inventory.Add(item);
+        }
+    }
+
     public void LoadData(GameData gameData){
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
@@ -1118,7 +1125,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //add all saved item data to the player's inventory.
         foreach (string s in gameData.inventory)
         {
-            inventory.Add(SaveDataManager.instance.FindItemData(s));
+            AddItemToInventory(SaveDataManager.instance.FindItemData(s));
         }
        
     }

@@ -18,7 +18,6 @@ public class SaveDataManager: MonoBehaviour{
     private List<IDataPersistence> dataPersistenceObjects;
     private FileDataHandler dataHandler;
     private string selectedProfile;
-    private Coroutine autoSaveCoroutine;
     public static SaveDataManager instance {get; private set;}
     
     private void Awake(){

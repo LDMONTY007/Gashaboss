@@ -127,6 +127,7 @@ public class UIManager : MonoBehaviour
     public void QuitToTitle()
     {
         Time.timeScale = 1;  // Ensure normal speed
+        SaveDataManager.instance.SaveGame();
         SceneManager.LoadScene("TitleScreen"); // Load the Title Screen scene
         Destroy(gameObject); // Remove UIManager from memory since it's not needed in TitleScreen
 

@@ -26,7 +26,7 @@ public class Item: Collectible
 
     public void OnCollectAnimationEnd()
     {
-        Player.instance.inventory.Add(item);
+        Player.instance.AddItemToInventory(item);
         item.OnPickup();
         Destroy(gameObject); // Destroy only the physical object, not the script
         Debug.Log("Deleting Item Prefab, Successfully added to inventory.");
