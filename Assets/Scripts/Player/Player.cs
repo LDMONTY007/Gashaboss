@@ -1103,10 +1103,12 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
     
-    public void AddItemToInventory(ItemData item){
+    public boolean AddItemToInventory(ItemData item){
         if (!inventory.Contains(item)){
             inventory.Add(item);
+            return true;
         }
+        return false;
     }
 
     public void LoadData(GameData gameData){
