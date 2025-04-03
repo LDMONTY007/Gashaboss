@@ -277,6 +277,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 0}
+  collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 2683351818666409076}
   hasCooldown: 1
@@ -321,7 +323,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 5
+  m_Radius: 2.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6111380475548345203
 GameObject:
@@ -535,22 +537,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22dab6d7ef89c14091860d85e8438dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: 6d424dd0c2af2de43af859ba22f9882c, type: 2}
+  collectibleName: TestBoss
+  bossName: BaseBoss
+  coinsRewarded: 3
+  capsRewarded: 1
   debugInfoTextMesh: {fileID: 6967904113999676315}
   bossCollider: {fileID: 0}
+  animator: {fileID: 0}
+  movementParticles: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   curIdleTime: 0
   doStateMachine: 1
   attackCheckRadius: 10
+  rb: {fileID: 0}
   moveSpeed: 20
   rotationSpeed: 5
+  avoidanceForceMultiplier: 25
+  avoidanceDistance: 5
+  avoidanceAngle: 90
   animatedModel: {fileID: 8088744811269085005}
   weapon: {fileID: 6818133242696300460}
   lookTransform: {fileID: 410040115047980711}
   playerObject: {fileID: 0}
-  avoidanceForceMultiplier: 25
-  avoidanceDistance: 5
-  avoidanceAngle: 90
 --- !u!54 &6498016807078793078
 Rigidbody:
   m_ObjectHideFlags: 0

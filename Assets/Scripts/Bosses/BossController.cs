@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
-public class BossController : MonoBehaviour, IDamageable
+public class BossController : Collectible, IDamageable
 {
     [Header("Boss Specific Info")]
     public string bossName = "BaseBoss";
@@ -95,6 +95,7 @@ public class BossController : MonoBehaviour, IDamageable
         //where it falls to the ground then fades away
 
         isDead = true;
+        OnCollect(); // add to collections before destroying
 
         //set color to be red when dead.
         //bossRenderer.material.color = Color.red;
@@ -1100,5 +1101,8 @@ public class BossController : MonoBehaviour, IDamageable
         lowResRoutine = null;
 
         yield return null;
+    }
+    public override void OnCollect(){
+        CollectionManager.instance.AddToCollection(this);
     }
 }

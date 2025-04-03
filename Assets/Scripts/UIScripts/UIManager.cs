@@ -1,8 +1,6 @@
 // UIManager is a Singleton class that manages the UI Panels in the game
 // It controls the Title Screen, In Game UI, Pause Menu, and transitions between them
 // It also handles the game state (paused or not)
-// The InGameUI currently also displays the BOSS health bar at all times, this needs to be set to only display during the boss fight
-// However, the boss fight is not implemented yet, so this is a placeholder
 
 using TMPro;
 using UnityEngine;
@@ -23,6 +21,13 @@ public class UIManager : MonoBehaviour
     public GameObject pauseMenuPanel;
 
     private bool isPaused = false;
+
+    // UI Block Flag
+    public bool uiBlock = false; // True when a non-pause UI (e.g., Collection or ObjectViewer) is open
+
+    public enum UIState { None, Collection, ObjectViewer, Pause }
+    public UIState currentUIState = UIState.None;
+
 
     private void Awake()
     {
@@ -57,20 +62,36 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("GameUIScene"); // Ensure this scene exists
     }
 
-    // Press ESC to toggle pause menu
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePause();
+            switch (currentUIState)
+            {
+                case UIState.ObjectViewer:
+                    ObjectViewer.instance.CloseViewer();
+                    break;
+                case UIState.Collection:
+                    CollectionManager.instance.CloseCollection();
+                    break;
+                case UIState.Pause:
+                    ResumeGame();
+                    break;
+                case UIState.None:
+                    TogglePause();
+                    break;
+            }
         }
     }
 
-    //LD Montello
-    //unlocks the cursor and makes it visible
-    //when the game is paused,
-    //and then locks the cursor to the center
-    //and makes it invisible while in game play.
+
+
+
+    // LD Montello
+    // unlocks the cursor and makes it visible
+    // when the game is paused,
+    // and then locks the cursor to the center
+    // and makes it invisible while in game play.
     public void HandleCursorStates()
     {
         Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
@@ -85,9 +106,11 @@ public class UIManager : MonoBehaviour
         inGameUI.SetActive(!isPaused);
         Time.timeScale = isPaused ? 0 : 1;
         HandleCursorStates();
+
+        currentUIState = isPaused ? UIState.Pause : UIState.None;
     }
 
-    // Resume Game
+
     public void ResumeGame()
     {
         isPaused = false;
@@ -95,17 +118,21 @@ public class UIManager : MonoBehaviour
         inGameUI.SetActive(true);
         Time.timeScale = 1;
         HandleCursorStates();
+
+        currentUIState = UIState.None;
     }
+
 
     // Quit to Title Screen (Load Title Scene)
     public void QuitToTitle()
     {
         Time.timeScale = 1;  // Ensure normal speed
+        SaveDataManager.instance.SaveGame();
         SceneManager.LoadScene("TitleScreen"); // Load the Title Screen scene
         Destroy(gameObject); // Remove UIManager from memory since it's not needed in TitleScreen
 
-        //LD Montello.
-        //unlock the cursor and make it visible.
+        // LD Montello.
+        // unlock the cursor and make it visible.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -117,14 +144,13 @@ public class UIManager : MonoBehaviour
         Debug.Log("Game Quit! (Only works in a built game)");
     }
 
-    //LD Montello
-    //will disable the boss ui
-    //object when false. 
-    //used to hide/display the boss UI if a boss is alive or dead.
-    //called form the boss itself.
+    // LD Montello
+    // will disable the boss ui
+    // object when false. 
+    // used to hide/display the boss UI if a boss is alive or dead.
+    // called from the boss itself.
     public void SetBossUI(bool visible)
     {
         bossUIManager.gameObject.SetActive(visible);
     }
 }
-

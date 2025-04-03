@@ -9,9 +9,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class Player : MonoBehaviour, IDamageable
+public class Player : MonoBehaviour, IDamageable, IDataPersistence
 {
-
     public static Player instance;
 
     //private references 
@@ -109,6 +108,9 @@ public class Player : MonoBehaviour, IDamageable
 
     //terraria uses this number for iframes as do most games.
     public float iFrameTime = 0.67f;
+
+    //radius from a weapon we need to enter in order to pick it up.
+    public float weaponPickupRadius = 2f;
 
     [Header("Movement Variables")]
     
@@ -265,6 +267,9 @@ public class Player : MonoBehaviour, IDamageable
     // Update is called once per frame
     void Update()
     {
+        // Checks if UI is open
+        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+
         #region isGroundedCheck
         //isGrounded = Physics.BoxCast(transform.position, this.GetComponent<Collider>().bounds.size, -transform.up, Quaternion.identity, groundCheckDist, playerMask);
         //isGrounded = Physics.Raycast(transform.position, -transform.up, this.GetComponent<Collider>().bounds.extents.y + groundCheckDist, playerMask);
@@ -388,15 +393,20 @@ public class Player : MonoBehaviour, IDamageable
 
         #region attacking
 
-        if (attackAction.WasPressedThisFrame())
+        if (curWeapon != null)
         {
-            curWeapon.Attack();
+            if (attackAction.WasPressedThisFrame())
+            {
+                curWeapon.Attack();
+            }
+
+            if (altAttackAction.WasPressedThisFrame())
+            {
+                curWeapon.AltAttack();
+            }
+
         }
 
-        if (altAttackAction.WasPressedThisFrame())
-        {
-            curWeapon.AltAttack();
-        }
 
         #endregion
 
@@ -419,18 +429,21 @@ public class Player : MonoBehaviour, IDamageable
 
     private void FixedUpdate()
     {
+        // Checks if UI manager is open
+        if (UIManager.Instance != null && UIManager.Instance.uiBlock) return;
+
         //Vector3 prevVel = rb.linearVelocity;
 
-        
+
 
         //project controls to the camera's rotation so left and right are always the left and right sides of the camera.
         //moveVector = cam.transform.right * moveInput.x + cam.transform.forward * moveInput.y;
 
-       
+
         //set the speed using move speed and the normalized movement direction vector.
         //rb.linearVelocity = moveVector.normalized * moveSpeed;
 
-        
+
         HandleRbRotation();
 
         HandleDashing();
@@ -1087,7 +1100,103 @@ public class Player : MonoBehaviour, IDamageable
 */
     void OnTriggerEnter(Collider other){
         if (other.gameObject.CompareTag("Collectable")){
-            other.GetComponent<ICollectable>().OnCollect();
+            other.GetComponent<Collectible>().OnCollect();
+        }
+    }
+    
+    public void AddItemToInventory(ItemData item){
+        if (!inventory.Contains(item)){
+            inventory.Add(item);
+        }
+    }
+
+    public void LoadData(GameData gameData){
+        this.curHealth = gameData.coins;
+        this.caps = gameData.caps;
+        //if it isn't null, create the player weapon and set the reference for it.
+        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
+        
+        //if we spawned a new weapon,
+        //set it's local posiition to be 0,0,0
+        //so that it's centered on the player.
+        if (this.curWeapon != null)
+        {
+            this.curWeapon.transform.localPosition = Vector3.zero;
+        }
+
+        this.modifiers = gameData.modifiers;
+
+
+        //clear inventory
+        this.inventory.Clear();
+        //add all saved item data to the player's inventory.
+        foreach (string s in gameData.inventory)
+        {
+            AddItemToInventory(SaveDataManager.instance.FindItemData(s));
+        }
+       
+    }
+
+    
+
+    public void SaveData(GameData gameData){
+        Debug.LogWarning("SAVING PLAYER DATA: " + this.curWeapon.collectibleData.name);
+        gameData.coins = this.curHealth;
+        gameData.caps = this.caps;
+        gameData.playerWeapon = this.curWeapon.collectibleData.name;
+        gameData.modifiers = this.modifiers;
+        
+        //add all the inventory items to the game data as strings
+        //because they are used like keys.
+        gameData.inventory.Clear();
+        for (int i = 0; i < inventory.Count; i++)
+        { gameData.inventory.Add(inventory[i].name); }
+        
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        //if the collider is a weapon
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            //if it's within a 2 meter radius
+            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
+            {
+                //collect the weapon.
+                other.GetComponent<Collectible>().OnCollect();
+            }
+        }
+    }
+
+    public void SwapCurrentWeapon(Weapon w)
+    {
+        DropCurrentWeapon();
+        //set the weapons parent transform to be this player.
+        w.transform.SetParent(transform, false);
+        //set the position to be zero locally
+        //so that it is zero relative to the parent as well.
+        w.transform.localPosition = Vector3.zero;
+        //set to no rotation (0, 0, 0);
+        w.transform.localRotation = Quaternion.identity;
+
+        //assign the new current weapon.
+        curWeapon = w;
+    }
+
+    void DropCurrentWeapon()
+    {
+        if (curWeapon != null)
+        {
+            //set parent to be null
+            //so that we can disconnect it from the player.
+            curWeapon.transform.parent = null;
+            //put the old weapon in front of the player.
+            //TODO:
+            //Write a quick function so the weapon can't be placed in an object.
+            curWeapon.transform.position = transform.position + transform.forward * 15f;
+
+            //Destroy the current weapon.
+            Destroy(curWeapon.gameObject);
         }
     }
 }

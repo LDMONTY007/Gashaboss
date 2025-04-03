@@ -6,11 +6,10 @@ using UnityEngine;
 //Note: Make sure this
 //object's collider excludes
 //the player layer.
-public class Weapon : MonoBehaviour
+public class Weapon : Collectible
 {
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
-
     public ParticleSystem hitParticles;
 
     public CollisionSensor collisionSensor;
@@ -54,9 +53,18 @@ public class Weapon : MonoBehaviour
         collisionSensor.triggerCollider.radius = attackDistance / 2;
     }
 
+    private void OnDestroy()
+    {
+        //TODO:
+        //Add the animation here where we destroy the 
+        //weapon.
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        player = Player.instance;
+
         //set the collision sensor 
         //collider radius to be
         //the same as our attack distance
@@ -78,7 +86,7 @@ public class Weapon : MonoBehaviour
         
     }
 
-    public void Attack()
+    public virtual void Attack()
     {
         //if we can't attack,
         //print a message in case something
@@ -103,11 +111,13 @@ public class Weapon : MonoBehaviour
             return;
         }
 
+        Debug.Log(gameObject.name);
+
         //Start AltAttackCoroutine
         StartCoroutine(AltAttackCoroutine());
     }
 
-    public IEnumerator AttackCoroutine()
+    public virtual IEnumerator AttackCoroutine()
     {
         //don't allow other attacks during our current attack.
         canAttack = false;
@@ -351,5 +361,10 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(cooldownTime);
 
         canAttack = true;
+    }
+    public override void OnCollect(){
+        CollectionManager.instance.AddToCollection(this);
+        //swap the weapon on the player for ourselves.
+        Player.instance.SwapCurrentWeapon(this);
     }
 }

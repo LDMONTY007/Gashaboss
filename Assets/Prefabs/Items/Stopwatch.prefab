@@ -67,6 +67,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22505acdcc2864647b815c9fd53a244b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: 958eb208523e63f448f269ff618201b0, type: 2}
+  collectibleName: Stopwatch
+  icon: {fileID: 0}
   item: {fileID: 11400000, guid: 8f83b8eea01f62f41962784b19cf6e4c, type: 2}
   itemModel: {fileID: 8496565502549723980}
 --- !u!1001 &8730426473361290781

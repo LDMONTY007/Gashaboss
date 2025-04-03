@@ -1,0 +1,63 @@
+using UnityEngine;
+
+public class BombProjectile : Projectile
+{
+
+    private int bouncesBeforeExplosion = 2;
+
+    private void Update()
+    {
+        Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 10f, Color.blue);
+    }
+
+    private void ReflectBounce(Collision col)
+    {
+        //reflect the current velocity to create a perfect parabola bounce.
+        //rb.linearVelocity = Vector3.Reflect(rb.linearVelocity, col.contacts[0].normal);
+        Debug.DrawRay(transform.position, col.GetContact(0).normal.normalized * 10f, Color.green);
+        Debug.DrawRay(transform.position, col.relativeVelocity * 15f, Color.yellow);
+        
+        //Set the current velocity to be the negative relative velocity reflected over the normal of the surface
+        //to create a perfect cartoony bounce.
+        rb.linearVelocity = Vector3.Reflect(-col.relativeVelocity, col.GetContact(0).normal);
+        Debug.DrawRay(transform.position, Vector3.Reflect(-col.relativeVelocity, col.GetContact(0).normal), Color.red);
+        
+    }
+
+    //hide the inherited member so we can have an explosion
+    //on the 3rd collision.
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (bouncesBeforeExplosion > 0)
+        {
+            bouncesBeforeExplosion--;
+
+            //bounce.
+            ReflectBounce(collision);
+            return;
+        }
+
+
+        if (doesSplashDamage)
+        {
+            DealSplashDamage();
+        }
+        else
+        {
+            //do damage to the object we collided with (or attempt to)
+            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                DealDamage(damageable);
+            }
+        }
+
+
+        //destroy the gameobject if it should
+        //be destroyed on collision.
+        if (destroyOnCollision)
+        {
+            Destroy(gameObject);
+        }
+    }
+}

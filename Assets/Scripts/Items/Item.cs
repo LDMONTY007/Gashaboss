@@ -3,7 +3,7 @@ using UnityEngine;
 // Used to attach to the game object prefabs for items
 // Passes logic to the ScriptableObject for that item
 // Primarily handles adding to inventory and gameobject deletion
-public class Item: MonoBehaviour, ICollectable
+public class Item: Collectible
 {
     [SerializeField] private ItemData item; // Assign scriptable object via inspector
 
@@ -13,20 +13,20 @@ public class Item: MonoBehaviour, ICollectable
     //and then used in the animation when the item is picked up.
     private TurnTable turnTable;
 
-    public void OnCollect(){
+    public override void OnCollect(){
         if(item == null) {
             Debug.LogError("Item Instance Has No Object Assigned: Please Add One.\n Aborting Item Pickup.");
             Destroy(gameObject);
             return;
         }
-
+        CollectionManager.instance.AddToCollection(this);
         //Start the animation for the item being picked up.
         StartCoroutine(PickupAnimationCoroutine());
     }
 
     public void OnCollectAnimationEnd()
     {
-        Player.instance.inventory.Add(item);
+        Player.instance.AddItemToInventory(item);
         item.OnPickup();
         Destroy(gameObject); // Destroy only the physical object, not the script
         Debug.Log("Deleting Item Prefab, Successfully added to inventory.");

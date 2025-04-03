@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc2ac3baa70fe84791d077b858ef41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: 500dde9cbe9ae994eb580fb06ea54cd0, type: 2}
+  collectibleName: Pillow
   bossName: Pillow
   coinsRewarded: 3
   capsRewarded: 1
@@ -475,6 +477,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 0}
+  collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 8584689668303243228}
   hasCooldown: 1

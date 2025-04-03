@@ -49,12 +49,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea34d370633a3e419003be3deaf2fc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 11400000, guid: e5179402f07374245a78f25ee96e2b05, type: 2}
+  collectibleName: Crocodile
   bossName: Crocodile
   coinsRewarded: 3
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 3973255039379739244}
   bossCollider: {fileID: 8487558562246309161}
   animator: {fileID: 8816747777273190341}
+  movementParticles: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   curIdleTime: 0
@@ -472,6 +475,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleData: {fileID: 0}
+  collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   collisionSensor: {fileID: 1421720976596736270}
   hasCooldown: 1

@@ -79,13 +79,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drops:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: e5179402f07374245a78f25ee96e2b05, type: 2}
+  - {fileID: 11400000, guid: 500dde9cbe9ae994eb580fb06ea54cd0, type: 2}
+  - {fileID: 11400000, guid: 843efc63262e21b4ba52340bb5ae8bca, type: 2}
+  - {fileID: 11400000, guid: 958eb208523e63f448f269ff618201b0, type: 2}
+  - {fileID: 11400000, guid: 3533069148c1ac1419a5eb26cb841a30, type: 2}
   capsule: {fileID: 4408692558850734106, guid: 0c36a2390d6f192469d7e60c54ddaf16, type: 3}
   capsuleSpawnTransform: {fileID: 5725657859695926706}
   gachaAnimator: {fileID: 781203210463097241}
   setRandomSeedAnimated: {fileID: 1999788588684373509}
+  gachaRollClip: {fileID: 8300000, guid: 648fa0ecd20380841a913424fcf13092, type: 3}
 --- !u!65 &3582258337774004232
 BoxCollider:
   m_ObjectHideFlags: 0
