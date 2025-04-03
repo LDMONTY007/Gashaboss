@@ -45,7 +45,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public ParticleSystem dashParticles;
     #region Items and Modifier vars
-    public List<StatModifier> modifiers = new List<StatModifier>();
+    [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
     #endregion
     #region caps vars
@@ -1103,7 +1103,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
     
-    public boolean AddItemToInventory(ItemData item){
+    public bool AddItemToInventory(ItemData item){
         if (!inventory.Contains(item)){
             inventory.Add(item);
             return true;
@@ -1126,7 +1126,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
 
         this.modifiers = gameData.modifiers;
-
 
         //clear inventory
         this.inventory.Clear();
