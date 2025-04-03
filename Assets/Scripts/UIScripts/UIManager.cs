@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
     // UI Block Flag
     public bool uiBlock = false; // True when a non-pause UI (e.g., Collection or ObjectViewer) is open
 
-    public enum UIState { None, Collection, ObjectViewer, Pause }
+    public enum UIState { None, Collection, ObjectViewer, Pause, Death }
     public UIState currentUIState = UIState.None;
 
 
@@ -86,6 +86,9 @@ public class UIManager : MonoBehaviour
                     break;
                 case UIState.Pause:
                     ResumeGame();
+                    break;
+                case UIState.Death:
+                    //Do nothing when escape is pressed during death.
                     break;
                 case UIState.None:
                     TogglePause();

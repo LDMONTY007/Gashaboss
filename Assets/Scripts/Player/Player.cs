@@ -898,8 +898,34 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         animatedModel.SetActive(false);
 
 
+
+        //Start the death coroutine which opens the Death UI.
         StartCoroutine(DeathCoroutine());
-        
+    }
+
+    public void Respawn()
+    {
+        //Delete the player's inventory.
+        DeletePlayerInventory();
+
+
+        //set the player's coin count to be the starting health coins
+        //and set the caps to be zero.
+        //so they will be saved and reloaded at their default when 
+        //the player respawns.
+        curHealth = startHealth;
+        caps = 0;
+
+        //Save all game data after deleting the inventory.
+        //This ensures we save the collection before leaving this scene.
+        //everything but the collection resets when the player dies. 
+        SaveDataManager.instance.SaveGame();
+
+        //Turn off the UI block when we reload the current scene.
+        UIManager.Instance.uiBlock = false;
+
+        //reload the current scene.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void DeletePlayerInventory()
@@ -921,29 +947,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public IEnumerator DeathCoroutine()
     {
-        //Delete the player's inventory.
-        DeletePlayerInventory();
+        //wait 0.5 seconds before we open the death screen.
+        yield return new WaitForSeconds(0.5f);
 
-
-        //set the player's coin count to be the starting health coins
-        //and set the caps to be zero.
-        //so they will be saved and reloaded at their default when 
-        //the player respawns.
-        curHealth = startHealth;
-        caps = 0;
-
-        //Save all game data after deleting the inventory.
-        //This ensures we save the collection before leaving this scene.
-        //everything but the collection resets when the player dies. 
-        SaveDataManager.instance.SaveGame();
-
-        //wait 2 seconds before we load into a new scene.
-        yield return new WaitForSeconds(2f);
-
-        
-
-        //reload the current scene.
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //Open the death UI
+        DeathUI.instance.OpenDeathUI();
     }
 
     public void TakeDamage(int d, GameObject other)
