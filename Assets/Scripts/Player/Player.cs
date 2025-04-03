@@ -7,6 +7,7 @@ using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour, IDamageable, IDataPersistence
@@ -70,6 +71,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     }
 
     #endregion
+
+    private int startHealth = 4;
 
     #region health vars
     [Header("Health Variables")]
@@ -893,6 +896,54 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //disable the visual model for the character.
         animatedModel.SetActive(false);
+
+
+        StartCoroutine(DeathCoroutine());
+        
+    }
+
+    public void DeletePlayerInventory()
+    {
+        //Delete the player's weapon from them so it is deleted when we save.
+        if (curWeapon != null)
+        Destroy(curWeapon.gameObject);
+        curWeapon = null;
+        //delete the player's inventory
+        inventory.Clear();
+        //delete the player's modifiers.
+        modifiers.Clear();
+
+
+        //We delete everything except the player's collectibles so they can still see them in the display case,
+        //but they still need to collect their items and weapon all over again even if they already got them
+        //in the display case.
+    }
+
+    public IEnumerator DeathCoroutine()
+    {
+        //Delete the player's inventory.
+        DeletePlayerInventory();
+
+
+        //set the player's coin count to be the starting health coins
+        //and set the caps to be zero.
+        //so they will be saved and reloaded at their default when 
+        //the player respawns.
+        curHealth = startHealth;
+        caps = 0;
+
+        //Save all game data after deleting the inventory.
+        //This ensures we save the collection before leaving this scene.
+        //everything but the collection resets when the player dies. 
+        SaveDataManager.instance.SaveGame();
+
+        //wait 2 seconds before we load into a new scene.
+        yield return new WaitForSeconds(2f);
+
+        
+
+        //reload the current scene.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void TakeDamage(int d, GameObject other)
@@ -1113,7 +1164,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
         //if it isn't null, create the player weapon and set the reference for it.
-        this.curWeapon = gameData.playerWeapon != string.Empty ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
+        this.curWeapon = (gameData.playerWeapon != null && gameData.playerWeapon != string.Empty) ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
         
         //if we spawned a new weapon,
         //set it's local posiition to be 0,0,0
@@ -1139,10 +1190,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     
 
     public void SaveData(GameData gameData){
-        Debug.LogWarning("SAVING PLAYER DATA: " + this.curWeapon.collectibleData.name);
         gameData.coins = this.curHealth;
         gameData.caps = this.caps;
-        gameData.playerWeapon = this.curWeapon.collectibleData.name;
+        gameData.playerWeapon = this.curWeapon != null ? this.curWeapon.collectibleData.name : null;
         gameData.modifiers = this.modifiers;
         
         //add all the inventory items to the game data as strings

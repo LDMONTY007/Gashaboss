@@ -38,6 +38,16 @@ public class UIManager : MonoBehaviour
         }
         else
         {
+           
+
+            //When an instance already exists,
+            //grab the references from it before we destroy it.
+            Instance.playerUIManager = playerUIManager;
+            Instance.bossUIManager = bossUIManager;
+            Instance.inGameUI = inGameUI;
+            Instance.pauseMenuPanel = pauseMenuPanel;
+
+
             Destroy(gameObject);
             return;
         }
