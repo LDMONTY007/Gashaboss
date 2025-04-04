@@ -5121,7 +5121,7 @@ MonoBehaviour:
   moveSpeed: 5
   rotationSpeed: 20
   avoidanceForceMultiplier: 50
-  avoidanceDistance: 15
+  avoidanceDistance: 5
   avoidanceAngle: 75
   animatedModel: {fileID: 3015649465965333844}
   weapon: {fileID: 3606864933855598784}

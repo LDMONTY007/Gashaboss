@@ -15,9 +15,12 @@ public class DashAwayMove : BossAction
         dashAwayPos = boss.transform.position + dashAwayPos;
         Vector3 ogDashAwayPos = dashAwayPos;
 
+        //get the pathable point on the navmesh for the boss.
+        dashAwayPos = boss.GetPathablePoint(dashAwayPos, 20f);
+
         //boss.curState = BossController.BossState.move;
 
-        #region collision avoidance
+       /* #region collision avoidance
         //we are going to search and find
         //the closest unobstructed position
         //to dash towards.
@@ -98,7 +101,7 @@ public class DashAwayMove : BossAction
         }
 
 
-        #endregion
+        #endregion*/
 
         //make sure that we don't
         //target a y position that we can't

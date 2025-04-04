@@ -248,27 +248,28 @@ public class BossController : Collectible, IDamageable
         rb = GetComponent<Rigidbody>();
     }
 
-    public Transform target;
-    public float radius = 5f;
-    Vector3 pathablePoint = Vector3.zero;
-
-    // Update is called once per frame
-    void Update()
+    public Vector3 GetPathablePoint(Vector3 desiredPoint, float searchRadius)
     {
-        #region navmesh point finder testing
+        Vector3 foundPoint = Vector3.zero;
 
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(target.position, out hit, radius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(desiredPoint, out hit, searchRadius, NavMesh.AllAreas))
         {
-            pathablePoint = hit.position;
-            Debug.Log("Pathable Point Found: " + pathablePoint);
+            foundPoint = hit.position;
+            Debug.Log("Pathable Point Found: " + foundPoint);
         }
         else
         {
             Debug.Log("No pathable point found within radius.");
         }
 
-        #endregion
+        return foundPoint;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
 
         if (doStateMachine)
         {
@@ -483,17 +484,6 @@ public class BossController : Collectible, IDamageable
         //our boss to initiate an attack.
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackCheckRadius);
-
-
-        #region pathing point navmesh debug
-
-        if (pathablePoint != Vector3.zero)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(pathablePoint, 0.5f);
-        }
-
-        #endregion
 
         //Set gizmos color back to the original color.
         Gizmos.color = prevColor;
@@ -768,6 +758,9 @@ public class BossController : Collectible, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
+            //this is usually a loop that bosses can get stuck in, if that's the case we should have
+            //a fall back where they stop doing this movement and restart pathing to the player.
+
             //if we're not in the move state
             //anymore than stop moving.
             if (curState != BossState.move)
@@ -835,6 +828,8 @@ public class BossController : Collectible, IDamageable
         //walk closer to them.
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
+            
+
             //if we're not in the move state
             //anymore than stop moving.
             //this is usually caused when a player
