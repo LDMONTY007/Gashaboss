@@ -471,6 +471,18 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public void HandleRbRotation()
     {
+        //if the player is jumping and they are moving horizontally 
+        //we rotate the animated model to visually show their jump arc.
+/*        if ((!isGrounded) && (rb.linearVelocity.x > 0 || rb.linearVelocity.y > 0))
+        {
+            animatedModel.transform.rotation = Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z), transform.up);
+        }
+        else
+        {
+            animatedModel.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }*/
+        
+
         //when dashing we want to rotate to face the dash direction
         if (dashing)
         {
@@ -481,7 +493,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         {
             //rotate towards the velocity direction but don't rotate upwards.
             if (moveVector != Vector3.zero)
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+                rb.MoveRotation(Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up));
         }
 
         
@@ -701,6 +713,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //and distance.
     public IEnumerator DashCoroutine()
     {
+        //Get the forward vector using player up and the camera right vector
+        //so it's a forward vector on the plane created by the up axis of the player
+        //and the right axis of the camera. 
+        Vector3 forwardProjectedOnPlane = Vector3.Cross(cam.transform.right, transform.up);
+
+        Vector3 desiredDashVector = cam.transform.right * moveInput.normalized.x + forwardProjectedOnPlane * moveInput.normalized.y;
+        //Set rotation instantly 
+        //so that they player always dashes in the direction they have input.
+        //it should feel extremely responsive.
+        rb.rotation = Quaternion.LookRotation(new Vector3(desiredDashVector.x, 0f, desiredDashVector.z), Vector3.up);
+
         //set the dash particles to play
         dashParticles.Play();
 
