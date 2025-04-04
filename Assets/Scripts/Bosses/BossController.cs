@@ -178,6 +178,18 @@ public class BossController : Collectible, IDamageable
         } 
         set { 
             Debug.LogWarning("State switched from " + _curState + " to " + value);  
+
+            if (value == BossState.move)
+            {
+                //only freeze rotation when moving, not position.
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+            }
+            else
+            {
+                //otherwise freeze position and rotation.
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
+
             _curState = value; 
             debugInfoTextMesh.text = _curState.ToString(); 
 
