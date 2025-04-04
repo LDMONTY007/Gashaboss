@@ -8,10 +8,10 @@ public enum StatModified{
     iFrameTime
 }
 public class StatModifier{
-    public StatModified stat { get; private set; }
-    public float modValue { get; private set; }
-    public StatModifierType type { get; private set; }
-    public object source { get; private set; } // Track what added the modifier
+    public StatModified stat { get; set; }
+    public float modValue { get; set; }
+    public StatModifierType type { get; set; }
+    public object source { get; set; } // Track what added the modifier
 
     public StatModifier(StatModified stat, float value, StatModifierType type, object source = null){
         this.stat = stat;

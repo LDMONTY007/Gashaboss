@@ -31,7 +31,9 @@ public class FileDataHandler{
                 if (newDateTime > mostRecentTime) mostRecentProfileId = profileId;
             }
         }
-        return mostRecentProfileId;
+        //if we don't find any files, go ahead and make it 1
+        //should only be used if the game is opened without loading
+        return mostRecentProfileId != null ? mostRecentProfileId : "1";
     } 
     public GameData Load(string saveID){
         // Safety check: nothing to return from null profile
