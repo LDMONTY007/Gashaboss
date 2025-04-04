@@ -8,7 +8,7 @@ public class DashAwayMove : BossAction
     {
         //the distance the player is going to dash at.
         //this is here just for readability.
-        float dashDist = 10f;
+        float dashDist = 50f;
 
         Vector3 dirFromPlayer = boss.playerObject.transform.position - boss.transform.position;
         Vector3 dashAwayPos = -1f * dirFromPlayer.normalized * dashDist;
