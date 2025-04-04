@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
@@ -247,9 +248,28 @@ public class BossController : Collectible, IDamageable
         rb = GetComponent<Rigidbody>();
     }
 
+    public Transform target;
+    public float radius = 5f;
+    Vector3 pathablePoint = Vector3.zero;
+
     // Update is called once per frame
     void Update()
     {
+        #region navmesh point finder testing
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(target.position, out hit, radius, NavMesh.AllAreas))
+        {
+            pathablePoint = hit.position;
+            Debug.Log("Pathable Point Found: " + pathablePoint);
+        }
+        else
+        {
+            Debug.Log("No pathable point found within radius.");
+        }
+
+        #endregion
+
         if (doStateMachine)
         {
             HandleStateMachine();
@@ -463,6 +483,17 @@ public class BossController : Collectible, IDamageable
         //our boss to initiate an attack.
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackCheckRadius);
+
+
+        #region pathing point navmesh debug
+
+        if (pathablePoint != Vector3.zero)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(pathablePoint, 0.5f);
+        }
+
+        #endregion
 
         //Set gizmos color back to the original color.
         Gizmos.color = prevColor;

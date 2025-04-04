@@ -17,7 +17,7 @@ public class PillowHop : BossAction
     }
 
     public void PlayShockwave(){
-        instantiate()
+        //instantiate()
     }
 
 
