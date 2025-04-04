@@ -148,8 +148,6 @@ public class BossController : Collectible, IDamageable
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
 
-    public float rotationSpeed = 20f;
-
     [Header("Collision Avoidance Parameters")]
     public float avoidanceForceMultiplier = 50f;
     public float avoidanceDistance = 30f;
@@ -467,10 +465,10 @@ public class BossController : Collectible, IDamageable
             //LD Montello
             //Rotation is locked on our rigidbody settings
             //so only code can rotate the object.
-            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up), rotationSpeed));
+            rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
         }
 
-
+        
 
     }
 

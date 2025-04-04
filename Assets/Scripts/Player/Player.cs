@@ -140,9 +140,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     
     public float sprintSpeed = 20f;
 
-
-    public float rotationSpeed = 5f;
-
     private Coroutine slowToStopCoroutine;
 
     //Variables for movement
