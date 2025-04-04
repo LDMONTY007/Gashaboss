@@ -923,6 +923,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //Turn off the UI block when we reload the current scene.
         UIManager.Instance.uiBlock = false;
+        UIManager.Instance.currentUIState = UIManager.UIState.None;
 
         //reload the current scene.
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
