@@ -4894,7 +4894,7 @@ MonoBehaviour:
   dashParticles: {fileID: 7108178822967578991}
   walkParticles: {fileID: 213442657710818105}
   inventory: []
-  bounceForce: 5
+  bounceForce: 20
   invincible: 0
   iFrameTime: 0.67
   weaponPickupRadius: 2

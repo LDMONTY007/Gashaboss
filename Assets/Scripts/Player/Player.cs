@@ -346,10 +346,12 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //jumpPressed |= jumpAction.WasPressedThisFrame();
 
-        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping);
+        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping && !stunned);
 
         if (isGrounded)
         {
+
+
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
             if (!jumping)
@@ -404,7 +406,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             jumping = false;
         }
 
-        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown;
+        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown && !stunned;
 
         #region attacking
 
@@ -555,13 +557,20 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //rb.linearVelocity += moveVector;
 
-        #region constant movement
-        //Store yVelocity
-        float yVel = rb.linearVelocity.y;
-        rb.linearVelocity = moveVector;
-        //Restore yVelocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);
-        #endregion
+        //when stunned don't override x and y values
+        //because the player is stunned so they can't move.
+        if (!stunned)
+        {
+            #region constant movement
+            //Store yVelocity
+            float yVel = rb.linearVelocity.y;
+            rb.linearVelocity = moveVector;
+            //Restore yVelocity
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);
+            #endregion
+        }
+
+
 
         ////The dot product check is for when we are
         ////turning on a dime and our velocity is the opposite direction
@@ -721,7 +730,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //divide by 2 so we get the amount of time to reach the apex of the jump.
         buttonTime = (launchForce / (rb.mass * gravity));
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(transform.up * launchForce, ForceMode.Impulse);
+        rb.AddForce(direction * launchForce, ForceMode.Impulse);
         jumpTime = 0;
         jumping = true;
         jumpCanceled = false;
@@ -849,7 +858,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public void ApplyFinalMovements()
     {
         //We need to check that the desiredMoveDirection vector isn't zero because otherwise it can zero out our velocity.
-        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
+        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0 && !stunned)
         {
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
@@ -1051,10 +1060,42 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //have the player get bounced away from the damaging object,
         //and then also give them invincibility frames where
         //they do the blinking in and out of existance thing.
-        rb.linearVelocity += (transform.position - other.transform.position).normalized * bounceForce;
+        //rb.linearVelocity += (transform.position - other.transform.position).normalized * bounceForce;
+        //StartCoroutine(BounceCoroutine((other.transform.position - transform.position).normalized + transform.up.normalized, bounceForce));
+
+        //Vector3 vectorAngle = Quaternion.AngleAxis(45, Vector3.Cross((other.transform.position - transform.position).normalized, transform.up)) * (other.transform.position - transform.position).normalized;
+
+
+        Vector3 vectorAngle = Quaternion.AngleAxis(-45, other.transform.right) * (transform.position - other.transform.position).normalized;
+
+        Debug.Log("HERE");
+        Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
+
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
 
         //print out data about the player taking damage.
         Debug.Log("Player Took: ".Color("Blue") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Orange"));
+    }
+
+    public IEnumerator BounceCoroutine(Vector3 direction, float force)
+    {
+
+        //we need to wait for fixed update so that this can
+        //properly be applied to the player.
+        yield return new WaitForFixedUpdate();
+
+        //stop the player
+        rb.linearVelocity = Vector3.zero;
+        //if jumping, cancel their jump.
+        if (jumping)
+        {
+            jumpCanceled = true;
+        }
+
+        //this only works while the player is stunned,
+        //they can escape being knocked back much quicker if they
+        //have less i-frame time.
+        rb.AddForce(direction * force, ForceMode.Impulse);
     }
 
 
