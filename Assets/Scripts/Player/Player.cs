@@ -45,6 +45,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public Weapon curWeapon;
 
     public ParticleSystem dashParticles;
+    public ParticleSystem walkParticles;
     #region Items and Modifier vars
     [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
@@ -450,7 +451,21 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         HandleMovement();
         HandleJumping();
 
+        HandleWalkParticles();
+
         HandleUI();
+    }
+
+    public void HandleWalkParticles()
+    {
+        if (!dashing && isGrounded && rb.linearVelocity.magnitude > 0f && !walkParticles.isPlaying)
+        {
+            walkParticles.Play();
+        }
+        else
+        {
+            walkParticles.Stop();
+        }
     }
 
     //LD Montello.
