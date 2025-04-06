@@ -28,6 +28,7 @@ public class Weapon : Collectible
 
     public Player player;
 
+    public Animator animator;
 
     //colors used when debugging the collision sensor mesh
     private Color ogMeshColor;
@@ -119,6 +120,10 @@ public class Weapon : Collectible
 
     public virtual IEnumerator AttackCoroutine()
     {
+        //start the attack animation
+        if (animator != null)
+        animator.SetTrigger("attack");
+
         //don't allow other attacks during our current attack.
         canAttack = false;
 
@@ -217,6 +222,9 @@ public class Weapon : Collectible
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;
+
+        //wait for the animator to finish the attack animation before continuing.
+        //yield return LDUtil.WaitForAnimationFinish(animator);
 
         //allow us to attack again.
         canAttack = true;
@@ -363,6 +371,12 @@ public class Weapon : Collectible
         canAttack = true;
     }
     public override void OnCollect(){
+
+        if (animator != null)
+        {
+            animator.SetBool("isDrop", false);
+        }
+
         CollectionManager.instance.AddToCollection(this);
         //swap the weapon on the player for ourselves.
         Player.instance.SwapCurrentWeapon(this);

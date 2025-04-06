@@ -412,7 +412,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //we're in Iframes after an attack
         //because we need to not allow the player to attack
         //while they're in iframes. 
-        if (curWeapon != null && !stunned)
+        //the player also cannot attack when dashing.
+        if (curWeapon != null && !stunned && !dashing)
         {
             if (attackAction.WasPressedThisFrame())
             {

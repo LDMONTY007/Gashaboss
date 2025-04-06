@@ -1417,6 +1417,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
+    - target: {fileID: 8690879436075887271, guid: 9ade0a2802ecf6f4d9212f790aeaa764, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.56098557
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690879436075887271, guid: 9ade0a2802ecf6f4d9212f790aeaa764, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.4304593
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690879436075887271, guid: 9ade0a2802ecf6f4d9212f790aeaa764, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.4304593
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690879436075887271, guid: 9ade0a2802ecf6f4d9212f790aeaa764, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.56098557
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690879436075887271, guid: 9ade0a2802ecf6f4d9212f790aeaa764, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 75
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
