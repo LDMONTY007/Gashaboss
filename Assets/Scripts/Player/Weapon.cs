@@ -112,7 +112,7 @@ public class Weapon : Collectible
             return;
         }
 
-        Debug.Log(gameObject.name);
+        
 
         //Start AltAttackCoroutine
         StartCoroutine(AltAttackCoroutine());
@@ -290,7 +290,11 @@ public class Weapon : Collectible
 
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
 
-                        player.LaunchPlayer(player.transform.up, 30f);
+                        //wait for fixedupdate before launching player.
+                        //if we didn't wait we'd have inconsistent physics.
+                        yield return new WaitForFixedUpdate();
+
+                        player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
                     }
                 }
                 else

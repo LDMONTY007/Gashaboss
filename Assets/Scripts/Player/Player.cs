@@ -700,18 +700,18 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //for example a heavy downward slash from the sword will push the player
     //up into the air without counting as a jump.
     //TODO: Make this more configureable than it is with the time code from the jump function
-    public void LaunchPlayer(Vector3 direction, float force)
+    public void LaunchPlayer(Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
 
         //I did the work out and 2 * h / t = gravity so I'm going to do that.
-        gravity = 2 * jumpHeight / timeToApex;
-        fallGravity = 2 * jumpHeight / timeToFall;
+        gravity = 2 * height / timeToApex;
+        fallGravity = 2 * height / timeToFall;
 
         float projectedHeight = timeToApex * gravity / 2f;
         Debug.Log(timeToApex + " " + projectedHeight + " " + gravity);
         Debug.Log(("Projected Height " + projectedHeight).ToString().Color("Cyan"));
 
-        //doJump = false;
+        doJump = false;
         //jumpCount--;
         float launchForce;
 
@@ -722,6 +722,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         buttonTime = (launchForce / (rb.mass * gravity));
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(transform.up * launchForce, ForceMode.Impulse);
+        jumpTime = 0;
+        jumping = true;
+        jumpCanceled = false;
+
+
 
         //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
