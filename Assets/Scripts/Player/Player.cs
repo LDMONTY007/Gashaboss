@@ -110,6 +110,20 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public bool invincible = false;
 
+    private bool _stunned = false;
+
+    //used after being hit to prevent the player from attacking immediately.
+    private bool stunned { 
+        get { 
+            return _stunned; 
+
+        } set { 
+            //Update the UI for the stunned popup.
+            UIManager.Instance.playerUIManager.UpdateStunnedPopup(value);
+            _stunned = value;
+        } 
+    }
+
     //terraria uses this number for iframes as do most games.
     public float iFrameTime = 0.67f;
 
@@ -394,7 +408,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         #region attacking
 
-        if (curWeapon != null)
+        //I am using stunned as a way to check if
+        //we're in Iframes after an attack
+        //because we need to not allow the player to attack
+        //while they're in iframes. 
+        if (curWeapon != null && !stunned)
         {
             if (attackAction.WasPressedThisFrame())
             {
@@ -1036,7 +1054,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public void StartIFrames()
     {
-
+        //say the player is stunned.
+        stunned = true;
 
         //if we're already invincible and
         //the iframes coroutine is currently
@@ -1056,6 +1075,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public IEnumerator IFramesCoroutine()
     {
+        stunned = true;
+
         invincible = true;
         float total = iFrameTime;
         float curTime = 0f;
@@ -1102,6 +1123,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //after hitframes become hittable again.
         invincible = false;
 
+        //we are no longer stunned
+        stunned = false;
 
 
         //set iframes routine to null 

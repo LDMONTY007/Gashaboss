@@ -14,6 +14,8 @@ public class PlayerUIManager : MonoBehaviour
     public Image dashImage;
     public Image weaponImage; // Chris Li - Added weaponImage for displaying the current weapon icon
 
+    public GameObject stunnedPopup;
+
     //LD Montello
     //updates the visual for how many coins the player has.
     //here is where we'd implement any animations we'd 
@@ -70,6 +72,20 @@ public class PlayerUIManager : MonoBehaviour
         if (weaponImage != null)
         {
             weaponImage.sprite = newWeaponSprite;
+        }
+    }
+
+    //LD Montello
+    //Just a popup to show when the player is stunned and can't attack.
+    public void UpdateStunnedPopup(bool isStunned)
+    {
+        if (isStunned)
+        {
+            stunnedPopup.SetActive(true);
+        }
+        else
+        {
+            stunnedPopup.SetActive(false);
         }
     }
 }
