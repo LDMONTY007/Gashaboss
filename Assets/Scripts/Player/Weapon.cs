@@ -235,6 +235,10 @@ public class Weapon : Collectible
 
     public IEnumerator AltAttackCoroutine()
     {
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("altAttack");
+
         //don't allow other attacks during our current attack.
         canAttack = false;
 
