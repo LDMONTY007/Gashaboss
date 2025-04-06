@@ -67,7 +67,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
             //LD Montello
             //Update the caps in the UI for the player.
-            //UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
         }
     }
 
@@ -226,11 +226,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     {
         //LD Montello
         //Update the current health in the UI for the player.
-        //UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
 
         //LD Montello
         //Update the caps in the UI for the player.
-        //UIManager.Instance.playerUIManager.UpdateCaps(caps);
+        UIManager.Instance.playerUIManager.UpdateCaps(caps);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -475,10 +475,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //and instead has a callback from the weapon.
     public void HandleUI()
     {
-        //UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+        //Update the attack indicator for the base attack.
+        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
 
         //if we are dashing or cooling down we want the dash indicator to be greyed out.
-        //UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
+        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
@@ -730,7 +731,18 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //and the right axis of the camera. 
         Vector3 forwardProjectedOnPlane = Vector3.Cross(cam.transform.right, transform.up);
 
+
+
         Vector3 desiredDashVector = cam.transform.right * moveInput.normalized.x + forwardProjectedOnPlane * moveInput.normalized.y;
+
+        //if the player isn't inputting a direction,
+        //default the dash direction to be the direction
+        //the camera is facing.
+        if (moveInput.magnitude == 0)
+        {
+            desiredDashVector = forwardProjectedOnPlane;
+        }
+
         //Set rotation instantly 
         //so that they player always dashes in the direction they have input.
         //it should feel extremely responsive.
