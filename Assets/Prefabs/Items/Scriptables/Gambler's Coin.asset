@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4316dee6f3d8ea348b9e83ff156270c1, type: 3}
   m_Name: Gambler's Coin
   m_EditorClassIdentifier: 
-  description: 
+  description: Everytime you get hit, you can gamble with this coin to see if you
+    can keep it!

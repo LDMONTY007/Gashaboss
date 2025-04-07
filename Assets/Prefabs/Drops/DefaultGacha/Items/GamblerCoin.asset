@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GamblerCoin
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 59991203688708908, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
-  weight: 5
-  isRemovedAfterDrop: 1
+  weight: 1
+  isRemovedAfterDrop: 0
