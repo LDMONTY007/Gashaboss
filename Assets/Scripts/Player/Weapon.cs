@@ -59,6 +59,7 @@ public class Weapon : Collectible
         //TODO:
         //Add the animation here where we destroy the 
         //weapon.
+        Debug.Log(gameObject.name + " was destroyed!");
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -468,7 +469,18 @@ public class Weapon : Collectible
 
         canAttack = true;
     }
+
+    bool isEquipped;
+
     public override void OnCollect(){
+
+        //we should not be equipped more than once.
+        if (isEquipped)
+        {
+            return;
+        }
+
+        isEquipped = true;
 
         if (animator != null)
         {
@@ -479,4 +491,6 @@ public class Weapon : Collectible
         //swap the weapon on the player for ourselves.
         Player.instance.SwapCurrentWeapon(this);
     }
+
+    
 }
