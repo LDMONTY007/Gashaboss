@@ -16,7 +16,7 @@ public class DashAwayMove : BossAction
         Vector3 ogDashAwayPos = dashAwayPos;
 
         //get the pathable point on the navmesh for the boss.
-        dashAwayPos = boss.GetPathablePoint(dashAwayPos, 20f);
+        dashAwayPos = boss.GetPathablePoint(dashAwayPos, 100f);
 
         //boss.curState = BossController.BossState.move;
 
