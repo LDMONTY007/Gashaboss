@@ -952,6 +952,8 @@ MonoBehaviour:
   bossUIManager: {fileID: 1414889109}
   inGameUI: {fileID: 494808767}
   pauseMenuPanel: {fileID: 494808764}
+  uiBlock: 0
+  currentUIState: 0
 --- !u!4 &285490386
 Transform:
   m_ObjectHideFlags: 0
@@ -1621,6 +1623,18 @@ PrefabInstance:
     - target: {fileID: 3948688920133332187, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Name
       value: GameUICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7632723384832491879, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4202,6 +4216,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39fdb73be6bd49449a5053aeec68764e, type: 3}
+--- !u!1001 &6506047602358020194
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 59991203688708908, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_Name
+      value: Gambler'sCoin
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 19.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.6973515
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 34.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998844250274119340, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
 --- !u!1001 &7942876371247154711
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4288,6 +4359,7 @@ SceneRoots:
   - {fileID: 760246078}
   - {fileID: 3029530521432650604}
   - {fileID: 7942876371247154711}
+  - {fileID: 6506047602358020194}
   - {fileID: 1354545111}
   - {fileID: 351926714}
   - {fileID: 72509268}
