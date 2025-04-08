@@ -12,6 +12,8 @@ public class Weapon : Collectible
     //cus it'll make scaling easier. 
     public ParticleSystem hitParticles;
 
+    public GameObject slamParticles;
+
     public CollisionSensor collisionSensor;
 
     //public Collider weaponCollider;
@@ -365,6 +367,11 @@ public class Weapon : Collectible
             animator.SetBool("inAir", false);
         }
 
+        //Spawn the slam attack landing ring
+        //particle effect
+        //at the player's feet
+        if (slamParticles != null)
+        Instantiate(slamParticles, player.GetFeetPosition(), slamParticles.transform.rotation);
 
         List<GameObject> objs = collisionSensor.ScanForObjects();
 

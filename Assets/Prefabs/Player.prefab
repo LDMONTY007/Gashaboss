@@ -4893,6 +4893,7 @@ MonoBehaviour:
   curWeapon: {fileID: 0}
   dashParticles: {fileID: 7108178822967578991}
   walkParticles: {fileID: 213442657710818105}
+  landingParticles: {fileID: 8082174744428417983, guid: 26a67eb306e4f1a44a81d42091cae702, type: 3}
   inventory: []
   bounceForce: 20
   invincible: 0

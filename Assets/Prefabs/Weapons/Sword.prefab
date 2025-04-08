@@ -244,6 +244,7 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: c7486be8fb1e1014c8874deeb6c22d7d, type: 2}
   collectibleName: Sword
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
+  slamParticles: {fileID: 7241007279958015534, guid: 38635f5a3cc910543877dec0c185ac42, type: 3}
   collisionSensor: {fileID: 3848898630884427804}
   hasCooldown: 1
   cooldownTime: 0.45
@@ -324,19 +325,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.56098557
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0.4304593
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.4304593
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.70710677
+      value: 0.56098557
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -344,7 +345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c8246ef02811a1942a2500692538e54c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z

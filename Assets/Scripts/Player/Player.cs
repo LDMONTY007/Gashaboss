@@ -46,6 +46,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public ParticleSystem dashParticles;
     public ParticleSystem walkParticles;
+    public GameObject landingParticles;
     #region Items and Modifier vars
     [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
@@ -216,6 +217,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     bool isSprinting = false;
 
+    bool didLand = true;
+
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
@@ -226,6 +229,12 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //Raycast vars
 
     LayerMask playerMask;
+
+    //gets the position of the bottom of the player collider.
+    public Vector3 GetFeetPosition()
+    {
+        return transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
+    }
 
     //set our static instance so it's easier to find the player.
     private void Awake()
@@ -291,11 +300,30 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         Collider[] colliders = Physics.OverlapBox(transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2) + (-transform.up * groundCheckDist), new Vector3(GetComponent<Collider>().bounds.size.x * groundCheckScale, 0.1f, GetComponent<Collider>().bounds.size.z * groundCheckScale), transform.rotation, playerMask);
         if (colliders.Length > 0)
         {
+            //if we were jumping or in the air,
+            //then we landed.
+            if (!didLand)
+            {
+                didLand = true;
+                OnLanded();
+            }
+
             isGrounded = true;
             //Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1f);
+
+            //Call on landed.
+            
         }
         else
         {
+            //when we are no longer grounded,
+            //say that we didn't land.
+            if (didLand == true)
+            {
+                Debug.Log("HERE");
+                didLand = false;
+            }
+
             isGrounded = false;
         }
         /*isGrounded = Physics.BoxCast(transform.position, this.GetComponent<Collider>().bounds.size, -transform.up, out RaycastHit hitInfo, Quaternion.identity, this.GetComponent<Collider>().bounds.extents.y + groundCheckDist, playerMask);*/
@@ -489,6 +517,16 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+    public void OnLanded()
+    {
+        PlayLandingParticles();
+    }
+
+    public void PlayLandingParticles()
+    {
+        Instantiate(landingParticles, GetFeetPosition(), landingParticles.transform.rotation);
+    }
+
     //LD Montello.
     //Make sure to accurately update
     //the weapon UI.
@@ -664,6 +702,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (doJump)
         {
+            //say we didn't yet land.
+            didLand = false;
+
             //I did the work out and 2 * h / t = gravity so I'm going to do that.
             gravity = 2 * jumpHeight / timeToApex;
             fallGravity = 2 * jumpHeight / timeToFall;
