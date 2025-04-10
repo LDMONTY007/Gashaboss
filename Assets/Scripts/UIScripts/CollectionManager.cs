@@ -112,7 +112,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     public void LoadData(GameData gameData)
     {
-        //this.collectedCollectibles = gameData.collectedCollectibles;
+        //clear the collectibles list before loading them.
         collectedCollectibles.Clear();
         foreach (string key in gameData.collectedCollectibles)
         {
@@ -126,6 +126,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     public void SaveData(GameData gameData)
     {
+        
         //loop through and save all the collected collectibles.
         gameData.collectedCollectibles.Clear();
         foreach (var kvp in collectedCollectibles)

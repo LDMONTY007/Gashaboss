@@ -83,8 +83,15 @@ public class SaveDataManager: MonoBehaviour{
     //find the prefab stored in a dropData in our global dropData scriptable object list.
     public GameObject FindDropGameObj(string key)
     {
+        DropData temp = (dropDataList.soList.Find(d => d.name == key) as DropData);
+        if (temp == null)
+        {
+            Debug.LogError("DROP DATA WAS NULL FOR THIS SEARCH: " + key);
+        }
+        GameObject temp1 = temp.droppedObject;
         //return the dropped object specifically.
-        return (dropDataList.soList.Find(d => d.name == key) as DropData).droppedObject;
+        //return (dropDataList.soList.Find(d => d.name == key) as DropData).droppedObject;
+        return temp1;
     }
 
     //find the dropData in our global dropData scriptable object list.

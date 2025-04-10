@@ -26,8 +26,8 @@ public class Item: Collectible
 
     public void OnCollectAnimationEnd()
     {
-        Player.instance.AddItemToInventory(item);
-        item.OnPickup();
+        // Only call pickup if the player doesn't already have item in inventory(unique items?)
+        if (Player.instance.AddItemToInventory(item)) item.OnPickup();
         Destroy(gameObject); // Destroy only the physical object, not the script
         Debug.Log("Deleting Item Prefab, Successfully added to inventory.");
     }
