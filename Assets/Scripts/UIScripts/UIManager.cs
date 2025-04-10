@@ -19,13 +19,14 @@ public class UIManager : MonoBehaviour
     [Header("UI Panels")]
     public GameObject inGameUI;
     public GameObject pauseMenuPanel;
+    public GameObject inventoryPanel;
 
     private bool isPaused = false;
 
     // UI Block Flag
     public bool uiBlock = false; // True when a non-pause UI (e.g., Collection or ObjectViewer) is open
 
-    public enum UIState { None, Collection, ObjectViewer, Pause, Death }
+    public enum UIState { None, Collection, ObjectViewer, Pause, Death, Inventory}
     public UIState currentUIState = UIState.None;
 
 
@@ -46,6 +47,7 @@ public class UIManager : MonoBehaviour
             Instance.bossUIManager = bossUIManager;
             Instance.inGameUI = inGameUI;
             Instance.pauseMenuPanel = pauseMenuPanel;
+            Instance.inventoryPanel = inventoryPanel;
 
 
             Destroy(gameObject);
@@ -64,14 +66,6 @@ public class UIManager : MonoBehaviour
             pauseMenuPanel.SetActive(false);  // hide the pause menu
         }
     }
-
-    // Start the Game (Load Game Scene)
-    public void StartGame()
-    {
-        Time.timeScale = 1; // Resume normal game speed
-        SceneManager.LoadScene("GameUIScene"); // Ensure this scene exists
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -90,10 +84,17 @@ public class UIManager : MonoBehaviour
                 case UIState.Death:
                     //Do nothing when escape is pressed during death.
                     break;
+                case UIState.Inventory:
+                    inventoryPanel.SetActive(false);
                 case UIState.None:
                     TogglePause();
                     break;
             }
+        }
+        // Open the player's inventory menu on Tab Press
+        if (Input.GetKeyDown(KeyCode.Tab)){
+            inventoryPanel.SetActive(true);
+            TogglePause();
         }
     }
 
