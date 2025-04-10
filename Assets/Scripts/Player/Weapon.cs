@@ -107,7 +107,7 @@ public class Weapon : Collectible
 
     }
 
-    public void AltAttack()
+    public virtual void AltAttack()
     {
         if (!canAttack)
         {
@@ -129,6 +129,21 @@ public class Weapon : Collectible
         }
 
         
+    }
+
+    public virtual void SpecialAttack()
+    {
+        //if we can't attack,
+        //print a message in case something
+        //breaks because of this.
+        if (!canAttack)
+        {
+            //Debug.LogWarning("Cannot attack during cooldown");
+            return;
+        }
+
+        //Start specialAttack
+        StartCoroutine(SpecialAttackCoroutine());
     }
 
     public virtual IEnumerator AttackCoroutine()
@@ -447,26 +462,112 @@ public class Weapon : Collectible
         yield break;
     }
 
-
-    /*private void OnCollisionEnter(Collision collision)
+    public IEnumerator SpecialAttackCoroutine()
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("specialAttack");
+
+
+        //don't allow other attacks during our current attack.
+        canAttack = false;
+
+
+        
+        if (animator != null)
         {
-            //make the damageable take damage.
-            //and tell it we gave it damage.
-            damageable.TakeDamage(1, gameObject);
+            //Tell the player not to use gravity.
+            player.useGravity = false;
+            //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0f, player.rb.linearVelocity.z);
 
-            //TODO:
-            //Spawn a particle system burst that destroys itself
-            //when we hit a damageable so that the player can see where they hit.
-            //maybe give each weapon an individualized particle effect.
-            //spawn a particle effect facing outward from the normal
-            //at the position that was hit.
-            Instantiate(hitParticles, collision.GetContact(0).point, Quaternion.LookRotation(collision.GetContact(0).normal));
+            //Tell the player to stop jumping.
+            player.StopJumping();
+
+            player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0.1f, player.rb.linearVelocity.z);
+
+            //Wait until the animation is done
+            yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);
+
+            player.useGravity = true;
+
+            //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, player.rb., player.rb.linearVelocity.z);
         }
-    }*/
 
+
+        List<GameObject> objs = collisionSensor.ScanForObjects();
+
+        if (objs.Count > 0)
+        {
+            for (int i = 0; i < objs.Count; i++)
+            {
+                if (objs[i] != null)
+                {
+                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        //if the damageable is a boss, and is dead, skip this object in the loop.
+                        BossController boss = objs[i].GetComponent<BossController>();
+                        if (boss != null && boss.isDead)
+                        {
+                            continue;
+                        }
+
+                        //make the damageable take damage.
+                        //and tell it we gave it damage.
+                        damageable.TakeDamage(1, gameObject);
+
+                        //TODO:
+                        //Spawn a particle system burst that destroys itself
+                        //when we hit a damageable so that the player can see where they hit.
+                        //maybe give each weapon an individualized particle effect.
+                        //spawn a particle effect facing outward from the normal
+                        //at the position that was hit.
+                        //TODO:
+                        //in the future replace this with
+                        //some code that checks the direction
+                        //the attack is coming from, does a box 
+                        //cast and uses the normal and hit point from
+                        //that box cast to calculate where the damage
+                        //particle effect should spawn. 
+                        Collider c = objs[i].GetComponent<Collider>();
+
+
+                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
+
+
+                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
+
+                        //wait for fixedupdate before launching player.
+                        //if we didn't wait we'd have inconsistent physics.
+                        yield return new WaitForFixedUpdate();
+
+                        //player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
+                }
+
+            }
+        }
+
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+            yield return new WaitForSeconds(cooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //allow us to attack again.
+        canAttack = true;
+
+        yield break;
+    }
+    
     //Cooldown coroutine.
     public IEnumerator CooldownCoroutine()
     {

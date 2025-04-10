@@ -116,6 +116,8 @@ public class LDUtil : MonoBehaviour
         }
     }
 
+
+
     /// <summary>
     /// Coroutine that helps
     /// for waiting for an animation to 
@@ -124,8 +126,45 @@ public class LDUtil : MonoBehaviour
     /// <returns></returns>
     public static IEnumerator WaitForAnimationFinish(Animator animator, string animation)
     {
+        //For some reason we need
+        //to wait while the normalized time is > 1
+        //because if an animation plays multiple times
+        //the normalized time will be greater than 1. 
+        //This is dumb.
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        {
+            yield return null;
+        }
+
         //Wait until the animation is done
         while (animator.GetCurrentAnimatorStateInfo(0).IsName(animation))
+        {
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that helps
+    /// for waiting for an animation to 
+    /// finish.
+    /// </summary>
+    /// <returns></returns>
+    /// Extra Note: For some reason some animations
+    /// need to ignore checking the transition and I don't know why.
+    public static IEnumerator WaitForAnimationFinishIgnoreTransition(Animator animator)
+    {
+        //For some reason we need
+        //to wait while the normalized time is > 1
+        //because if an animation plays multiple times
+        //the normalized time will be greater than 1. 
+        //This is dumb.
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        {
+            yield return null;
+        }
+
+        //Wait until the animation is done
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
         {
             yield return null;
         }

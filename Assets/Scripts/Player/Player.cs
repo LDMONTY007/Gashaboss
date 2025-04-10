@@ -195,6 +195,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     float gravity = 9.81f;
     float fallGravity = 9.81f;
 
+    public bool useGravity = true;
+
     public bool doJump;
 
     /* private Coroutine jumpCoroutine;
@@ -224,6 +226,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     InputAction jumpAction;
     InputAction attackAction;
     InputAction altAttackAction;
+    InputAction specialAttackAction;
     InputAction dashAction;
 
     //Raycast vars
@@ -279,6 +282,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
         altAttackAction = playerInput.actions["AltAttack"];
+        specialAttackAction = playerInput.actions["SpecialAttack"];
         dashAction = playerInput.actions["Dash"];
 
         //disable the ragdoll after
@@ -320,7 +324,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             //say that we didn't land.
             if (didLand == true)
             {
-                Debug.Log("HERE");
                 didLand = false;
             }
 
@@ -382,7 +385,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
-            if (!jumping)
+            if (!jumping && didLand)
             {
                 jumpCount = jumpTotal;
                 jumpCanceled = false;
@@ -455,6 +458,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
                 curWeapon.AltAttack();
             }
 
+            if (specialAttackAction.WasPressedThisFrame())
+            {
+                curWeapon.SpecialAttack();
+            }
         }
 
 
@@ -746,6 +753,24 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+
+    //this is used when we want to forcefully stop
+    //jumping.
+    public void StopJumping()
+    {
+
+        jumping = false;
+
+        
+        jumpCanceled = false;
+
+        //set gravity back to fall gravity
+        gravity = fallGravity;
+
+        //set player y velocity to 0
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+    }
+
     //used when doing heavy attacks which will propel the player,
     //for example a heavy downward slash from the sword will push the player
     //up into the air without counting as a jump.
@@ -946,13 +971,16 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         }
 
+        if (useGravity)
+        {
+            //Apply gravity, because gravity is not affected by mass and 
+            //we can't use ForceMode.acceleration with 2D just multiply
+            //by mass at the end. It's basically the same.
+            //In unity it factors in mass for this calculation so 
+            //multiplying by mass cancels out mass entirely.
+            rb.AddForce(-transform.up * gravity * rb.mass);
+        }
 
-        //Apply gravity, because gravity is not affected by mass and 
-        //we can't use ForceMode.acceleration with 2D just multiply
-        //by mass at the end. It's basically the same.
-        //In unity it factors in mass for this calculation so 
-        //multiplying by mass cancels out mass entirely.
-        rb.AddForce(-transform.up * gravity * rb.mass);
     }
 
     private IEnumerator slowToStop()
