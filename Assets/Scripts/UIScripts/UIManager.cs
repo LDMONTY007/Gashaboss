@@ -86,6 +86,7 @@ public class UIManager : MonoBehaviour
                     break;
                 case UIState.Inventory:
                     inventoryPanel.SetActive(false);
+                    break;
                 case UIState.None:
                     TogglePause();
                     break;
