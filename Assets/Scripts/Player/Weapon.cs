@@ -23,6 +23,10 @@ public class Weapon : Collectible
 
     public float cooldownTime = 1f;
 
+    public float altCooldownTime = 1f;
+
+    public float specialCooldownTime = 1f;
+
     public bool canAttack = true;
 
     public float attackDistance = 1f;
@@ -334,7 +338,7 @@ public class Weapon : Collectible
 
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
-            yield return new WaitForSeconds(cooldownTime);
+            yield return new WaitForSeconds(altCooldownTime);
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;
@@ -452,7 +456,7 @@ public class Weapon : Collectible
 
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
-            yield return new WaitForSeconds(cooldownTime);
+            yield return new WaitForSeconds(altCooldownTime);
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;
@@ -567,8 +571,8 @@ public class Weapon : Collectible
 
         //this special attack has no cooldown other than it's animation time.
         //if we have a cooldown, wait the cooldown time before attacking.
-       /* if (hasCooldown)
-            yield return new WaitForSeconds(cooldownTime);*/
+        if (hasCooldown)
+            yield return new WaitForSeconds(specialCooldownTime);
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;

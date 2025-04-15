@@ -248,6 +248,8 @@ MonoBehaviour:
   collisionSensor: {fileID: 3848898630884427804}
   hasCooldown: 1
   cooldownTime: 0.45
+  altCooldownTime: 0.45
+  specialCooldownTime: 0
   canAttack: 1
   attackDistance: 7
   player: {fileID: 0}
