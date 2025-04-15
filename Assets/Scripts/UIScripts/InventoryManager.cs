@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-public class inventoryPanel: MonoBehaviour{
+public class InventoryManager: MonoBehaviour{
     [SerializeField] private GameObject inventoryItem;
     [SerializeField] private GameObject playerStatListMenu;
     [SerializeField] private Transform ItemContentWindow;
@@ -14,8 +14,8 @@ public class inventoryPanel: MonoBehaviour{
         //rotationspeed, dashspeed, dashDistance, dashCooldown, Jump Count, jumpHieght, fallMultiplier
 
         // Taking and updating the text of each corresponding stat listing
-        playerStatListMenu.transform.Find("Coins").GetComponent<TextMeshProUGUI>().text = Player.instance.curHealth;
-        playerStatListMenu.transform.Find("Caps").GetComponent<TextMeshProUGUI>().text = Player.instance.caps;
+        playerStatListMenu.transform.Find("Coins").GetComponent<TextMeshProUGUI>().text = "Coins: " + Player.instance.curHealth;
+        playerStatListMenu.transform.Find("Caps").GetComponent<TextMeshProUGUI>().text = "Caps: " + Player.instance.caps;
         // TODO: Apply all modifiers for this before use? No, update Player to have a modified 
         // variation of each stat, that holds the modified value and a method that calculates the new value
         // That way we can rebuild the value everytime it needs to be updated, without restraint, 
@@ -31,23 +31,24 @@ public class inventoryPanel: MonoBehaviour{
             StatModified stat = modifier.stat;
             switch(stat){
                 case StatModified.iFrameTime:
-                    modifiedIFrameTime = modifire.makeModifications(modifiedIFrameTime);
+                    modifiedIFrameTime = modifier.makeModifications(modifiedIFrameTime);
+                    break;
             }
         }
 
-        playerStatListMenu.transform.Find("IFramTime").GetComponent<TextMeshProUGUI>().text = modifiedIFrameTime;
-        playerStatListMenu.transform.Find("MinSpeed").GetComponent<TextMeshProUGUI>().text = Player.instance.minSpeed;
-        playerStatListMenu.transform.Find("MaxSpeed").GetComponent<TextMeshProUGUI>().text = Player.instance.maxSpeed;
-        playerStatListMenu.transform.Find("MaxAcceleration").GetComponent<TextMeshProUGUI>().text = Player.instance.maxAcceleration;
-        playerStatListMenu.transform.Find("MaxDeceleration").GetComponent<TextMeshProUGUI>().text = Player.instance.maxDeceleration;
-        playerStatListMenu.transform.Find("MoveSpeed").GetComponent<TextMeshProUGUI>().text = Player.instance.moveSpeed;
-        playerStatListMenu.transform.Find("RotationSpeed").GetComponent<TextMeshProUGUI>().text = Player.instance.rotationSpeed;
-        playerStatListMenu.transform.Find("DashSpeed").GetComponent<TextMeshProUGUI>().text = Player.instance.dashSpeed;
-        playerStatListMenu.transform.Find("DashDistance").GetComponent<TextMeshProUGUI>().text = Player.instance.dashDistance;
-        playerStatListMenu.transform.Find("DashCooldown").GetComponent<TextMeshProUGUI>().text = Player.instance.dashCooldown;
-        playerStatListMenu.transform.Find("JumpCount").GetComponent<TextMeshProUGUI>().text = Player.instance.jumpCount;
-        playerStatListMenu.transform.Find("JumpHeight").GetComponent<TextMeshProUGUI>().text = Player.instance.jumpHeight;
-        playerStatListMenu.transform.Find("FallMultiplier").GetComponent<TextMeshProUGUI>().text = Player.instance.fallMultiplier;
+        playerStatListMenu.transform.Find("IFrameTime").GetComponent<TextMeshProUGUI>().text = "I-Frame Time: " + modifiedIFrameTime;
+        playerStatListMenu.transform.Find("MinSpeed").GetComponent<TextMeshProUGUI>().text = "Minimum Speed: " + Player.instance.minSpeed;
+        playerStatListMenu.transform.Find("MaxSpeed").GetComponent<TextMeshProUGUI>().text = "Maximum Speed: " + Player.instance.maxSpeed;
+        playerStatListMenu.transform.Find("MaxAcceleration").GetComponent<TextMeshProUGUI>().text = "Maximum Acceleration: " + Player.instance.maxAcceleration;
+        playerStatListMenu.transform.Find("MaxDeceleration").GetComponent<TextMeshProUGUI>().text = "Maximum Deceleration: " + Player.instance.maxDeceleration;
+        playerStatListMenu.transform.Find("MoveSpeed").GetComponent<TextMeshProUGUI>().text = "Move Speed: " + Player.instance.moveSpeed;
+        playerStatListMenu.transform.Find("RotationSpeed").GetComponent<TextMeshProUGUI>().text = "Rotation Speed: " +  Player.instance.rotationSpeed;
+        playerStatListMenu.transform.Find("DashSpeed").GetComponent<TextMeshProUGUI>().text = "Dash Speed: " + Player.instance.dashSpeed;
+        playerStatListMenu.transform.Find("DashDistance").GetComponent<TextMeshProUGUI>().text = "Dash Distance: " + Player.instance.dashDist;
+        playerStatListMenu.transform.Find("DashCooldown").GetComponent<TextMeshProUGUI>().text = "Dash Cooldown: " + Player.instance.dashCooldown;
+        playerStatListMenu.transform.Find("JumpCount").GetComponent<TextMeshProUGUI>().text = "Jump Count: " + Player.instance.jumpCount;
+        playerStatListMenu.transform.Find("JumpHeight").GetComponent<TextMeshProUGUI>().text = "Jump Height: " + Player.instance.jumpHeight;
+        playerStatListMenu.transform.Find("FallMultiplier").GetComponent<TextMeshProUGUI>().text = "Fall Multiplier: " + Player.instance.fallMultiplier;
     }
     public void OnOpen(){
         // for each item in the inventory, make a listing on the menu

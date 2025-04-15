@@ -134,12 +134,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float currentSpeed = 0f;
 
     [SerializeField]
-    private float moveSpeed = 5.0f;
-
-    public float walkSpeed = 10f;
-    
-    public float sprintSpeed = 20f;
-
+    public float moveSpeed = 10.0f;
 
     public float rotationSpeed = 5f;
 
@@ -163,7 +158,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     [Header("Jump Parameters")]
     public float groundCheckDist = 0.1f;
-    [SerializeField] private int jumpCount = 1;
+    public int jumpCount = 1;
     public int jumpTotal = 1;
     [SerializeField] private bool jumpCanceled;
     [SerializeField] private bool jumping;
@@ -201,8 +196,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public Vector2 accumulatedVelocity = Vector2.zero;
 
     bool isOnWall = false;
-
-    bool isSprinting = false;
 
     //Input actions
     InputAction moveAction;
@@ -294,9 +287,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
-
-        //TODO: Remove isSprinting because we don't want sprint anymore.
-        moveSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         //Get the forward vector using player up and the camera right vector
         //so it's a forward vector on the plane created by the up axis of the player

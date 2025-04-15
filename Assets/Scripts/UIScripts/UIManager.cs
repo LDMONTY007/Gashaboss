@@ -85,6 +85,7 @@ public class UIManager : MonoBehaviour
                     //Do nothing when escape is pressed during death.
                     break;
                 case UIState.Inventory:
+                    inventoryPanel.GetComponent<InventoryManager>().OnClose();
                     inventoryPanel.SetActive(false);
                     break;
                 case UIState.None:
@@ -96,11 +97,9 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab)){
             inventoryPanel.SetActive(true);
             TogglePause();
+            inventoryPanel.GetComponent<InventoryManager>().OnOpen();
         }
     }
-
-
-
 
     // LD Montello
     // unlocks the cursor and makes it visible
