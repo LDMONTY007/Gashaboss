@@ -8,6 +8,11 @@ using UnityEngine;
 //the player layer.
 public class Weapon : Collectible
 {
+    // NEW CODE FOR ITEMS
+    // Event for when the weapon attacks - both normal and alt attacks will trigger this
+    public event System.Action onAttack;
+    // END NEW CODE FOR ITEMS
+
     //the weapon should handle animations within itself
     //cus it'll make scaling easier. 
     public ParticleSystem hitParticles;
@@ -83,7 +88,7 @@ public class Weapon : Collectible
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public virtual void Attack()
@@ -97,10 +102,13 @@ public class Weapon : Collectible
             return;
         }
 
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event
+        onAttack?.Invoke();
+        // END NEW CODE FOR ITEMS
+
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
-
-
     }
 
     public void AltAttack()
@@ -112,6 +120,11 @@ public class Weapon : Collectible
         }
 
         Debug.Log(gameObject.name);
+
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event for alt attacks too
+        onAttack?.Invoke();
+        // END NEW CODE FOR ITEMS
 
         //Start AltAttackCoroutine
         StartCoroutine(AltAttackCoroutine());
@@ -129,9 +142,9 @@ public class Weapon : Collectible
 
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
-        if (objs.Count > 0 )
+        if (objs.Count > 0)
         {
-            for ( int i = 0; i < objs.Count; i++ )
+            for (int i = 0; i < objs.Count; i++)
             {
                 if (objs[i] != null)
                 {
@@ -163,10 +176,10 @@ public class Weapon : Collectible
                         //that box cast to calculate where the damage
                         //particle effect should spawn. 
                         Collider c = objs[i].GetComponent<Collider>();
-                       
+
 
                         Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-                        
+
 
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
                     }
@@ -175,7 +188,7 @@ public class Weapon : Collectible
                 {
                     Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
                 }
-                
+
             }
         }
 
@@ -213,7 +226,7 @@ public class Weapon : Collectible
 
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
-        yield return new WaitForSeconds(cooldownTime);
+            yield return new WaitForSeconds(cooldownTime);
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;
@@ -362,7 +375,8 @@ public class Weapon : Collectible
 
         canAttack = true;
     }
-    public override void OnCollect(){
+    public override void OnCollect()
+    {
         CollectionManager.instance.AddToCollection(this);
         //swap the weapon on the player for ourselves.
         Player.instance.SwapCurrentWeapon(this);

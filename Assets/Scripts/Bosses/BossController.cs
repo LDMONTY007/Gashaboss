@@ -117,6 +117,15 @@ public class BossController : Collectible, IDamageable
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
+        // after rewarding the player, check if the player has a voucher tem
+        VoucherEffect voucher = playerObject.GetComponent<Player>().GetComponent<VoucherEffect>();
+        if (voucher != null)
+        {
+            voucher.ResetFreeGacha();
+        }
+
+
+
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
         Destroy(gameObject);
@@ -153,7 +162,10 @@ public class BossController : Collectible, IDamageable
     public float avoidanceForceMultiplier = 50f;
     public float avoidanceDistance = 30f;
     public float avoidanceAngle = 75f;
-    
+
+    // incoming dmg multiplier - Chris Li (for items)
+    public float incomingDamageMultiplier = 1.0f;
+
     bool isMoving = false;
 
     bool isShaking = false;
@@ -208,6 +220,11 @@ public class BossController : Collectible, IDamageable
 
     bool IsPlayerInAttackRange()
     {
+
+        // If player is invisible, they can't be detected
+        if (!Player.instance.isVisible)
+            return false;
+
         Collider[] objs = Physics.OverlapSphere(transform.position, attackCheckRadius);
 
         //if the player is in the attack range
@@ -690,11 +707,16 @@ public class BossController : Collectible, IDamageable
         curState = BossState.move;
         isMoving = true;
 
-        //while the player isn't
-        //close enough to be attacked,
-        //walk closer to them.
+        // While the player isn't close enough to be attacked or is invisible,
+        // walk closer to them (if visible) or just wait (if invisible)
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
+            // If player is invisible, don't move toward them, just wait
+            if (!Player.instance.isVisible)
+            {
+                yield return new WaitForSeconds(0.5f);
+                continue;
+            }
             //if we're not in the move state
             //anymore than stop moving.
             //this is usually caused when a player
@@ -814,14 +836,17 @@ public class BossController : Collectible, IDamageable
             return;
         }
 
-        curHealth -= d;
+        //curHealth -= d; adjusted takeDamage code for items multipliers
+        int modifiedDamage = Mathf.RoundToInt(d * incomingDamageMultiplier);
+        curHealth -= modifiedDamage;
 
         //idle for a few moments before moving again.
         //SwitchToIdle(1f);
 
 
-        //print out data about the boss taking damage.
-        Debug.Log("Boss Took: ".Color("Orange") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
+        //print out data about the boss taking damage. (updated debug code)
+        //Debug.Log("Boss Took: ".Color("Orange") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
+        Debug.Log("Boss Took: ".Color("Orange") + modifiedDamage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
 
         //When the boss takes damage,
         //put them in the stun state

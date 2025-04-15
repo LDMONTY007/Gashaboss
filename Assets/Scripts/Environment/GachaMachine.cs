@@ -105,6 +105,16 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     public bool TryBuyCapsule(Player p)
     {
+        // Check if player has voucher effect and can use free gacha
+        VoucherEffect voucher = p.GetComponent<VoucherEffect>();
+        if (voucher != null && voucher.hasFreeGacha)
+        {
+            // Use the free gacha pull
+            voucher.UseFreeGacha();
+            Debug.Log("Free gacha pull used from Voucher item!");
+            return true;
+        }
+
         if (p.curHealth > 1)
         {
             //Decrement player coins.

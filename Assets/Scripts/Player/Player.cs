@@ -74,6 +74,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     private int startHealth = 4;
 
+    
+    // Player visibility for invis item
+    public bool isVisible = true;
+
     #region health vars
     [Header("Health Variables")]
 
@@ -964,6 +968,43 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             return;
         }
 
+        // Try to absorb damage with shield first if present
+        ShieldEffectComponent shieldEffect = GetComponent<ShieldEffectComponent>();
+        if (shieldEffect != null)
+        {
+            shieldEffect.TryAbsorbDamage(ref d);
+
+            if (d == 0)
+            {
+                onPlayerHit?.Invoke();
+                rb.linearVelocity += (transform.position - other.transform.position).normalized * bounceForce;
+                return;
+            }
+        }
+
+        // After shield (if any), check for gamblers coin effect
+        // In TakeDamage method
+        LuckyAmuletEffect amuletEffect = GetComponent<LuckyAmuletEffect>();
+        if (amuletEffect != null)
+        {
+            amuletEffect.TryModifyDamage(ref d, other);
+
+            if (d == 0)
+            {
+                onPlayerHit?.Invoke();
+                return;
+            }
+        }
+
+        // Add to the TakeDamage method after GamblersCoinEffect check
+        GachaGambitEffect gambitEffect = GetComponent<GachaGambitEffect>();
+        if (gambitEffect != null && other.GetComponent<BossController>() != null)
+        {
+            // Modify damage taken from bosses
+            d = Mathf.RoundToInt(gambitEffect.ModifyIncomingDamage(d, other));
+        }
+
+        // Apply the (possibly modified) damage
         curHealth -= d;
 
         //Set to be low resolution for a small amount of time.
