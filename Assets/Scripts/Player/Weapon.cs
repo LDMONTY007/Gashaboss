@@ -613,6 +613,10 @@ public class Weapon : Collectible
         CollectionManager.instance.AddToCollection(this);
         //swap the weapon on the player for ourselves.
         Player.instance.SwapCurrentWeapon(this);
+
+        //set the collision sensor's mask to be the player mask
+        //so we don't damage the player.
+        collisionSensor.mask = playerMask;
     }
 
     

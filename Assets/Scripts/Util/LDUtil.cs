@@ -169,4 +169,10 @@ public class LDUtil : MonoBehaviour
             yield return null;
         }
     }
+
+    public static bool IsLayerInMask(LayerMask mask, int layer)
+    {
+        //where I learned how to do this check: https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331/2
+        return (mask.value & (1 << layer)) != 0;
+    }
 }
