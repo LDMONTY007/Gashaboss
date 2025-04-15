@@ -175,6 +175,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float dashCooldown = 0.67f;
 
     [Header("Jump Parameters")]
+    //this is just a rule to see if the player is allowed to jump.
+    //that way during certain attacks we can disable it.
+    public bool canJump = true;
     public float groundCheckDist = 0.1f;
     [SerializeField] private int jumpCount = 1;
     public int jumpTotal = 1;
@@ -377,7 +380,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //jumpPressed |= jumpAction.WasPressedThisFrame();
 
-        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping && !stunned);
+        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping && !stunned && canJump);
 
         if (isGrounded)
         {

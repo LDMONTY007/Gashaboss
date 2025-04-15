@@ -4973,14 +4973,14 @@ MonoBehaviour:
   jumpTotal: 1
   jumpCanceled: 0
   jumping: 0
-  jumpHeight: 5
+  jumpHeight: 30
   buttonTime: 0
   jumpTime: 0
   fallMultiplier: 9
   lowJumpMultiplier: 2
   multiplier: 100
-  timeToApex: 0.1
-  timeToFall: 0.1
+  timeToApex: 0.5
+  timeToFall: 0.5
   useGravity: 1
   doJump: 0
   playerCollider: {fileID: 1463052221125900097}

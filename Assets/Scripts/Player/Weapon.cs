@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 //LD Montello
@@ -478,7 +479,9 @@ public class Weapon : Collectible
         {
             //Tell the player not to use gravity.
             player.useGravity = false;
-            //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0f, player.rb.linearVelocity.z);
+
+            //don't let the player jump.
+            player.canJump = false;
 
             //Tell the player to stop jumping.
             player.StopJumping();
@@ -488,7 +491,10 @@ public class Weapon : Collectible
             //Wait until the animation is done
             yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);
 
+            //turn gravity back on and
+            //let the player jump again.
             player.useGravity = true;
+            player.canJump = true;
 
             //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, player.rb., player.rb.linearVelocity.z);
         }
