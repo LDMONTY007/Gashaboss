@@ -116,8 +116,11 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         collectedCollectibles.Clear();
         foreach (string key in gameData.collectedCollectibles)
         {
+
+
             //get the drop using our search function
             DropData dropToSave = SaveDataManager.instance.FindDropData(key);
+
             //get the name of the collectible from the collectible itself and store
             //the drop data.
             collectedCollectibles.Add(dropToSave.droppedObject.GetComponent<Collectible>().collectibleName, dropToSave);

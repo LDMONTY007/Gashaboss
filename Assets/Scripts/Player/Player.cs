@@ -544,6 +544,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //and instead has a callback from the weapon.
     public void HandleUI()
     {
+        //null check for the weapon.
+        if (curWeapon != null)
         //Update the attack indicator for the base attack.
         UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
 
