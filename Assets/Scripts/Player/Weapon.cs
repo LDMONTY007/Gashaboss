@@ -463,6 +463,10 @@ public class Weapon : Collectible
         yield break;
     }
 
+    //TODO:
+    //I want to make it so when you get an attack
+    //to land, any attack, you don't start falling yet,
+    //because then you can combo against the boss.
     public IEnumerator SpecialAttackCoroutine()
     {
         //start the attack animation
@@ -561,9 +565,10 @@ public class Weapon : Collectible
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
 
+        //this special attack has no cooldown other than it's animation time.
         //if we have a cooldown, wait the cooldown time before attacking.
-        if (hasCooldown)
-            yield return new WaitForSeconds(cooldownTime);
+       /* if (hasCooldown)
+            yield return new WaitForSeconds(cooldownTime);*/
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;
