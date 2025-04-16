@@ -63,6 +63,7 @@ public class InventoryManager: MonoBehaviour{
         }
         UpdatePlayerStats();
     }
+
     public void OnClose(){
         foreach(Transform child in ItemContentWindow){
             Destroy(child.gameObject);

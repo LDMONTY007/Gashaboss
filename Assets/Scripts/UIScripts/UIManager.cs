@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         {
             pauseMenuPanel.SetActive(false);  // hide the pause menu
         }
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
     }
     void Update()
     {
@@ -87,6 +88,7 @@ public class UIManager : MonoBehaviour
                 case UIState.Inventory:
                     inventoryPanel.GetComponent<InventoryManager>().OnClose();
                     inventoryPanel.SetActive(false);
+                    currentUIState = UIState.None;
                     break;
                 case UIState.None:
                     TogglePause();
@@ -95,9 +97,15 @@ public class UIManager : MonoBehaviour
         }
         // Open the player's inventory menu on Tab Press
         if (Input.GetKeyDown(KeyCode.Tab)){
-            inventoryPanel.SetActive(true);
-            TogglePause();
-            inventoryPanel.GetComponent<InventoryManager>().OnOpen();
+            if (currentUIState == UIState.Inventory){
+                inventoryPanel.GetComponent<InventoryManager>().OnClose();
+                inventoryPanel.SetActive(false);
+                currentUIState = UIState.None;
+            }else{
+                currentUIState = UIState.Inventory;
+                inventoryPanel.SetActive(true);
+                inventoryPanel.GetComponent<InventoryManager>().OnOpen();
+            }
         }
     }
 
