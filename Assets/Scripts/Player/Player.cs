@@ -45,6 +45,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public Weapon curWeapon;
 
     public ParticleSystem dashParticles;
+    public ParticleSystem walkParticles;
+    public GameObject landingParticles;
     #region Items and Modifier vars
     [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
@@ -66,7 +68,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
             //LD Montello
             //Update the caps in the UI for the player.
-            //UIManager.Instance.playerUIManager.UpdateCaps(_caps);
+            UIManager.Instance.playerUIManager.UpdateCaps(_caps);
         }
     }
 
@@ -108,6 +110,20 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public event Action onPlayerHit;
 
     public bool invincible = false;
+
+    private bool _stunned = false;
+
+    //used after being hit to prevent the player from attacking immediately.
+    private bool stunned { 
+        get { 
+            return _stunned; 
+
+        } set { 
+            //Update the UI for the stunned popup.
+            UIManager.Instance.playerUIManager.UpdateStunnedPopup(value);
+            _stunned = value;
+        } 
+    }
 
     //terraria uses this number for iframes as do most games.
     public float iFrameTime = 0.67f;
@@ -157,6 +173,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float dashCooldown = 0.67f;
 
     [Header("Jump Parameters")]
+    //this is just a rule to see if the player is allowed to jump.
+    //that way during certain attacks we can disable it.
+    public bool canJump = true;
     public float groundCheckDist = 0.1f;
     public int jumpCount = 1;
     public int jumpTotal = 1;
@@ -177,6 +196,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     float gravity = 9.81f;
     float fallGravity = 9.81f;
 
+    public bool useGravity = true;
+
     public bool doJump;
 
     /* private Coroutine jumpCoroutine;
@@ -196,17 +217,26 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public Vector2 accumulatedVelocity = Vector2.zero;
 
     bool isOnWall = false;
+    
+    vool didLand = true;
 
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
     InputAction attackAction;
     InputAction altAttackAction;
+    InputAction specialAttackAction;
     InputAction dashAction;
 
     //Raycast vars
 
     LayerMask playerMask;
+
+    //gets the position of the bottom of the player collider.
+    public Vector3 GetFeetPosition()
+    {
+        return transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
+    }
 
     //set our static instance so it's easier to find the player.
     private void Awake()
@@ -221,11 +251,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     {
         //LD Montello
         //Update the current health in the UI for the player.
-        //UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
+        UIManager.Instance.playerUIManager.UpdateCoins(curHealth);
 
         //LD Montello
         //Update the caps in the UI for the player.
-        //UIManager.Instance.playerUIManager.UpdateCaps(caps);
+        UIManager.Instance.playerUIManager.UpdateCaps(caps);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -251,6 +281,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         jumpAction = playerInput.actions["Jump"];
         attackAction = playerInput.actions["Attack"];
         altAttackAction = playerInput.actions["AltAttack"];
+        specialAttackAction = playerInput.actions["SpecialAttack"];
         dashAction = playerInput.actions["Dash"];
 
         //disable the ragdoll after
@@ -272,11 +303,29 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         Collider[] colliders = Physics.OverlapBox(transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2) + (-transform.up * groundCheckDist), new Vector3(GetComponent<Collider>().bounds.size.x * groundCheckScale, 0.1f, GetComponent<Collider>().bounds.size.z * groundCheckScale), transform.rotation, playerMask);
         if (colliders.Length > 0)
         {
+            //if we were jumping or in the air,
+            //then we landed.
+            if (!didLand)
+            {
+                didLand = true;
+                OnLanded();
+            }
+
             isGrounded = true;
             //Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1f);
+
+            //Call on landed.
+            
         }
         else
         {
+            //when we are no longer grounded,
+            //say that we didn't land.
+            if (didLand == true)
+            {
+                didLand = false;
+            }
+
             isGrounded = false;
         }
         /*isGrounded = Physics.BoxCast(transform.position, this.GetComponent<Collider>().bounds.size, -transform.up, out RaycastHit hitInfo, Quaternion.identity, this.GetComponent<Collider>().bounds.extents.y + groundCheckDist, playerMask);*/
@@ -324,13 +373,15 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //jumpPressed |= jumpAction.WasPressedThisFrame();
 
-        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping);
+        doJump |= (jumpAction.WasPressedThisFrame() && jumpCount > 0 && !jumping && !stunned && canJump);
 
         if (isGrounded)
         {
+
+
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
-            if (!jumping)
+            if (!jumping && didLand)
             {
                 jumpCount = jumpTotal;
                 jumpCanceled = false;
@@ -382,11 +433,16 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             jumping = false;
         }
 
-        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown;
+        doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown && !stunned;
 
         #region attacking
 
-        if (curWeapon != null)
+        //I am using stunned as a way to check if
+        //we're in Iframes after an attack
+        //because we need to not allow the player to attack
+        //while they're in iframes. 
+        //the player also cannot attack when dashing.
+        if (curWeapon != null && !stunned && !dashing)
         {
             if (attackAction.WasPressedThisFrame())
             {
@@ -398,6 +454,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
                 curWeapon.AltAttack();
             }
 
+            if (specialAttackAction.WasPressedThisFrame())
+            {
+                curWeapon.SpecialAttack();
+            }
         }
 
 
@@ -443,7 +503,31 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         HandleMovement();
         HandleJumping();
 
+        HandleWalkParticles();
+
         HandleUI();
+    }
+
+    public void HandleWalkParticles()
+    {
+        if (!dashing && isGrounded && rb.linearVelocity.magnitude > 0f && !walkParticles.isPlaying)
+        {
+            walkParticles.Play();
+        }
+        else
+        {
+            walkParticles.Stop();
+        }
+    }
+
+    public void OnLanded()
+    {
+        PlayLandingParticles();
+    }
+
+    public void PlayLandingParticles()
+    {
+        Instantiate(landingParticles, GetFeetPosition(), landingParticles.transform.rotation);
     }
 
     //LD Montello.
@@ -453,14 +537,29 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //and instead has a callback from the weapon.
     public void HandleUI()
     {
-        //UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
+        //null check for the weapon.
+        if (curWeapon != null)
+        //Update the attack indicator for the base attack.
+        UIManager.Instance.playerUIManager.UpdateAttackIndicator(curWeapon.canAttack);
 
         //if we are dashing or cooling down we want the dash indicator to be greyed out.
-        //UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
+        UIManager.Instance.playerUIManager.UpdateDashIndicator(isDashCooldown || dashing);
     }
 
     public void HandleRbRotation()
     {
+        //if the player is jumping and they are moving horizontally 
+        //we rotate the animated model to visually show their jump arc.
+/*        if ((!isGrounded) && (rb.linearVelocity.x > 0 || rb.linearVelocity.y > 0))
+        {
+            animatedModel.transform.rotation = Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z), transform.up);
+        }
+        else
+        {
+            animatedModel.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }*/
+        
+
         //when dashing we want to rotate to face the dash direction
         if (dashing)
         {
@@ -471,7 +570,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         {
             //rotate towards the velocity direction but don't rotate upwards.
             if (moveVector != Vector3.zero)
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up), rotationSpeed));
+                rb.MoveRotation(Quaternion.LookRotation(new Vector3(moveVector.x, 0, moveVector.z), transform.up));
         }
 
         
@@ -501,13 +600,20 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //rb.linearVelocity += moveVector;
 
-        #region constant movement
-        //Store yVelocity
-        float yVel = rb.linearVelocity.y;
-        rb.linearVelocity = moveVector;
-        //Restore yVelocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);
-        #endregion
+        //when stunned don't override x and y values
+        //because the player is stunned so they can't move.
+        if (!stunned)
+        {
+            #region constant movement
+            //Store yVelocity
+            float yVel = rb.linearVelocity.y;
+            rb.linearVelocity = moveVector;
+            //Restore yVelocity
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, yVel, rb.linearVelocity.z);
+            #endregion
+        }
+
+
 
         ////The dot product check is for when we are
         ////turning on a dime and our velocity is the opposite direction
@@ -601,6 +707,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (doJump)
         {
+            //say we didn't yet land.
+            didLand = false;
+
             //I did the work out and 2 * h / t = gravity so I'm going to do that.
             gravity = 2 * jumpHeight / timeToApex;
             fallGravity = 2 * jumpHeight / timeToFall;
@@ -642,22 +751,40 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+
+    //this is used when we want to forcefully stop
+    //jumping.
+    public void StopJumping()
+    {
+
+        jumping = false;
+
+        
+        jumpCanceled = false;
+
+        //set gravity back to fall gravity
+        gravity = fallGravity;
+
+        //set player y velocity to 0
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+    }
+
     //used when doing heavy attacks which will propel the player,
     //for example a heavy downward slash from the sword will push the player
     //up into the air without counting as a jump.
     //TODO: Make this more configureable than it is with the time code from the jump function
-    public void LaunchPlayer(Vector3 direction, float force)
+    public void LaunchPlayer(Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
 
         //I did the work out and 2 * h / t = gravity so I'm going to do that.
-        gravity = 2 * jumpHeight / timeToApex;
-        fallGravity = 2 * jumpHeight / timeToFall;
+        gravity = 2 * height / timeToApex;
+        fallGravity = 2 * height / timeToFall;
 
         float projectedHeight = timeToApex * gravity / 2f;
         Debug.Log(timeToApex + " " + projectedHeight + " " + gravity);
         Debug.Log(("Projected Height " + projectedHeight).ToString().Color("Cyan"));
 
-        //doJump = false;
+        doJump = false;
         //jumpCount--;
         float launchForce;
 
@@ -667,7 +794,12 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //divide by 2 so we get the amount of time to reach the apex of the jump.
         buttonTime = (launchForce / (rb.mass * gravity));
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(transform.up * launchForce, ForceMode.Impulse);
+        rb.AddForce(direction * launchForce, ForceMode.Impulse);
+        jumpTime = 0;
+        jumping = true;
+        jumpCanceled = false;
+
+
 
         //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
@@ -691,6 +823,28 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //and distance.
     public IEnumerator DashCoroutine()
     {
+        //Get the forward vector using player up and the camera right vector
+        //so it's a forward vector on the plane created by the up axis of the player
+        //and the right axis of the camera. 
+        Vector3 forwardProjectedOnPlane = Vector3.Cross(cam.transform.right, transform.up);
+
+
+
+        Vector3 desiredDashVector = cam.transform.right * moveInput.normalized.x + forwardProjectedOnPlane * moveInput.normalized.y;
+
+        //if the player isn't inputting a direction,
+        //default the dash direction to be the direction
+        //the camera is facing.
+        if (moveInput.magnitude == 0)
+        {
+            desiredDashVector = forwardProjectedOnPlane;
+        }
+
+        //Set rotation instantly 
+        //so that they player always dashes in the direction they have input.
+        //it should feel extremely responsive.
+        rb.rotation = Quaternion.LookRotation(new Vector3(desiredDashVector.x, 0f, desiredDashVector.z), Vector3.up);
+
         //set the dash particles to play
         dashParticles.Play();
 
@@ -768,7 +922,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public void ApplyFinalMovements()
     {
         //We need to check that the desiredMoveDirection vector isn't zero because otherwise it can zero out our velocity.
-        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0)
+        if (isGrounded && !dashing && !jumping && /*!grappling.IsGrappling() && */desiredMoveDirection.normalized.sqrMagnitude > 0 && !stunned)
         {
             // Set the velocity directly to match the desired direction
             // Don't clamp the speed anymore as there isn't a good reason to do so.
@@ -815,13 +969,16 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         }
 
+        if (useGravity)
+        {
+            //Apply gravity, because gravity is not affected by mass and 
+            //we can't use ForceMode.acceleration with 2D just multiply
+            //by mass at the end. It's basically the same.
+            //In unity it factors in mass for this calculation so 
+            //multiplying by mass cancels out mass entirely.
+            rb.AddForce(-transform.up * gravity * rb.mass);
+        }
 
-        //Apply gravity, because gravity is not affected by mass and 
-        //we can't use ForceMode.acceleration with 2D just multiply
-        //by mass at the end. It's basically the same.
-        //In unity it factors in mass for this calculation so 
-        //multiplying by mass cancels out mass entirely.
-        rb.AddForce(-transform.up * gravity * rb.mass);
     }
 
     private IEnumerator slowToStop()
@@ -970,16 +1127,49 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //have the player get bounced away from the damaging object,
         //and then also give them invincibility frames where
         //they do the blinking in and out of existance thing.
-        rb.linearVelocity += (transform.position - other.transform.position).normalized * bounceForce;
+        //rb.linearVelocity += (transform.position - other.transform.position).normalized * bounceForce;
+        //StartCoroutine(BounceCoroutine((other.transform.position - transform.position).normalized + transform.up.normalized, bounceForce));
+
+        //Vector3 vectorAngle = Quaternion.AngleAxis(45, Vector3.Cross((other.transform.position - transform.position).normalized, transform.up)) * (other.transform.position - transform.position).normalized;
+
+
+        Vector3 vectorAngle = Quaternion.AngleAxis(-45, other.transform.right) * (transform.position - other.transform.position).normalized;
+
+        Debug.Log("HERE");
+        Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
+
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
 
         //print out data about the player taking damage.
         Debug.Log("Player Took: ".Color("Blue") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Orange"));
     }
 
+    public IEnumerator BounceCoroutine(Vector3 direction, float force)
+    {
+
+        //we need to wait for fixed update so that this can
+        //properly be applied to the player.
+        yield return new WaitForFixedUpdate();
+
+        //stop the player
+        rb.linearVelocity = Vector3.zero;
+        //if jumping, cancel their jump.
+        if (jumping)
+        {
+            jumpCanceled = true;
+        }
+
+        //this only works while the player is stunned,
+        //they can escape being knocked back much quicker if they
+        //have less i-frame time.
+        rb.AddForce(direction * force, ForceMode.Impulse);
+    }
+
 
     public void StartIFrames()
     {
-
+        //say the player is stunned.
+        stunned = true;
 
         //if we're already invincible and
         //the iframes coroutine is currently
@@ -999,6 +1189,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     public IEnumerator IFramesCoroutine()
     {
+        stunned = true;
+
         invincible = true;
         float total = iFrameTime;
         float curTime = 0f;
@@ -1045,6 +1237,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //after hitframes become hittable again.
         invincible = false;
 
+        //we are no longer stunned
+        stunned = false;
 
 
         //set iframes routine to null 
@@ -1134,9 +1328,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         Gizmos.matrix = prevMatrix;
     }
 
+    //Old, do not use --LD Montello
     //draw health
     //for debug.
-    void OnGUI()
+/*    void OnGUI()
     {
         string text = curHealth.ToString();
         int oldFontSize = GUI.skin.label.fontSize;
@@ -1146,7 +1341,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
     }
-
+*/
     void OnTriggerEnter(Collider other){
         if (other.gameObject.CompareTag("Collectable")){
             other.GetComponent<Collectible>().OnCollect();

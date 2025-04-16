@@ -10,6 +10,10 @@ public class CollisionSensor : MonoBehaviour
     public bool debugTargets;
     public bool debug;
     public Color sensorColor = Color.blue;
+
+    [HideInInspector]
+    public LayerMask mask;
+
     public List<GameObject> Objects
     {
         get
@@ -50,6 +54,12 @@ public class CollisionSensor : MonoBehaviour
             //adding it to the objects list.
             if (transforms[i] == null)
             {
+                transforms.Remove(transforms[i]);
+                continue;
+            }
+            if (!LDUtil.IsLayerInMask(mask, transforms[i].gameObject.layer))
+            {
+                //remove this transform
                 transforms.Remove(transforms[i]);
                 continue;
             }

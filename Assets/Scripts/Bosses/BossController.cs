@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
@@ -147,8 +148,6 @@ public class BossController : Collectible, IDamageable
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
 
-    public float rotationSpeed = 20f;
-
     [Header("Collision Avoidance Parameters")]
     public float avoidanceForceMultiplier = 50f;
     public float avoidanceDistance = 30f;
@@ -179,6 +178,18 @@ public class BossController : Collectible, IDamageable
         } 
         set { 
             Debug.LogWarning("State switched from " + _curState + " to " + value);  
+
+            if (value == BossState.move)
+            {
+                //only freeze rotation when moving, not position.
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+            }
+            else
+            {
+                //otherwise freeze position and rotation.
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
+
             _curState = value; 
             debugInfoTextMesh.text = _curState.ToString(); 
 
@@ -247,9 +258,29 @@ public class BossController : Collectible, IDamageable
         rb = GetComponent<Rigidbody>();
     }
 
+    public Vector3 GetPathablePoint(Vector3 desiredPoint, float searchRadius)
+    {
+        Vector3 foundPoint = Vector3.zero;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(desiredPoint, out hit, searchRadius, NavMesh.AllAreas))
+        {
+            foundPoint = hit.position;
+            Debug.Log("Pathable Point Found: " + foundPoint);
+        }
+        else
+        {
+            Debug.Log("No pathable point found within radius.");
+        }
+
+        return foundPoint;
+    }
+
     // Update is called once per frame
     void Update()
     {
+
+
         if (doStateMachine)
         {
             HandleStateMachine();
@@ -262,6 +293,22 @@ public class BossController : Collectible, IDamageable
 
         //Handle the animations.
         HandleAnimation();
+
+        //Debug test for the GetPathablePosition algorithm
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Vector3 foundPos = Vector3.zero;
+            //pause the editor so that we can step through the search algorithm.
+            Debug.Break();
+            if (GetPathablePosition(50f, ref foundPos))
+            {
+                Debug.Log("FOUND PATHABLE POSITION");
+            }
+            else
+            {
+               
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -430,10 +477,10 @@ public class BossController : Collectible, IDamageable
             //LD Montello
             //Rotation is locked on our rigidbody settings
             //so only code can rotate the object.
-            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up), rotationSpeed));
+            rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
         }
 
-
+        
 
     }
 
@@ -452,8 +499,9 @@ public class BossController : Collectible, IDamageable
         Gizmos.color = prevColor;
     }
 
+    //old, do not use --LD Montello.
     //draw health for debug.
-    void OnGUI()
+/*    void OnGUI()
     {
         string text = curHealth.ToString();
         int oldFontSize = GUI.skin.label.fontSize;
@@ -462,7 +510,7 @@ public class BossController : Collectible, IDamageable
         Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
-    }
+    }*/
 
 
     /// <summary>
@@ -586,6 +634,98 @@ public class BossController : Collectible, IDamageable
     }
 
     //LD Montello
+    //finds a position 
+    //that the boss can path to 
+    //from their current position
+    //from the current angle
+    public bool GetPathablePosition(float desiredDist, ref Vector3 foundPos)
+    {
+
+        float angleIncrement = 10f;
+
+        float leftAngle = 0f;
+        float rightAngle = 0f;
+
+        bool checkLeftAngle = false;
+
+        while (leftAngle < 180 && rightAngle < 180)
+        {
+
+            Vector2 tempVec = Vector2.zero;
+
+            //switch between which angle we are checking
+            //based off of the current side we check.
+            //so we're alternating the side we check on.
+            if (checkLeftAngle)
+            {
+                //we subtract the left angle
+                //from the current rotation to find 
+                //the world rotation.
+                //LD Note: we subtract 90 from the y angle 
+                //because the boss's forward looking angle is 180 
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) - leftAngle);
+                //increment search angle.
+                leftAngle += angleIncrement;
+            }
+            else
+            {
+                //we add the right angle
+                //from the current rotation to find 
+                //the world rotation.
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) + rightAngle);
+                //increment search angle.
+                rightAngle += angleIncrement;
+            }
+
+
+            //get the angle as a direction vector.
+            Vector3 dir = new Vector3(tempVec.x, 0f, tempVec.y);
+            //get the point relative to the boss's position 
+            //at the distance to check if there is anything colliding there.
+            //Vector3 pointToCheck = transform.position + dir.normalized * desiredDist;
+
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, (bossCollider as CapsuleCollider).radius, dir, desiredDist);
+
+            if (hits.Length > 0)
+            {
+                //if we hit ourself and nothing else, then
+                //we consider this a pathable position.
+                if (hits.Length == 1 && hits[0].collider.gameObject == gameObject)
+                {
+                    //set the found position
+                    foundPos = transform.position + dir.normalized * desiredDist;
+
+                    //Draw debug ray
+                    Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                    //say we found a position successfully. 
+                    return true;
+                }
+                Debug.DrawLine(transform.position, hits[0].point, checkLeftAngle ? Color.red : Color.blue);
+            }
+            //We didn't hit anything so this point is valid for pathing.
+            else
+            {
+                //set the found position
+                foundPos = transform.position + dir.normalized * desiredDist;
+
+                //Draw debug ray
+                Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                //say we found a position successfully. 
+                return true;
+            }
+
+            checkLeftAngle = !checkLeftAngle;
+        }
+
+        //return false when we haven't
+        //found a proper position.
+        foundPos = Vector3.zero;
+        return false;
+    }
+
+    //LD Montello
     /// <summary>
     /// Moves from current position to target position given a speed value. 
     /// </summary>
@@ -628,6 +768,9 @@ public class BossController : Collectible, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
+            //this is usually a loop that bosses can get stuck in, if that's the case we should have
+            //a fall back where they stop doing this movement and restart pathing to the player.
+
             //if we're not in the move state
             //anymore than stop moving.
             if (curState != BossState.move)
@@ -695,6 +838,8 @@ public class BossController : Collectible, IDamageable
         //walk closer to them.
         while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
         {
+            
+
             //if we're not in the move state
             //anymore than stop moving.
             //this is usually caused when a player

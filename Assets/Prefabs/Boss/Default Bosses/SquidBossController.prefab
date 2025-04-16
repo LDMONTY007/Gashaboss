@@ -5118,10 +5118,9 @@ MonoBehaviour:
   doStateMachine: 1
   attackCheckRadius: 10
   rb: {fileID: 0}
-  moveSpeed: 5
-  rotationSpeed: 20
+  moveSpeed: 15
   avoidanceForceMultiplier: 50
-  avoidanceDistance: 15
+  avoidanceDistance: 5
   avoidanceAngle: 75
   animatedModel: {fileID: 3015649465965333844}
   weapon: {fileID: 3606864933855598784}
@@ -5173,10 +5172,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
-  m_Height: 8
+  m_Radius: 5
+  m_Height: 12
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1 &7111925468099047979
 GameObject:
   m_ObjectHideFlags: 0
@@ -5372,7 +5371,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d67fb6a3c2b6b084d81948e8905f1af0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d67fb6a3c2b6b084d81948e8905f1af0, type: 3}
       propertyPath: m_LocalPosition.z
