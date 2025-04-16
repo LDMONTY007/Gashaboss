@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67a24c53be3fb0348bc032e20b4e5583, type: 3}
+  m_Name: PhantomCloak
+  m_EditorClassIdentifier: 
+  description: When taking damage, activate for x seconds. The player becomes invisible
+    and the boss loses track of the player. If the player attacks before the invisibility
+    timer ends, the next attack is a surprise attack and does x times damage.
+  invisibilityDuration: 3
+  surpriseAttackMultiplier: 1.5

@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: GamblerCoin
+  m_Script: {fileID: 11500000, guid: 6c4dd69d42d0d9245abcdb3bc6e36d18, type: 3}
+  m_Name: CoordinatedAttackItem
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 59991203688708908, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
-  weight: 1
-  isRemovedAfterDrop: 1
+  description: A passive entity that launches an attack every time the player attacks
+  companionPrefab: {fileID: 0}
+  attackDelay: 0.2
+  attackDamage: 1

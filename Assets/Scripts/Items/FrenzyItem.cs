@@ -15,7 +15,7 @@ public class FrenzyItem : ItemData
     public float frenzyDuration = 5f;
 
     [Tooltip("Cooldown before frenzy can be triggered again")]
-    public float frenzyCooldown = 8f;
+    public float frenzyCooldown = 15f;
 
     private static bool isApplied = false;
 

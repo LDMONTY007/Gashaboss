@@ -24,6 +24,9 @@ public class GlitchyStopwatch : ItemData
 
     public GameObject stunReadyIndicator;
 
+    // Keep track of the current indicator
+    private GameObject currentIndicator;
+
     public override void OnPickup()
     {
         Debug.Log("Glitchy Stopwatch picked up! Your next attack will periodically stun bosses.");
@@ -36,7 +39,7 @@ public class GlitchyStopwatch : ItemData
         }
 
         // Subscribe to the attack event if weapon exists
-        if (Player.instance.curWeapon != null)
+        if (Player.instance != null && Player.instance.curWeapon != null)
         {
             Player.instance.curWeapon.onAttack += OnPlayerAttack;
         }
@@ -45,7 +48,7 @@ public class GlitchyStopwatch : ItemData
     public override void RemoveItem()
     {
         // Unsubscribe from attack event
-        if (Player.instance.curWeapon != null)
+        if (Player.instance != null && Player.instance.curWeapon != null)
         {
             Player.instance.curWeapon.onAttack -= OnPlayerAttack;
         }
@@ -56,7 +59,14 @@ public class GlitchyStopwatch : ItemData
             stunRoutine = null;
         }
 
-        Player.instance.inventory.Remove(this);
+        // Clean up any existing indicator
+        CleanupIndicator();
+
+        // Remove from inventory
+        if (Player.instance != null && Player.instance.inventory.Contains(this))
+        {
+            Player.instance.inventory.Remove(this);
+        }
     }
 
     public override void ApplyEffect()
@@ -70,9 +80,15 @@ public class GlitchyStopwatch : ItemData
             {
                 boss.curState = BossController.BossState.stun;
 
-                coroutineRunner.StartCoroutine(StunEffectRoutine(boss));
+                if (coroutineRunner != null)
+                {
+                    coroutineRunner.StartCoroutine(StunEffectRoutine(boss));
+                }
 
                 Debug.Log("Boss stunned by Glitchy Stopwatch!");
+
+                // Clean up the indicator when used
+                CleanupIndicator();
             }
         }
     }
@@ -122,9 +138,7 @@ public class GlitchyStopwatch : ItemData
             readyToStun = false;
 
             // Clean up any existing indicator
-            GameObject indicator = GameObject.FindGameObjectWithTag("StunReadyIndicator");
-            if (indicator != null)
-                Object.Destroy(indicator);
+            CleanupIndicator();
 
             yield return new WaitForSeconds(stunCooldown);
 
@@ -132,15 +146,31 @@ public class GlitchyStopwatch : ItemData
 
             if (stunReadyIndicator != null && Player.instance != null)
             {
-                GameObject newIndicator = Object.Instantiate(stunReadyIndicator,
+                // Create new indicator
+                currentIndicator = Object.Instantiate(stunReadyIndicator,
                     Player.instance.transform.position + Vector3.up * 2,
                     Quaternion.identity);
-                newIndicator.tag = "StunReadyIndicator";
+
+                // Make it follow the player
+                if (currentIndicator != null)
+                {
+                    IndicatorFollower follower = currentIndicator.AddComponent<IndicatorFollower>();
+                    follower.Initialize(Player.instance.transform, Vector3.up * 2);
+                }
             }
 
             Debug.Log("Glitchy Stopwatch charged and ready to use!");
 
             yield return new WaitUntil(() => !readyToStun);
+        }
+    }
+
+    private void CleanupIndicator()
+    {
+        if (currentIndicator != null)
+        {
+            Object.Destroy(currentIndicator);
+            currentIndicator = null;
         }
     }
 
@@ -157,8 +187,28 @@ public class GlitchyStopwatch : ItemData
             coroutineRunner.StopCoroutine(stunRoutine);
         }
 
-        GameObject indicator = GameObject.FindGameObjectWithTag("StunReadyIndicator");
-        if (indicator != null)
-            Object.Destroy(indicator);
+        // Clean up any existing indicator
+        CleanupIndicator();
+    }
+}
+
+// Simple component to make indicator follow the player
+public class IndicatorFollower : MonoBehaviour
+{
+    private Transform target;
+    private Vector3 offset;
+
+    public void Initialize(Transform followTarget, Vector3 followOffset)
+    {
+        target = followTarget;
+        offset = followOffset;
+    }
+
+    void LateUpdate()
+    {
+        if (target != null)
+        {
+            transform.position = target.position + offset;
+        }
     }
 }

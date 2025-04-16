@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: GamblerCoin
+  m_Script: {fileID: 11500000, guid: 61959566f4b24174cbd5dbb38d763afe, type: 3}
+  m_Name: Voucher
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 59991203688708908, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
-  weight: 1
-  isRemovedAfterDrop: 1
+  description: "The first pull every boss/item cycle from Gacha is free and doesn\u2019t
+    use up coins/hp. "

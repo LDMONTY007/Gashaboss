@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: GamblerCoin
+  m_Name: ShieldEffect
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 59991203688708908, guid: 38f4b32e3db37a44d9bf97741beb019e, type: 3}
-  weight: 1
+  droppedObject: {fileID: 5279676522511768380, guid: 6177217961e6507468b547782bbba3c6, type: 3}
+  weight: 5
   isRemovedAfterDrop: 1
