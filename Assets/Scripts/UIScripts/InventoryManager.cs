@@ -6,7 +6,6 @@ public class InventoryManager: MonoBehaviour{
     [SerializeField] private GameObject inventoryItem;
     [SerializeField] private GameObject playerStatListMenu;
     [SerializeField] private Transform ItemContentWindow;
-    [SerializeField] private GameObject closeInventoryButton;
 
     public void UpdatePlayerStats(){
         //Stats displayed currently: (Keep Up To Date list, pls?)

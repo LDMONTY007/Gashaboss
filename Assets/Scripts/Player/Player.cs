@@ -218,7 +218,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     bool isOnWall = false;
     
-    vool didLand = true;
+    bool didLand = true;
 
     //Input actions
     InputAction moveAction;
