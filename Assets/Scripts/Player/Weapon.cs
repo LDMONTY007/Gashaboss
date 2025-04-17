@@ -469,7 +469,7 @@ public class Weapon : Collectible
                 //Execute the coroutine for dealing damage using our collision sensor.
                 yield return DealDamage(1);
 
-                //if we did hit something, we need to wait a few seconds
+                //if we did hit something, we need to wait 0.33 seconds
                 //before registering another hit in this spin attack.
                 if (specialDamageHitSuccess)
                 {

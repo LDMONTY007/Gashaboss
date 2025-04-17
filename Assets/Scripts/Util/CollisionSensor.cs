@@ -54,6 +54,13 @@ public class CollisionSensor : MonoBehaviour
                 colliders.Remove(colliders[i]);
                 continue;
             }
+            //if our parent somehow gets in this list,
+            //skip them.
+            if (transform.IsChildOf(colliders[i].transform))
+            {
+                colliders.Remove(colliders[i]);
+                continue;
+            }
 
             //we add the GetWidthAlongDirection calculation here so
             //that the point we check also takes into account the width
@@ -216,7 +223,6 @@ public class CollisionSensor : MonoBehaviour
     {
         //Do not add our own parent to a collision list.
         //We want to ignore our parents in these checks.
-        //
         if (transform.IsChildOf(other.transform))
         {
             return;

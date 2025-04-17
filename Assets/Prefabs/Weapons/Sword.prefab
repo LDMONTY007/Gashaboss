@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 3584174674595279152}
   - component: {fileID: 9079628037579507504}
   - component: {fileID: 6575773965476115922}
+  - component: {fileID: 4471090823642522675}
   m_Layer: 2
   m_Name: Sword
   m_TagString: Weapon
@@ -325,6 +326,27 @@ MonoBehaviour:
   attackDistance: 7
   player: {fileID: 0}
   animator: {fileID: 1265195092187752908}
+--- !u!135 &4471090823642522675
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236452567972498733}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 3.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &9157662681433476428
 PrefabInstance:
   m_ObjectHideFlags: 0
