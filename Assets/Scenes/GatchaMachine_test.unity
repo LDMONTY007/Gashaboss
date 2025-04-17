@@ -581,13 +581,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SquidBossController
       objectReference: {fileID: 0}
+    - target: {fileID: 6520624465326032014, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 123251506265365520, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
 --- !u!1001 &234092451
 PrefabInstance:

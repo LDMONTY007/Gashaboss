@@ -44,17 +44,28 @@ public class CollisionSensor : MonoBehaviour
         List<GameObject> _objects = new List<GameObject>();
 
 
-        for (int i = 0; i < transforms.Count; i++)
+        for (int i = 0; i < colliders.Count; i++)
         {
-            //if the transform is now null,
+            //if the collider is now null,
             //remove it from the list and skip
             //adding it to the objects list.
-            if (transforms[i] == null)
+            if (colliders[i] == null)
             {
-                transforms.Remove(transforms[i]);
+                colliders.Remove(colliders[i]);
                 continue;
             }
-            _objects.Add(transforms[i].gameObject);
+
+            //we add the GetWidthAlongDirection calculation here so
+            //that the point we check also takes into account the width
+            //of the collider in the up direction of the collision sensor.
+            if (IsPointWithinArc(colliders[i].transform.position, transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2))
+            {
+                //add the collider to our list
+                //because it is within collision sensor.
+                _objects.Add(colliders[i].gameObject);
+            }
+
+            
         }
         
         return _objects;
@@ -104,38 +115,24 @@ public class CollisionSensor : MonoBehaviour
             }
 
             //Draw transforms that are within the sphere trigger.
-            if (transforms.Count > 0)
+            if (colliders.Count > 0)
             {
-                foreach (Transform t in transforms)
+                foreach (Collider c in colliders)
                 {
-                    //if the transform is null, then continue instead.
-                    if (t == null) continue;
-                    Gizmos.DrawSphere(t.position, 0.5f);
+                    //if the collider is null, then continue instead.
+                    if (c == null) continue;
+                    Gizmos.DrawSphere(c.transform.position, 0.5f);
                     Gizmos.color = Color.blue;
                     //draw the bounds width in the up direcion of our collision sensor.
-                    Gizmos.DrawLine(t.position, t.position + transform.up.normalized * GetWidthAlongDirection(t.GetComponent<Collider>().bounds, transform.up) / 2);
-                    Gizmos.DrawLine(t.position, t.position - transform.up.normalized * GetWidthAlongDirection(t.GetComponent<Collider>().bounds, transform.up) / 2);
+                    Gizmos.DrawLine(c.transform.position, c.transform.position + transform.up.normalized * GetWidthAlongDirection(c.transform.GetComponent<Collider>().bounds, transform.up) / 2);
+                    Gizmos.DrawLine(c.transform.position, c.transform.position - transform.up.normalized * GetWidthAlongDirection(c.transform.GetComponent<Collider>().bounds, transform.up) / 2);
                 }
             }
         }
 
     }
 
-    List<Transform> transforms = new List<Transform>();
-
-
-    //old point in arc method.
-    public bool pointInArc(Vector3 point)
-    {
-        
-
-        if (Mathf.Abs(Vector3.SignedAngle(transform.forward, (point - transform.position).normalized, transform.up)) <= angle)
-        {
-            Debug.LogWarning(Mathf.Abs(Vector3.SignedAngle(transform.forward, (point - transform.position).normalized, transform.up)));
-            return true;
-        }
-        return false;
-    }
+    List<Collider> colliders = new List<Collider>();
 
     bool IsPointWithinArc(Vector3 point, Vector3 arcCenter, Vector3 forwardTransform, Vector3 upTransform, float arcAngle, float heightRange)
 
@@ -225,44 +222,25 @@ public class CollisionSensor : MonoBehaviour
             return;
         }
 
-        //we add the GetWidthAlongDirection calculation here so
-        //that the point we check also takes into account the width
-        //of the collider in the up direction of the collision sensor.
-        if (IsPointWithinArc(other.transform.position , transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(other.bounds, transform.up) / 2))
-        {
-            //add the transform to our list.
-            transforms.Add(other.transform);
-        }
+        //add the collider to our list.
+        colliders.Add(other);
 
     }
 
     private void OnTriggerStay(Collider other)
     {
-        //If the point is within the arc angle and height
-        if (IsPointWithinArc(other.transform.position, transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(other.bounds, transform.up) / 2))
+        //if this transform isn't in the transforms
+        //yet, then add it.
+        if (!colliders.Contains(other))
         {
-            //if this transform isn't in the transforms
-            //yet, then add it.
-            if (!transforms.Contains(other.transform))
-            {
-                transforms.Add(other.transform);
-            }
-        }
-        //if the angle is too great,
-        //remove them from the list.
-        else
-        {
-            //remove the transform from
-            //the list as it is no longer
-            //within the arc.
-            transforms.Remove(other.transform);
+            colliders.Add(other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        //remove the transform from
+        //remove the collider from
         //the list as it has left the sphere.
-        transforms.Remove(other.transform);
+        colliders.Remove(other);
     }
 }

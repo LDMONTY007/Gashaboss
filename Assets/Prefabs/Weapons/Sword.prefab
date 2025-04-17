@@ -1,5 +1,77 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3209659546691108338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4278642964264479097}
+  - component: {fileID: 4119237376946075307}
+  - component: {fileID: 2579409374648468183}
+  m_Layer: 2
+  m_Name: CollisionSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4278642964264479097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209659546691108338}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4463684173311591945}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4119237376946075307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209659546691108338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a5c6a9f0eca9945befd7744fcf8485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angle: 75
+  height: 3
+  debugTargets: 1
+  debug: 1
+  sensorColor: {r: 0, g: 0, b: 1, a: 1}
+  triggerCollider: {fileID: 2579409374648468183}
+--- !u!135 &2579409374648468183
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209659546691108338}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 3.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4782717363964357032
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,8 +223,6 @@ GameObject:
   - component: {fileID: 3584174674595279152}
   - component: {fileID: 9079628037579507504}
   - component: {fileID: 6575773965476115922}
-  - component: {fileID: 3848898630884427804}
-  - component: {fileID: 7284059923602112338}
   m_Layer: 2
   m_Name: Sword
   m_TagString: Weapon
@@ -173,6 +243,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4278642964264479097}
   - {fileID: 8690879436075887271}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -245,7 +316,7 @@ MonoBehaviour:
   collectibleName: Sword
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 7241007279958015534, guid: 38635f5a3cc910543877dec0c185ac42, type: 3}
-  collisionSensor: {fileID: 3848898630884427804}
+  collisionSensor: {fileID: 4119237376946075307}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 0.45
@@ -254,45 +325,6 @@ MonoBehaviour:
   attackDistance: 7
   player: {fileID: 0}
   animator: {fileID: 1265195092187752908}
---- !u!114 &3848898630884427804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6236452567972498733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72a5c6a9f0eca9945befd7744fcf8485, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  angle: 75
-  height: 3
-  debugTargets: 1
-  debug: 1
-  sensorColor: {r: 0, g: 0, b: 1, a: 1}
-  triggerCollider: {fileID: 7284059923602112338}
---- !u!135 &7284059923602112338
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6236452567972498733}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 3.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &9157662681433476428
 PrefabInstance:
   m_ObjectHideFlags: 0
