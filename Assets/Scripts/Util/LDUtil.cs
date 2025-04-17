@@ -116,8 +116,6 @@ public class LDUtil : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
     /// Coroutine that helps
     /// for waiting for an animation to 
@@ -126,16 +124,6 @@ public class LDUtil : MonoBehaviour
     /// <returns></returns>
     public static IEnumerator WaitForAnimationFinish(Animator animator, string animation)
     {
-        //For some reason we need
-        //to wait while the normalized time is > 1
-        //because if an animation plays multiple times
-        //the normalized time will be greater than 1. 
-        //This is dumb.
-        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
-        {
-            yield return null;
-        }
-
         //Wait until the animation is done
         while (animator.GetCurrentAnimatorStateInfo(0).IsName(animation))
         {
@@ -174,5 +162,11 @@ public class LDUtil : MonoBehaviour
     {
         //where I learned how to do this check: https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331/2
         return (mask.value & (1 << layer)) != 0;
+    }
+
+    public static Vector3 RotateVectorAroundAxis(Vector3 vectorToRotate, Vector3 axis, float angleDeg)
+    {
+        //multiplying a quaternion by a vector gives us the vector rotated by that quaternion.
+        return Quaternion.AngleAxis(angleDeg, axis) * vectorToRotate;
     }
 }

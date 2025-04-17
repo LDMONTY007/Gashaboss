@@ -349,6 +349,7 @@ public class Weapon : Collectible
         yield break;
     }
 
+    //this does 2 damage.
     public IEnumerator AirAltAttackCoroutine()
     {
         

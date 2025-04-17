@@ -130,6 +130,8 @@ public class BossController : Collectible, IDamageable
 
     #endregion
 
+    public float bounceForce = 20f;
+
     //LD Montello
     //time to idle before making a decision
     //by default this is zero but will change 
@@ -140,6 +142,7 @@ public class BossController : Collectible, IDamageable
 
     [Header("Attack Parameters")]
     public float attackCheckRadius = 10f;
+
 
 
     [HideInInspector]
@@ -980,6 +983,12 @@ public class BossController : Collectible, IDamageable
         //Set to be low resolution for a small amount of time.
         StartLowResRoutine();
 
+        //rotate -45 degrees away from the player so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -45);
+
+        //bounce the boss away from the player.
+        //this is how we simulate knockback.
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
 
         if (curIFramesRoutine == null)
         {
@@ -993,6 +1002,37 @@ public class BossController : Collectible, IDamageable
         }
 
         
+    }
+
+    public IEnumerator BounceCoroutine(Vector3 direction, float force)
+    {
+        Vector3 startForce = direction * force;
+
+        //stop the boss
+        rb.linearVelocity = Vector3.zero;
+
+        float bounceTime = 0.5f;
+        float curTime = 0f;
+
+        while (curTime <= bounceTime)
+        {
+            //we need to wait for fixed update so that this can
+            //properly be applied to the boss.
+            yield return new WaitForFixedUpdate();
+
+            rb.linearVelocity = startForce;
+
+            curTime += Time.deltaTime;
+        }
+
+        
+
+        
+
+        //this only works while the boss is stunned,
+        //they can escape being knocked back much quicker if they
+        //have less i-frame time.
+        //rb.AddForce(direction * force, ForceMode.Impulse);
     }
 
     Coroutine curIFramesRoutine = null;

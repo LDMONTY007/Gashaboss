@@ -1139,8 +1139,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //Vector3 vectorAngle = Quaternion.AngleAxis(45, Vector3.Cross((other.transform.position - transform.position).normalized, transform.up)) * (other.transform.position - transform.position).normalized;
 
-
-        Vector3 vectorAngle = Quaternion.AngleAxis(-45, other.transform.right) * (transform.position - other.transform.position).normalized;
+        //rotate -45 degrees away from the boss so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -45);
 
         Debug.Log("HERE");
         Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
