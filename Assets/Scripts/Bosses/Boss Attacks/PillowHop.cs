@@ -34,7 +34,7 @@ public class PillowHop : BossAction
         // but the possible moves will change as well (Can't guarntee that every boss will have a melee attack?)
         
         // Alternatively, we could for the moment assume boss's have exactly two attacks
-        // A special which, may or may not exist
+        // A special which, may or may not exist and only gets called if it exists
         // And then a basic melee attack
     }
 }

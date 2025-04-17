@@ -1365,6 +1365,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //if we spawned a new weapon,
         //set it's local posiition to be 0,0,0
         //so that it's centered on the player.
+        //TODO: Change this to a Mount point for that the weapon stores relative to the player
         if (this.curWeapon != null)
         {
             this.curWeapon.transform.localPosition = Vector3.zero;
