@@ -60,12 +60,13 @@ MonoBehaviour:
   movementParticles: {fileID: 0}
   _maxHealth: 3
   isDead: 0
+  bounceForce: 20
+  stunTime: 0.5
   curIdleTime: 0
   doStateMachine: 1
   attackCheckRadius: 15
   rb: {fileID: 0}
   moveSpeed: 15
-  rotationSpeed: 20
   avoidanceForceMultiplier: 50
   avoidanceDistance: 15
   avoidanceAngle: 75
@@ -478,12 +479,16 @@ MonoBehaviour:
   collectibleData: {fileID: 0}
   collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
+  slamParticles: {fileID: 0}
   collisionSensor: {fileID: 1421720976596736270}
   hasCooldown: 1
   cooldownTime: 0.45
+  altCooldownTime: 1
+  specialCooldownTime: 1
   canAttack: 1
   attackDistance: 15
   player: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!114 &1421720976596736270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -501,6 +506,9 @@ MonoBehaviour:
   debugTargets: 1
   debug: 1
   sensorColor: {r: 0, g: 0, b: 1, a: 1}
+  mask:
+    serializedVersion: 2
+    m_Bits: 0
   triggerCollider: {fileID: 2347861928408988028}
 --- !u!135 &2347861928408988028
 SphereCollider:
