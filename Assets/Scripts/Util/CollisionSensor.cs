@@ -11,9 +11,6 @@ public class CollisionSensor : MonoBehaviour
     public bool debug;
     public Color sensorColor = Color.blue;
 
-    [HideInInspector]
-    public LayerMask mask;
-
     public List<GameObject> Objects
     {
         get
@@ -54,12 +51,6 @@ public class CollisionSensor : MonoBehaviour
             //adding it to the objects list.
             if (transforms[i] == null)
             {
-                transforms.Remove(transforms[i]);
-                continue;
-            }
-            if (!LDUtil.IsLayerInMask(mask, transforms[i].gameObject.layer))
-            {
-                //remove this transform
                 transforms.Remove(transforms[i]);
                 continue;
             }
@@ -226,6 +217,14 @@ public class CollisionSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //Do not add our own parent to a collision list.
+        //We want to ignore our parents in these checks.
+        //
+        if (transform.IsChildOf(other.transform))
+        {
+            return;
+        }
+
         //we add the GetWidthAlongDirection calculation here so
         //that the point we check also takes into account the width
         //of the collider in the up direction of the collision sensor.

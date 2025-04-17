@@ -284,10 +284,45 @@ public class BossController : Collectible, IDamageable
         return foundPoint;
     }
 
+    public float groundCheckDist = 0.97f;
+    public float groundCheckScale = 0.4f;
+    public bool isGrounded = false;
+
+    private bool didLand = true;
+
     // Update is called once per frame
     void Update()
     {
+        #region grounded check
+        Collider[] colliders = Physics.OverlapBox(transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2) + (-transform.up * groundCheckDist), new Vector3(GetComponent<Collider>().bounds.size.x * groundCheckScale, 0.1f, GetComponent<Collider>().bounds.size.z * groundCheckScale), transform.rotation);
+        if (colliders.Length > 0 && (colliders.Contains(GetComponent<Collider>()) && colliders.Length != 1))
+        {
+            //if we were jumping or in the air,
+            //then we landed.
+            if (!didLand)
+            {
+                didLand = true;
+                OnLanded();
+            }
 
+            isGrounded = true;
+            //Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1f);
+
+            //Call on landed.
+
+        }
+        else
+        {
+            //when we are no longer grounded,
+            //say that we didn't land.
+            if (didLand == true)
+            {
+                didLand = false;
+            }
+
+            isGrounded = false;
+        }
+        #endregion
 
         if (doStateMachine)
         {
@@ -319,6 +354,11 @@ public class BossController : Collectible, IDamageable
         }
     }
 
+    public void OnLanded()
+    {
+        //TODO: Play landing particles here.
+    }
+
     private void FixedUpdate()
     {
         //LD Montello
@@ -346,7 +386,7 @@ public class BossController : Collectible, IDamageable
         //we freeze the position otherwise. 
         //we just allow gravity to take over
         //so that it can fall back to the ground.
-        if (curState != BossState.stun && curState != BossState.move && transform.position.y != 0)
+        if (curState != BossState.stun && curState != BossState.move && !isGrounded)
         {
             //freeze all rotation and only allow movement on the y axis.
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
