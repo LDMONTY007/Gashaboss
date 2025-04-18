@@ -565,6 +565,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 516627551158126604, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: collectibleButtonPrefab
+      value: 
+      objectReference: {fileID: 2516833066890704956, guid: 2bd73419213031d4cb3455d0413dc679, type: 3}
     - target: {fileID: 564160294640084946, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -748,6 +752,10 @@ PrefabInstance:
     - target: {fileID: 7929057294060633807, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9036078711863809842, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00012207031
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
