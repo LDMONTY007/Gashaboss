@@ -566,6 +566,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 516627551158126604, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: gachaMachine
+      value: 
+      objectReference: {fileID: 1211662093}
+    - target: {fileID: 516627551158126604, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: collectibleButtonPrefab
       value: 
       objectReference: {fileID: 2516833066890704956, guid: 2bd73419213031d4cb3455d0413dc679, type: 3}
@@ -1927,6 +1931,11 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7929057294060633807, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
   m_PrefabInstance: {fileID: 234092451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1211662093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6098404018322062433, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
+  m_PrefabInstance: {fileID: 5765394802999621754}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1352092888
 MonoBehaviour:
