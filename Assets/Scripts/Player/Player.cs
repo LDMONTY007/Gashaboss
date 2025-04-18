@@ -72,6 +72,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+    public event Action onCapsSpent;
+
     #endregion
 
     private int startHealth = 4;
@@ -1100,6 +1102,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //Open the death UI
         DeathUI.instance.OpenDeathUI();
+    }
+
+    // Made it a bool, that way the caller can know if the subtraction was succesful
+    public bool SpendCaps(int c){
+        if (c > caps){
+            Debug.LogWarning("Not Enough Caps for that!? Aborting the purchase. Tried to remove " + c + " caps.");
+            return false;
+        }
+        caps -= c;
+        onCapsSpent?.Invoke();// Send out signal that the player has spent caps
+        return true;
     }
 
     public void TakeDamage(int d, GameObject other)
