@@ -130,6 +130,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         {
             //Decrement player coins.
             p.curHealth--;
+            //Give player a cap if they use gacha machine, cause *shrugs*
+            p.caps += 1;
             return true;
         }
         //player didn't have enough coins.
