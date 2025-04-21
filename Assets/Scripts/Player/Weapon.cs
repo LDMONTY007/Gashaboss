@@ -31,8 +31,6 @@ public class Weapon : Collectible
 
     public float attackDistance = 1f;
 
-    LayerMask playerMask;
-
     public Player player;
 
     public Animator animator;
@@ -45,6 +43,8 @@ public class Weapon : Collectible
     //used to prevent destroying the weapon we pick up.
     //sometimes that would happen and this is a really messy solution for that.
     public bool isEquipped;
+
+    bool swordOnLeft = false;
 
     //when unity engine
     //does the "Loading" prompt
@@ -87,10 +87,6 @@ public class Weapon : Collectible
         ogMeshColor = collisionSensor.sensorColor;
         //weaponCollider.enabled = false;
 
-        //get player mask
-        playerMask = LayerMask.GetMask("Player", "Ignore Raycast"); //Assign our layer mask to player
-        playerMask = ~playerMask; //Invert the layermask value so instead of being just the player it becomes every layer but the mask
-
     }
 
     // Update is called once per frame
@@ -106,6 +102,7 @@ public class Weapon : Collectible
 
     public IEnumerator DealDamage(int damage)
     {
+
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
         if (objs.Count > 0)
@@ -152,6 +149,8 @@ public class Weapon : Collectible
 
 
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
+
+                        //Instantiate(hitParticles, c.transform.position, Quaternion.LookRotation(Camera.main.transform.position));
 
                         //wait for fixedupdate before launching player.
                         //if we didn't wait we'd have inconsistent physics.
@@ -246,7 +245,8 @@ public class Weapon : Collectible
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
 
-
+        //flip if the sword is on the left or not so we know for the special attack.
+        swordOnLeft = !swordOnLeft;
     }
 
     public virtual void AltAttack()
@@ -257,6 +257,7 @@ public class Weapon : Collectible
             return;
         }
 
+
         //TODO: 
         //code a different attack that occurs when in the air. this way the player can have a quick downward smash attack that
         //works only if they are in the air and do their alt attack with the sword.
@@ -266,6 +267,10 @@ public class Weapon : Collectible
         }
         else
         {
+
+            //flip if the sword is on the left or not so we know for the special attack.
+            swordOnLeft = !swordOnLeft;
+
             //Start AltAttackCoroutine
             StartCoroutine(AltAttackCoroutine());
         }
@@ -421,6 +426,8 @@ public class Weapon : Collectible
         yield break;
     }
 
+
+
     //TODO:
     //I want to make it so when you get an attack
     //to land, any attack, you don't start falling yet,
@@ -467,7 +474,20 @@ public class Weapon : Collectible
             //Wait until the animation is done
             while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             {
-                collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(0, 360, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
+                //if the sword is on the left spin collider clockwise
+                if (!swordOnLeft)
+                {
+                    //spin the collision sensor 360 degrees based on the normalized time of the spin animation.
+                    collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(360, 0, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
+                }
+                //else sword is on the right spin collider counter-clockwise 
+                else
+                {
+                    //spin the collision sensor 360 degrees based on the normalized time of the spin animation.
+                    collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(0, 360, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
+                }
+
+               
 
                 //Check and deal damage.
                 //Execute the coroutine for dealing damage using our collision sensor.
