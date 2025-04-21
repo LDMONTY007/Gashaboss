@@ -79,6 +79,9 @@ public class GachaMachine : MonoBehaviour, IDamageable {
             //after the animation finishes playing it will spawn the capsule.
             PlayDispenseAnimation();
         }
+
+        //print out data about the machine taking damage.
+        Debug.Log("Machine Took: ".Color("Cyan") + damage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Red"));
     }
 
     public void SpawnCapsule()

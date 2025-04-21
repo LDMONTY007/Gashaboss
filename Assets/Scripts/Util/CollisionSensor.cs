@@ -52,6 +52,7 @@ public class CollisionSensor : MonoBehaviour
             if (colliders[i] == null)
             {
                 colliders.Remove(colliders[i]);
+
                 continue;
             }
             //if our parent somehow gets in this list,
@@ -59,6 +60,7 @@ public class CollisionSensor : MonoBehaviour
             if (transform.IsChildOf(colliders[i].transform))
             {
                 colliders.Remove(colliders[i]);
+                
                 continue;
             }
 
@@ -71,7 +73,6 @@ public class CollisionSensor : MonoBehaviour
                 //because it is within collision sensor.
                 _objects.Add(colliders[i].gameObject);
             }
-
             
         }
         
@@ -165,6 +166,9 @@ public class CollisionSensor : MonoBehaviour
         //print out the height distance from the arc's center to the point
         //we are checking for the arc to see if it's within our height range. 
         //Debug.Log(Vector3.Dot(arcCenter - point, upTransform));
+
+        //prints out the info we are checking for the different values that could invalidate this check.
+        //Debug.Log("Angle: " + angle + "\narcAngle / 2: " + arcAngle / 2 + " \nDotAbs: " + (Mathf.Abs(Vector3.Dot(arcCenter - point, upTransform))) + "\nheightRange: " + heightRange);
 
         //Check if angle is within arc range and height is within height range
         //for the height range, we're just projecting the point onto the arc's up

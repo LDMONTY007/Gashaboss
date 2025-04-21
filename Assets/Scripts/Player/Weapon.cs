@@ -469,7 +469,7 @@ public class Weapon : Collectible
 
             float prevAngle = collisionSensor.angle;
 
-            collisionSensor.angle = 30;
+            collisionSensor.angle = 45;
 
             //Wait until the animation is done
             while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
