@@ -1356,8 +1356,21 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     }
 */
     void OnTriggerEnter(Collider other){
-        if (other.gameObject.CompareTag("Collectable") || other.gameObject.CompareTag("Weapon")){
+        if (other.gameObject.CompareTag("Collectable")){
             other.GetComponent<Collectible>().OnCollect();
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        //if the collider is a weapon
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            //if it's within the weapon pickup radius.
+            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
+            {
+                //collect the weapon.
+                other.GetComponent<Collectible>().OnCollect();
+            }
         }
     }
     
@@ -1413,19 +1426,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        //if the collider is a weapon
-        if (other.gameObject.CompareTag("Weapon"))
-        {
-            //if it's within a 2 meter radius
-            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
-            {
-                //collect the weapon.
-                other.GetComponent<Collectible>().OnCollect();
-            }
-        }
-    }
 
     public void SwapCurrentWeapon(Weapon w)
     {

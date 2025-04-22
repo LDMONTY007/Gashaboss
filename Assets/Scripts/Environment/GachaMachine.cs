@@ -35,6 +35,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     //exists.
     bool bossExists => FindAnyObjectByType<BossController>() != null;
 
+    //set to true when the animation for dispensing starts and set back to false
+    //when the animatino ends in SpawnCapsule
+    public bool isDispensing = false;
+
     public SetRandomSeed setRandomSeedAnimated;
 
     public AudioClip gachaRollClip;
@@ -75,8 +79,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     public void TakeDamage(int damage, GameObject other){
         
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
-        if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
+        if (!isDispensing && !capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
+            //say we are dispensing.
+            isDispensing = true;
 
             //if a drop exists, 
             //we know it isn't a boss if we 
@@ -101,6 +107,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     }
 
     public void SpawnCapsule(){
+        isDispensing = false;
+
         Debug.Log("TRY SPAWN DROP");
         GameObject drop = GetRandomDrop();
         if (drop == null)
