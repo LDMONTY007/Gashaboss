@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: CrocodileBossDrop
+  m_Name: TrexBossDropData
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 115467984967334595, guid: 3eccd5887c2069a4eae8c0f5ca24f277, type: 3}
+  droppedObject: {fileID: 7220439192702206297, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
   weight: 1
   isRemovedAfterDrop: 0

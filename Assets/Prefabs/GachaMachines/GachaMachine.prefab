@@ -85,6 +85,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 843efc63262e21b4ba52340bb5ae8bca, type: 2}
   - {fileID: 11400000, guid: 958eb208523e63f448f269ff618201b0, type: 2}
   - {fileID: 11400000, guid: 3533069148c1ac1419a5eb26cb841a30, type: 2}
+  - {fileID: 11400000, guid: 1b1341d79a8244f47909f30d365c9323, type: 2}
+  - {fileID: 11400000, guid: ce1da2e6fc22ebb47a4dcc7db3ef1a33, type: 2}
   capsule: {fileID: 4408692558850734106, guid: 0c36a2390d6f192469d7e60c54ddaf16, type: 3}
   capsuleSpawnTransform: {fileID: 5725657859695926706}
   gachaAnimator: {fileID: 781203210463097241}
