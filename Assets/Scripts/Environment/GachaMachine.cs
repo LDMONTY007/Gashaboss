@@ -84,9 +84,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         Debug.Log("Machine Took: ".Color("Cyan") + damage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Red"));
     }
 
-    public void SpawnCapsule()
-    {
-        Debug.LogWarning("TRY SPAWN DROP");
+    public void SpawnCapsule(){
+        Debug.Log("TRY SPAWN DROP");
         GameObject drop = GetRandomDrop();
         if (drop == null)
         {
@@ -106,12 +105,36 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         currentCapsule = intCapsule;
     }
 
+    public void SpawnSpecificCapsule(DropData toDrop){
+        Debug.Log("TRY SPAWN SPECIFIC DROP");
+        if (toDrop == null){
+            Debug.LogError("Dropdata was null, check passed value");
+            return;
+        }
+        GameObject drop = toDrop.droppedObject;
+        if (drop == null){
+            Debug.LogError("Drop from drop data was null, check dropdata prefab");
+            return;
+        }
+        //instantiate the capsule at the spawn position for capsules.
+        GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
+        intCapsule.GetComponent<Capsule>().SetObjectHeld(drop);
+
+        //copy the seed color from the animated capsule's color seed to the new instanced capsule.
+        intCapsule.GetComponentInChildren<SetRandomSeed>().seed = setRandomSeedAnimated.seed;
+
+        //set a reference to our current capsule.
+        currentCapsule = intCapsule;
+    }
+
     public bool TryBuyCapsule(Player p)
     {
         if (p.curHealth > 1)
         {
             //Decrement player coins.
             p.curHealth--;
+            //Give player a cap if they use gacha machine, cause *shrugs*
+            p.caps += 1;
             return true;
         }
         //player didn't have enough coins.

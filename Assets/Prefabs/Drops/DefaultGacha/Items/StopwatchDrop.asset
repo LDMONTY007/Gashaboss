@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 5489800404765948044, guid: 4f18d8cebd34b7b4b973be4b46348798, type: 3}
   weight: 5
+  cost: 2
   isRemovedAfterDrop: 1

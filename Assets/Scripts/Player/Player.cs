@@ -72,6 +72,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+    public event Action onCapsSpent;
+
     #endregion
 
     private int startHealth = 4;
@@ -150,11 +152,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float currentSpeed = 0f;
 
     [SerializeField]
-    private float moveSpeed = 5.0f;
+    public float moveSpeed = 10.0f;
 
-    public float walkSpeed = 10f;
-    
-    public float sprintSpeed = 20f;
+    public float rotationSpeed = 5f;
 
     private Coroutine slowToStopCoroutine;
 
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //that way during certain attacks we can disable it.
     public bool canJump = true;
     public float groundCheckDist = 0.1f;
-    [SerializeField] private int jumpCount = 1;
+    public int jumpCount = 1;
     public int jumpTotal = 1;
     [SerializeField] private bool jumpCanceled;
     [SerializeField] private bool jumping;
@@ -219,9 +219,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public Vector2 accumulatedVelocity = Vector2.zero;
 
     bool isOnWall = false;
-
-    bool isSprinting = false;
-
+    
     bool didLand = true;
 
     //Input actions
@@ -340,9 +338,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //get the movement direction.
         moveInput = moveAction.ReadValue<Vector2>();
-
-        //TODO: Remove isSprinting because we don't want sprint anymore.
-        moveSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         //Get the forward vector using player up and the camera right vector
         //so it's a forward vector on the plane created by the up axis of the player
@@ -1107,6 +1102,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //Open the death UI
         DeathUI.instance.OpenDeathUI();
+    }
+
+    // Made it a bool, that way the caller can know if the subtraction was succesful
+    public bool SpendCaps(int c){
+        if (c > caps){
+            Debug.LogWarning("Not Enough Caps for that!? Aborting the purchase. Tried to remove " + c + " caps.");
+            return false;
+        }
+        caps -= c;
+        onCapsSpent?.Invoke();// Send out signal that the player has spent caps
+        return true;
     }
 
     public void TakeDamage(int d, GameObject other)
