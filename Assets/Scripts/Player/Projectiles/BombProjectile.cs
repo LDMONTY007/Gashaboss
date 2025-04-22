@@ -28,27 +28,29 @@ public class BombProjectile : Projectile
     //on the 3rd collision.
     public new void OnCollisionEnter(Collision collision)
     {
-        if (bouncesBeforeExplosion > 0)
+
+        //if the object we hit is damageable, immediately explode.
+        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            bouncesBeforeExplosion--;
-
-            //bounce.
-            ReflectBounce(collision);
-            return;
-        }
-
-
-        if (doesSplashDamage)
-        {
-            DealSplashDamage();
+            DealDamage(damageable);
         }
         else
         {
-            //do damage to the object we collided with (or attempt to)
-            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-            if (damageable != null)
+            //if we haven't bounced enough we'll
+            //continue allowing the bomb to bounce.
+            if (bouncesBeforeExplosion > 0)
             {
-                DealDamage(damageable);
+                bouncesBeforeExplosion--;
+
+                //bounce.
+                ReflectBounce(collision);
+                return;
+            }
+            //once we've bounced enough the bomb will explode.
+            else if (doesSplashDamage)
+            {
+                DealSplashDamage();
             }
         }
 

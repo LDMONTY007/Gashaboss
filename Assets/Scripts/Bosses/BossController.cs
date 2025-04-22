@@ -27,6 +27,8 @@ public class BossController : Collectible, IDamageable
 
     public ParticleSystem movementParticles;
 
+    public ParticleSystem stunParticles;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -211,6 +213,7 @@ public class BossController : Collectible, IDamageable
         } 
     }
 
+
     public GameObject animatedModel;
 
     public Weapon weapon;
@@ -336,22 +339,6 @@ public class BossController : Collectible, IDamageable
 
         //Handle the animations.
         HandleAnimation();
-
-        //Debug test for the GetPathablePosition algorithm
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            Vector3 foundPos = Vector3.zero;
-            //pause the editor so that we can step through the search algorithm.
-            Debug.Break();
-            if (GetPathablePosition(50f, ref foundPos))
-            {
-                Debug.Log("FOUND PATHABLE POSITION");
-            }
-            else
-            {
-               
-            }
-        }
     }
 
     public void OnLanded()
@@ -460,6 +447,21 @@ public class BossController : Collectible, IDamageable
             else if (movementParticles.isPlaying && !isMoving && curState != BossState.move)
             {
                 movementParticles.Stop();
+            }
+        }
+
+        if (stunParticles != null)
+        {
+            if (!stunParticles.isPlaying && curState == BossState.stun)
+            {
+                stunParticles.Play();
+            }
+            else if (stunParticles.isPlaying && curState != BossState.stun)
+            {
+                stunParticles.Stop();
+                //make sure all the particles are deleted from the system.
+                stunParticles.Clear();
+                Debug.LogWarning("STOPPED");
             }
         }
     }
