@@ -18,10 +18,16 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     public Animator gachaAnimator;
 
     private GameObject currentCapsule;
+    //the currently dropped object from a capsule
+    public GameObject currentDrop;
 
     //if current capsule isn't null, then
     //a capsule exists
     bool capsuleExists => currentCapsule != null;
+
+    //if current drop isn't null, then
+    //a drop exists
+    bool dropExists => currentDrop != null;
    
     //this isn't the best way to check for this,
     //but seeing as we don't do it often
@@ -71,6 +77,16 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
         if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
+
+            //if a drop exists, 
+            //we know it isn't a boss if we 
+            //reach this check so destroy it.
+            //this is how the player gets rid of items or a weapon
+            //they don't want, if they don't pick it up then it gets destroyed.
+            if (dropExists)
+            {
+                Destroy(currentDrop);
+            }
             
 
             //Generate a new color for the capsule
@@ -97,6 +113,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //instantiate the capsule at the spawn position for capsules.
         GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
         intCapsule.GetComponent<Capsule>().SetObjectHeld(drop);
+
+        //set the parent machine of the capsule.
+        intCapsule.GetComponent<Capsule>().parentMachine = this;
+
 
         //copy the seed color from the animated capsule's color seed to the new instanced capsule.
         intCapsule.GetComponentInChildren<SetRandomSeed>().seed = setRandomSeedAnimated.seed;
