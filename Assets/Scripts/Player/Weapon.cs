@@ -266,7 +266,7 @@ public class Weapon : Collectible
     }
 
 
-    public IEnumerator AltAttackCoroutine()
+    public virtual IEnumerator AltAttackCoroutine()
     {
         //start the attack animation
         if (animator != null)
@@ -349,7 +349,7 @@ public class Weapon : Collectible
         yield break;
     }
 
-    public IEnumerator AirAltAttackCoroutine()
+    public virtual IEnumerator AirAltAttackCoroutine()
     {
         
 
@@ -471,7 +471,7 @@ public class Weapon : Collectible
     //I want to make it so when you get an attack
     //to land, any attack, you don't start falling yet,
     //because then you can combo against the boss.
-    public IEnumerator SpecialAttackCoroutine()
+    public virtual IEnumerator SpecialAttackCoroutine()
     {
         //start the attack animation
         if (animator != null)
@@ -562,7 +562,6 @@ public class Weapon : Collectible
                 {
                     Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
                 }
-
             }
         }
 
@@ -618,6 +617,4 @@ public class Weapon : Collectible
         //so we don't damage the player.
         collisionSensor.mask = playerMask;
     }
-
-    
 }
