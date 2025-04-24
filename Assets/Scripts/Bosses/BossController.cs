@@ -424,26 +424,28 @@ public class BossController : Collectible, IDamageable
 
 
     MeleeAttack meleeAttack = new MeleeAttack();
+    AltAttack altAttack = new AltAttack();
+    SpecialAttack specialAttack = new SpecialAttack();
 
     public void HandleAttack()
-    {
-
-
-        //TODO:
-        //choose the attack based on our pattern
-        //and execute it.
-        //attacks should be a seperate script to make modular bosses and boss design easier.
-
-
-        //if the boss isn't already in a melee attack,
+    {   
+        //if the boss isn't already attacking,
         //then start one.
-        if (!meleeAttack.active)
+        if (!meleeAttack.active && !altAttack.active && !specialAttack.active)
         {
+            // Temp logic for attack handling, for now we'll just pick a random attack out of the three options
+            // Weapons will just default to melee attacks, if a alt or special attack isn't available anyway, so this should operate fine
+            int randAttack = UnityEngine.Random.Range(0,3);
             Debug.Log("Boss wants to attack here!".Color("Red"));
-            StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+            switch randAttack{
+                case: 0
+                    StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+                case: 1
+                    StartCoroutine(altAttack.ActionCoroutine(this, 1f));
+                case: 2
+                    StartCoroutine(specialAttack.ActionCoroutine(this, 1f));
+            }
         }
-        
-
     }
 
     private Coroutine getCloseForAttackCoroutine = null;
