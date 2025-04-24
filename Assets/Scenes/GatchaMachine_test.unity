@@ -2966,14 +2966,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7749684998793185523, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: b71d4403fca428d4cbb88b227da673f3, type: 2}
-    - target: {fileID: 8001251965469382699, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: 9a7e9a7f57fdc934699e565b6449b428, type: 2}
     - target: {fileID: 8197494247657850279, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
       propertyPath: collectionPanelUI
       value: 
