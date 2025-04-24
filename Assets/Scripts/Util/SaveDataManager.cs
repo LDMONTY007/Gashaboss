@@ -94,9 +94,24 @@ public class SaveDataManager: MonoBehaviour{
         return temp1;
     }
 
+    //used to throw an error in the collection manager
+    //that informs the developers that they need to be sure
+    //they added the DropData for the given object
+    //to the scriptableObject "DropDataList" in Assets/Prefabs
+    public bool DropDataExists(string key)
+    {
+        return dropDataList.soList.Exists(d => d.name == key);
+    }
+
     //find the dropData in our global dropData scriptable object list.
     public DropData FindDropData(string key)
     {
+        if (!SaveDataManager.instance.DropDataExists(key))
+        {
+
+            Debug.LogError("DropData: \"" + key + "\" not found in the DropDataList! Please add the DropData to the scriptableObject \"DropDataList\" in Assets/Prefabs!");
+        }
+
         //return the dropped object specifically.
         return (dropDataList.soList.Find(d => d.name == key) as DropData);
     }

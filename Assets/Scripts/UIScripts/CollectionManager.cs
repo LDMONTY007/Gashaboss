@@ -15,6 +15,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
     public Transform collectionContent; // Scroll View content holder
     public GameObject collectibleButtonPrefab; // Prefab for collectible buttons
     public Button closeCollectionButton; // Button to close the collection UI
+    [SerializeField] private GameObject gachaMachine; // needed to spawn, bought collectibles
 
     [Header("Collected Collectibles")]
     private Dictionary<string, DropData> collectedCollectibles;
@@ -57,7 +58,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         collectionPanel.SetActive(true);
         foreach (KeyValuePair<string, DropData> collectible in this.collectedCollectibles)
         {
-            LoadMenuItem(collectible.Value.droppedObject, collectible.Key);
+            LoadMenuItem(collectible.Value.droppedObject, collectible.Key, collectible.Value.cost);
         }
         SetCursorState(true);
         UIManager.Instance.currentUIState = UIManager.UIState.Collection; // <<< USE STATE MACHINE
@@ -92,22 +93,21 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         }
     }
 
-
-
-    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName)
+    public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, int cost)
     {
-
         Debug.Log("Loading Menu Item");
 
-        GameObject button = Instantiate(collectibleButtonPrefab, collectionContent);
+        GameObject listing = Instantiate(collectibleButtonPrefab, collectionContent);
 
-        TextMeshProUGUI collectibleText = button.transform.Find("CollectibleText").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI collectibleText = listing.transform.Find("CollectibleText").GetComponent<TextMeshProUGUI>();
         if (collectibleText != null)
         {
             collectibleText.text = collectibleName;
         }
-
-        button.GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
+        // add event to view button
+        listing.transform.Find("CollectibleButton").GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
+        // add event to buy button
+        listing.transform.Find("BuyButton").GetComponent<Button>().onClick.AddListener(() => BuyCollectible(collectibleName, cost));
     }
 
     public void LoadData(GameData gameData)
@@ -118,6 +118,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         {
             //get the drop using our search function
             DropData dropToSave = SaveDataManager.instance.FindDropData(key);
+
             //get the name of the collectible from the collectible itself and store
             //the drop data.
             collectedCollectibles.Add(dropToSave.droppedObject.GetComponent<Collectible>().collectibleName, dropToSave);
@@ -126,7 +127,6 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     public void SaveData(GameData gameData)
     {
-        
         //loop through and save all the collected collectibles.
         gameData.collectedCollectibles.Clear();
         foreach (var kvp in collectedCollectibles)
@@ -164,4 +164,10 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         CloseCollection();
     }
 
+    private void BuyCollectible(string collectibleName, int cost){
+        if (Player.instance.SpendCaps(cost)){
+            DropData spawn = collectedCollectibles[collectibleName];
+            gachaMachine.GetComponent<GachaMachine>().SpawnSpecificCapsule(spawn);
+        }
+    }
 }

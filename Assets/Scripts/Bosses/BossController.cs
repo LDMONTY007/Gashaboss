@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
 using static UnityEditor.PlayerSettings;
 
@@ -25,6 +26,8 @@ public class BossController : Collectible, IDamageable
     public Animator animator;
 
     public ParticleSystem movementParticles;
+
+    public ParticleSystem stunParticles;
 
     #region health vars
     [Header("Health Variables")]
@@ -138,6 +141,10 @@ public class BossController : Collectible, IDamageable
 
     #endregion
 
+    public float bounceForce = 20f;
+
+    public float stunTime = 0.5f;
+
     //LD Montello
     //time to idle before making a decision
     //by default this is zero but will change 
@@ -150,13 +157,12 @@ public class BossController : Collectible, IDamageable
     public float attackCheckRadius = 10f;
 
 
+
     [HideInInspector]
     public Rigidbody rb;
 
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
-
-    public float rotationSpeed = 20f;
 
     [Header("Collision Avoidance Parameters")]
     public float avoidanceForceMultiplier = 50f;
@@ -191,6 +197,18 @@ public class BossController : Collectible, IDamageable
         } 
         set { 
             Debug.LogWarning("State switched from " + _curState + " to " + value);  
+
+            if (value == BossState.move)
+            {
+                //only freeze rotation when moving, not position.
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+            }
+            else
+            {
+                //otherwise freeze position and rotation.
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
+
             _curState = value; 
             debugInfoTextMesh.text = _curState.ToString(); 
 
@@ -206,6 +224,7 @@ public class BossController : Collectible, IDamageable
             }*/
         } 
     }
+
 
     public GameObject animatedModel;
 
@@ -256,6 +275,9 @@ public class BossController : Collectible, IDamageable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //start with the max health for this boss.
+        curHealth = maxHealth;
+
         StartUI();
 
         playerObject = Player.instance.gameObject;
@@ -264,9 +286,64 @@ public class BossController : Collectible, IDamageable
         rb = GetComponent<Rigidbody>();
     }
 
+    public Vector3 GetPathablePoint(Vector3 desiredPoint, float searchRadius)
+    {
+        Vector3 foundPoint = Vector3.zero;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(desiredPoint, out hit, searchRadius, NavMesh.AllAreas))
+        {
+            foundPoint = hit.position;
+            Debug.Log("Pathable Point Found: " + foundPoint);
+        }
+        else
+        {
+            Debug.Log("No pathable point found within radius.");
+        }
+
+        return foundPoint;
+    }
+
+    public float groundCheckDist = 0.97f;
+    public float groundCheckScale = 0.4f;
+    public bool isGrounded = false;
+
+    private bool didLand = true;
+
     // Update is called once per frame
     void Update()
     {
+        #region grounded check
+        Collider[] colliders = Physics.OverlapBox(transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2) + (-transform.up * groundCheckDist), new Vector3(GetComponent<Collider>().bounds.size.x * groundCheckScale, 0.1f, GetComponent<Collider>().bounds.size.z * groundCheckScale), transform.rotation);
+        if (colliders.Length > 0 && (colliders.Contains(GetComponent<Collider>()) && colliders.Length != 1))
+        {
+            //if we were jumping or in the air,
+            //then we landed.
+            if (!didLand)
+            {
+                didLand = true;
+                OnLanded();
+            }
+
+            isGrounded = true;
+            //Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1f);
+
+            //Call on landed.
+
+        }
+        else
+        {
+            //when we are no longer grounded,
+            //say that we didn't land.
+            if (didLand == true)
+            {
+                didLand = false;
+            }
+
+            isGrounded = false;
+        }
+        #endregion
+
         if (doStateMachine)
         {
             HandleStateMachine();
@@ -281,12 +358,43 @@ public class BossController : Collectible, IDamageable
         HandleAnimation();
     }
 
+    public void OnLanded()
+    {
+        //TODO: Play landing particles here.
+    }
+
     private void FixedUpdate()
     {
         //LD Montello
         //rotate towards the direction
         //we are moving in.
         HandleRbRotation();
+    }
+
+    void LateUpdate()
+    {
+        ApplyFinalMovements();
+    }
+
+
+
+    /// <summary>
+    /// Handles applying final data to the rigidbody.
+    /// For example if the boss is in the air make sure we don't
+    /// freeze them on the Z axis and let gravity effect them.
+    /// </summary>
+    public void ApplyFinalMovements()
+    {
+        //when we aren't doing some kind of move, 
+        //the boss can't fall unless we check here and allow them to fall.
+        //we freeze the position otherwise. 
+        //we just allow gravity to take over
+        //so that it can fall back to the ground.
+        if (curState != BossState.stun && curState != BossState.move && !isGrounded)
+        {
+            //freeze all rotation and only allow movement on the y axis.
+            rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        }
     }
 
     public void SwitchToIdle(float idleTime)
@@ -358,6 +466,21 @@ public class BossController : Collectible, IDamageable
                 movementParticles.Stop();
             }
         }
+
+        if (stunParticles != null)
+        {
+            if (!stunParticles.isPlaying && curState == BossState.stun)
+            {
+                stunParticles.Play();
+            }
+            else if (stunParticles.isPlaying && curState != BossState.stun)
+            {
+                stunParticles.Stop();
+                //make sure all the particles are deleted from the system.
+                stunParticles.Clear();
+                Debug.LogWarning("STOPPED");
+            }
+        }
     }
 
     //Here we decide if we want to attack,
@@ -380,16 +503,20 @@ public class BossController : Collectible, IDamageable
             Debug.LogWarning("EXIT IDLE " + curIdleTime);
         }
 
+        //no leaving the stun state early.
+        if (curState != BossState.stun)
+        {
+            if (IsPlayerInAttackRange())
+            {
+                Debug.Log("Boss is in attack range!".Color("orange"));
+                curState = BossState.attack;
+            }
+            else
+            {
+                curState = BossState.move;
+            }
+        }
 
-        if (IsPlayerInAttackRange())
-        {
-            Debug.Log("Boss is in attack range!".Color("orange"));
-            curState = BossState.attack;
-        }
-        else
-        {
-            curState = BossState.move;
-        }
     }
 
 
@@ -447,10 +574,10 @@ public class BossController : Collectible, IDamageable
             //LD Montello
             //Rotation is locked on our rigidbody settings
             //so only code can rotate the object.
-            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up), rotationSpeed));
+            rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
         }
 
-
+        
 
     }
 
@@ -469,8 +596,9 @@ public class BossController : Collectible, IDamageable
         Gizmos.color = prevColor;
     }
 
+    //old, do not use --LD Montello.
     //draw health for debug.
-    void OnGUI()
+/*    void OnGUI()
     {
         string text = curHealth.ToString();
         int oldFontSize = GUI.skin.label.fontSize;
@@ -479,7 +607,7 @@ public class BossController : Collectible, IDamageable
         Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
         GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), text);
         GUI.skin.label.fontSize = oldFontSize;
-    }
+    }*/
 
 
     /// <summary>
@@ -603,6 +731,98 @@ public class BossController : Collectible, IDamageable
     }
 
     //LD Montello
+    //finds a position 
+    //that the boss can path to 
+    //from their current position
+    //from the current angle
+    public bool GetPathablePosition(float desiredDist, ref Vector3 foundPos)
+    {
+
+        float angleIncrement = 10f;
+
+        float leftAngle = 0f;
+        float rightAngle = 0f;
+
+        bool checkLeftAngle = false;
+
+        while (leftAngle < 180 && rightAngle < 180)
+        {
+
+            Vector2 tempVec = Vector2.zero;
+
+            //switch between which angle we are checking
+            //based off of the current side we check.
+            //so we're alternating the side we check on.
+            if (checkLeftAngle)
+            {
+                //we subtract the left angle
+                //from the current rotation to find 
+                //the world rotation.
+                //LD Note: we subtract 90 from the y angle 
+                //because the boss's forward looking angle is 180 
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) - leftAngle);
+                //increment search angle.
+                leftAngle += angleIncrement;
+            }
+            else
+            {
+                //we add the right angle
+                //from the current rotation to find 
+                //the world rotation.
+                tempVec = LDUtil.AngleToDir2D((transform.rotation.eulerAngles.y - 90) + rightAngle);
+                //increment search angle.
+                rightAngle += angleIncrement;
+            }
+
+
+            //get the angle as a direction vector.
+            Vector3 dir = new Vector3(tempVec.x, 0f, tempVec.y);
+            //get the point relative to the boss's position 
+            //at the distance to check if there is anything colliding there.
+            //Vector3 pointToCheck = transform.position + dir.normalized * desiredDist;
+
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, (bossCollider as CapsuleCollider).radius, dir, desiredDist);
+
+            if (hits.Length > 0)
+            {
+                //if we hit ourself and nothing else, then
+                //we consider this a pathable position.
+                if (hits.Length == 1 && hits[0].collider.gameObject == gameObject)
+                {
+                    //set the found position
+                    foundPos = transform.position + dir.normalized * desiredDist;
+
+                    //Draw debug ray
+                    Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                    //say we found a position successfully. 
+                    return true;
+                }
+                Debug.DrawLine(transform.position, hits[0].point, checkLeftAngle ? Color.red : Color.blue);
+            }
+            //We didn't hit anything so this point is valid for pathing.
+            else
+            {
+                //set the found position
+                foundPos = transform.position + dir.normalized * desiredDist;
+
+                //Draw debug ray
+                Debug.DrawLine(transform.position, foundPos, Color.green);
+
+                //say we found a position successfully. 
+                return true;
+            }
+
+            checkLeftAngle = !checkLeftAngle;
+        }
+
+        //return false when we haven't
+        //found a proper position.
+        foundPos = Vector3.zero;
+        return false;
+    }
+
+    //LD Montello
     /// <summary>
     /// Moves from current position to target position given a speed value. 
     /// </summary>
@@ -645,6 +865,9 @@ public class BossController : Collectible, IDamageable
         //and only stop if we reach it or we hit an object.
         while ((targetPos - transform.position).magnitude > targetAccuracy && curState != BossState.stun)
         {
+            //this is usually a loop that bosses can get stuck in, if that's the case we should have
+            //a fall back where they stop doing this movement and restart pathing to the player.
+
             //if we're not in the move state
             //anymore than stop moving.
             if (curState != BossState.move)
@@ -860,19 +1083,61 @@ public class BossController : Collectible, IDamageable
         //Set to be low resolution for a small amount of time.
         StartLowResRoutine();
 
+        //rotate -1 degrees away from the player so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
 
-        if (curIFramesRoutine == null)
+        //bounce the boss away from the player.
+        //this is how we simulate knockback.
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
+
+        //LD Montello
+        //Stun the boss for 1f
+        //This gives the player a 0.5 second range to continue their attack combo and keep the boss stunned.
+        StartCoroutine(StunCoroutine(stunTime));
+    }
+
+    public IEnumerator BounceCoroutine(Vector3 direction, float force)
+    {
+        Vector3 startForce = direction * force;
+
+        //stop the boss
+        rb.linearVelocity = Vector3.zero;
+
+        float bounceTime = 0.5f;
+        float curTime = 0f;
+
+        if (curState == BossState.stun)
         {
-            //LD Montello
-            //Stun the boss temporarily.
-            curIFramesRoutine = StartCoroutine(IFramesCoroutine(1f));
-        }
-        else
-        {
-            Debug.LogError("PREVIOUS IFRAMES HAVEN'T FINISHED");
+            //don't freeze position anymore
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
-        
+
+        while (curTime <= bounceTime)
+        {
+            //we need to wait for fixed update so that this can
+            //properly be applied to the boss.
+            yield return new WaitForFixedUpdate();
+
+            rb.linearVelocity = startForce;
+
+            curTime += Time.deltaTime;
+        }
+
+
+        rb.linearVelocity = Vector3.zero;
+
+        if (curState == BossState.stun)
+        {
+            //go back to freezing position
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
+
+        //this only works while the boss is stunned,
+        //they can escape being knocked back much quicker if they
+        //have less i-frame time.
+        //rb.AddForce(direction * force, ForceMode.Impulse);
     }
 
     Coroutine curIFramesRoutine = null;
@@ -967,6 +1232,13 @@ public class BossController : Collectible, IDamageable
         curIFramesRoutine = null;
     }
 
+    public IEnumerator StunCoroutine(float stunTime)
+    {
+        //We are already in stun,
+        //so wait some amount of time before exiting stun.
+        yield return new WaitForSeconds(stunTime);
+        curState = BossState.idle;
+    }
 
     bool isLowRes = false;
 

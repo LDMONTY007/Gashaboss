@@ -18,16 +18,26 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     public Animator gachaAnimator;
 
     private GameObject currentCapsule;
+    //the currently dropped object from a capsule
+    public GameObject currentDrop;
 
     //if current capsule isn't null, then
     //a capsule exists
     bool capsuleExists => currentCapsule != null;
+
+    //if current drop isn't null, then
+    //a drop exists
+    bool dropExists => currentDrop != null;
    
     //this isn't the best way to check for this,
     //but seeing as we don't do it often
     //when we check we'll just search for if a boss controller
     //exists.
     bool bossExists => FindAnyObjectByType<BossController>() != null;
+
+    //set to true when the animation for dispensing starts and set back to false
+    //when the animatino ends in SpawnCapsule
+    public bool isDispensing = false;
 
     public SetRandomSeed setRandomSeedAnimated;
 
@@ -69,8 +79,20 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     public void TakeDamage(int damage, GameObject other){
         
         //try to buy a capsule so long as there isn't a capsule waiting to be opened.
-        if (!capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
+        if (!isDispensing && !capsuleExists && !bossExists && Player.instance != null && TryBuyCapsule(Player.instance))
         {
+            //say we are dispensing.
+            isDispensing = true;
+
+            //if a drop exists, 
+            //we know it isn't a boss if we 
+            //reach this check so destroy it.
+            //this is how the player gets rid of items or a weapon
+            //they don't want, if they don't pick it up then it gets destroyed.
+            if (dropExists)
+            {
+                Destroy(currentDrop);
+            }
             
 
             //Generate a new color for the capsule
@@ -79,11 +101,15 @@ public class GachaMachine : MonoBehaviour, IDamageable {
             //after the animation finishes playing it will spawn the capsule.
             PlayDispenseAnimation();
         }
+
+        //print out data about the machine taking damage.
+        Debug.Log("Machine Took: ".Color("Cyan") + damage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Red"));
     }
 
-    public void SpawnCapsule()
-    {
-        Debug.LogWarning("TRY SPAWN DROP");
+    public void SpawnCapsule(){
+        isDispensing = false;
+
+        Debug.Log("TRY SPAWN DROP");
         GameObject drop = GetRandomDrop();
         if (drop == null)
         {
@@ -92,6 +118,32 @@ public class GachaMachine : MonoBehaviour, IDamageable {
             return;
         }
         Debug.Log("Spawning Drop...");
+        //instantiate the capsule at the spawn position for capsules.
+        GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
+        intCapsule.GetComponent<Capsule>().SetObjectHeld(drop);
+
+        //set the parent machine of the capsule.
+        intCapsule.GetComponent<Capsule>().parentMachine = this;
+
+
+        //copy the seed color from the animated capsule's color seed to the new instanced capsule.
+        intCapsule.GetComponentInChildren<SetRandomSeed>().seed = setRandomSeedAnimated.seed;
+
+        //set a reference to our current capsule.
+        currentCapsule = intCapsule;
+    }
+
+    public void SpawnSpecificCapsule(DropData toDrop){
+        Debug.Log("TRY SPAWN SPECIFIC DROP");
+        if (toDrop == null){
+            Debug.LogError("Dropdata was null, check passed value");
+            return;
+        }
+        GameObject drop = toDrop.droppedObject;
+        if (drop == null){
+            Debug.LogError("Drop from drop data was null, check dropdata prefab");
+            return;
+        }
         //instantiate the capsule at the spawn position for capsules.
         GameObject intCapsule = Instantiate(capsule, capsuleSpawnTransform.position, capsule.transform.rotation);
         intCapsule.GetComponent<Capsule>().SetObjectHeld(drop);
@@ -119,6 +171,8 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         {
             //Decrement player coins.
             p.curHealth--;
+            //Give player a cap if they use gacha machine, cause *shrugs*
+            p.caps += 1;
             return true;
         }
         //player didn't have enough coins.

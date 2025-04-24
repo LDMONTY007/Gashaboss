@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7842571436054462625}
-  - component: {fileID: 6512853943826952466}
-  - component: {fileID: 2057590263567642505}
+  - component: {fileID: 1998844250274119340}
+  - component: {fileID: 6326283862921698174}
+  - component: {fileID: 1869756585311057387}
   m_Layer: 0
   m_Name: Gambler's Coin
   m_TagString: Collectable
@@ -49,9 +49,9 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: ce1da2e6fc22ebb47a4dcc7db3ef1a33, type: 2}
   collectibleName: Gambler's Coin
   item: {fileID: 11400000, guid: b2a772639eb1626469c0362f9b618b2d, type: 2}
-  itemModel: {fileID: 4150916910649406704}
---- !u!136 &2057590263567642505
-CapsuleCollider:
+  itemModel: {fileID: 4321943645753147892}
+--- !u!65 &1869756585311057387
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -68,10 +68,8 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2
-  m_Height: 5
-  m_Direction: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4150916910649406704
 GameObject:

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: BombDropData
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 4968730763377577749, guid: d6bef274511005e4c88baba1f144b83f, type: 3}
-  weight: 3
+  weight: 1
+  cost: 4
   isRemovedAfterDrop: 1
