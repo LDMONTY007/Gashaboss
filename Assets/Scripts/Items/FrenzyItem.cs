@@ -59,8 +59,7 @@ public class FrenzyItemEffect : MonoBehaviour
     private int attackCounter = 0;
     private bool inFrenzy = false;
     private bool inCooldown = false;
-    private float originalWalkSpeed;
-    private float originalSprintSpeed;
+    private float originalMoveSpeed;
     private ParticleSystem frenzyParticles;
 
     public void Initialize(FrenzyItem data)
@@ -74,9 +73,8 @@ public class FrenzyItemEffect : MonoBehaviour
             playerWeapon.onAttack += OnPlayerAttack;
         }
 
-        // Store original speeds
-        originalWalkSpeed = Player.instance.walkSpeed;
-        originalSprintSpeed = Player.instance.sprintSpeed;
+        // Store original speed - assuming Player has a moveSpeed property
+        originalMoveSpeed = Player.instance.moveSpeed;
 
         // Create particle effect
         CreateFrenzyParticles();
@@ -130,8 +128,7 @@ public class FrenzyItemEffect : MonoBehaviour
         inFrenzy = true;
 
         // Increase movement speed
-        Player.instance.walkSpeed *= itemData.speedMultiplier;
-        Player.instance.sprintSpeed *= itemData.speedMultiplier;
+        Player.instance.moveSpeed *= itemData.speedMultiplier;
 
         frenzyParticles.Play();
 
@@ -141,8 +138,7 @@ public class FrenzyItemEffect : MonoBehaviour
         yield return new WaitForSeconds(itemData.frenzyDuration);
 
         // Restore original speed
-        Player.instance.walkSpeed = originalWalkSpeed;
-        Player.instance.sprintSpeed = originalSprintSpeed;
+        Player.instance.moveSpeed = originalMoveSpeed;
 
         frenzyParticles.Stop();
 
@@ -189,8 +185,7 @@ public class FrenzyItemEffect : MonoBehaviour
         // Restore original speed if in frenzy
         if (inFrenzy)
         {
-            Player.instance.walkSpeed = originalWalkSpeed;
-            Player.instance.sprintSpeed = originalSprintSpeed;
+            Player.instance.moveSpeed = originalMoveSpeed;
         }
 
         if (frenzyParticles != null)

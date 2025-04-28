@@ -115,21 +115,28 @@ public class BossController : Collectible, IDamageable
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
 
-        //reward the player with the loot
-        //from this boss.
+        // reward the player with the loot
+        // from this boss.
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
-        // after rewarding the player, check if the player has a voucher tem
+        // Check if the player has a discount voucher and refresh it after boss defeat
         VoucherEffect voucher = playerObject.GetComponent<Player>().GetComponent<VoucherEffect>();
         if (voucher != null)
         {
-            voucher.ResetFreeGacha();
+            // Reset the discount after boss defeat
+            voucher.hasDiscount = true;
+            Debug.Log("Caps discount voucher refreshed after boss defeat!");
         }
 
+        // Check if player has GachaGambit effect active and expire it after boss defeat
+        GachaGambitEffect gambitEffect = playerObject.GetComponent<Player>().GetComponent<GachaGambitEffect>();
+        if (gambitEffect != null)
+        {
+            gambitEffect.OnBossDefeated();
+        }
 
-
-        //Destroy the boss object after stopping all coroutines on this object
+        // Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
         Destroy(gameObject);
     }

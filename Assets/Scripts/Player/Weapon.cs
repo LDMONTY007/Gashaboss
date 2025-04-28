@@ -50,6 +50,9 @@ public class Weapon : Collectible
     public bool isEquipped;
 
     bool swordOnLeft = false;
+    
+    // For attack damage
+    public int damage = 1;
 
     //when unity engine
     //does the "Loading" prompt
@@ -100,7 +103,6 @@ public class Weapon : Collectible
 
     }
 
-
     //used for the special spin attack 
     //to check if there was a successful hit.
     bool specialDamageHitSuccess = false;
@@ -113,39 +115,27 @@ public class Weapon : Collectible
         if (!canAttack)
         {
             //Debug.LogWarning("Cannot attack during cooldown");
-            return;
+            yield break;
         }
 
         // NEW CODE FOR ITEMS
         // Trigger the attack event
-        onAttack?.Invoke();
+        if (onAttack != null)
+            onAttack.Invoke();
         // END NEW CODE FOR ITEMS
 
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
-    }
-
-    public void AltAttack()
-    {
-        if (!canAttack)
-        {
-            //Debug.LogWarning("Cannot attack during cooldown");
-            return;
-        }
-
-        Debug.Log(gameObject.name);
-
-        // NEW CODE FOR ITEMS
-        // Trigger the attack event for alt attacks too
-        onAttack?.Invoke();
-        // END NEW CODE FOR ITEMS
-
-        //Start AltAttackCoroutine
-        StartCoroutine(AltAttackCoroutine());
+        
+        yield break;
     }
 
     public virtual IEnumerator AttackCoroutine()
     {
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("attack");
+
         //don't allow other attacks during our current attack.
         canAttack = false;
 
@@ -179,7 +169,6 @@ public class Weapon : Collectible
                         //tell the special attack that the special damage hit was a success.
                         specialDamageHitSuccess = true;
 
-
                         //TODO:
                         //Spawn a particle system burst that destroys itself
                         //when we hit a damageable so that the player can see where they hit.
@@ -195,13 +184,9 @@ public class Weapon : Collectible
                         //particle effect should spawn. 
                         Collider c = objs[i].GetComponent<Collider>();
 
-
                         Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
 
-
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
-
-                        //Instantiate(hitParticles, c.transform.position, Quaternion.LookRotation(Camera.main.transform.position));
 
                         //wait for fixedupdate before launching player.
                         //if we didn't wait we'd have inconsistent physics.
@@ -214,38 +199,8 @@ public class Weapon : Collectible
                 {
                     Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
                 }
-
             }
         }
-
-        /*//RaycastHit hits = Physics.SphereCastAll(transform.position, attackRadius, transform.forward, attackDistance, playerMask);
-        RaycastHit sphereHit;
-        
-        if (Physics.SphereCast(transform.position, attackRadius, transform.forward * attackDistance, out sphereHit, attackDistance, playerMask))
-        {
-            //if this hit is in front of us, check for damageables
-            if (Mathf.Abs(Vector3.Dot(transform.position, sphereHit.point)) > 0)
-            {
-                IDamageable damageable = sphereHit.collider.GetComponent<IDamageable>();
-                if (damageable != null)
-                {
-                    //make the damageable take damage.
-                    //and tell it we gave it damage.
-                    damageable.TakeDamage(1, gameObject);
-
-                    //TODO:
-                    //Spawn a particle system burst that destroys itself
-                    //when we hit a damageable so that the player can see where they hit.
-                    //maybe give each weapon an individualized particle effect.
-                    //spawn a particle effect facing outward from the normal
-                    //at the position that was hit.
-                    Debug.Log(sphereHit.point);
-                    Instantiate(hitParticles, sphereHit.point, Quaternion.LookRotation(sphereHit.normal));
-                }
-            }
-
-
-        }*/
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -265,7 +220,6 @@ public class Weapon : Collectible
 
     public IEnumerator DealDamageAndLaunch(int damage, Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
-
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
         if (objs.Count > 0)
@@ -286,9 +240,8 @@ public class Weapon : Collectible
 
                         //make the damageable take damage.
                         //and tell it we gave it damage.
-                        damageable.TakeDamage(1, gameObject);
+                        damageable.TakeDamage(damage, gameObject);
 
-                        
                         //TODO:
                         //Spawn a particle system burst that destroys itself
                         //when we hit a damageable so that the player can see where they hit.
@@ -304,9 +257,7 @@ public class Weapon : Collectible
                         //particle effect should spawn. 
                         Collider c = objs[i].GetComponent<Collider>();
 
-
                         Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-
 
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
 
@@ -321,9 +272,10 @@ public class Weapon : Collectible
                 {
                     Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
                 }
-
             }
         }
+        
+        yield break;
     }
 
     public virtual void Attack()
@@ -336,6 +288,12 @@ public class Weapon : Collectible
             //Debug.LogWarning("Cannot attack during cooldown");
             return;
         }
+
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event
+        if (onAttack != null)
+            onAttack.Invoke();
+        // END NEW CODE FOR ITEMS
 
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
@@ -352,6 +310,11 @@ public class Weapon : Collectible
             return;
         }
 
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event for alt attacks too
+        if (onAttack != null)
+            onAttack.Invoke();
+        // END NEW CODE FOR ITEMS
 
         //TODO: 
         //code a different attack that occurs when in the air. this way the player can have a quick downward smash attack that
@@ -362,15 +325,12 @@ public class Weapon : Collectible
         }
         else
         {
-
             //flip if the sword is on the left or not so we know for the special attack.
             swordOnLeft = !swordOnLeft;
 
             //Start AltAttackCoroutine
             StartCoroutine(AltAttackCoroutine());
         }
-
-        
     }
 
     public virtual void SpecialAttack()
@@ -384,46 +344,15 @@ public class Weapon : Collectible
             return;
         }
 
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event
+        if (onAttack != null)
+            onAttack.Invoke();
+        // END NEW CODE FOR ITEMS
+
         //Start specialAttack
         StartCoroutine(SpecialAttackCoroutine());
     }
-
-    public virtual IEnumerator AttackCoroutine()
-    {
-        //start the attack animation
-        if (animator != null)
-        animator.SetTrigger("attack");
-
-        //don't allow other attacks during our current attack.
-        canAttack = false;
-
-        //TODO:
-        //implement an animation for attacking,
-        //but for now enable the collider for an attack.
-        //weaponCollider.enabled = true;
-
-        //Execute the coroutine for dealing damage using our collision sensor.
-        yield return DealDamage(1);
-
-        //set color of debug mesh to show we are in cooldown
-        collisionSensor.sensorColor = cooldownMeshColor;
-
-        //if we have a cooldown, wait the cooldown time before attacking.
-        if (hasCooldown)
-        yield return new WaitForSeconds(cooldownTime);
-
-        //restore default color
-        collisionSensor.sensorColor = ogMeshColor;
-
-        //wait for the animator to finish the attack animation before continuing.
-        //yield return LDUtil.WaitForAnimationFinish(animator);
-
-        //allow us to attack again.
-        canAttack = true;
-
-        yield break;
-    }
-
 
     public IEnumerator AltAttackCoroutine()
     {
@@ -436,7 +365,7 @@ public class Weapon : Collectible
 
         //Execute the coroutine for dealing damage using our collision sensor.
         //and launch the player upwards.
-        yield return DealDamageAndLaunch(1, player.transform.up, 30f, 1f, 2f);
+        yield return DealDamageAndLaunch(damage, player.transform.up, 30f, 1f, 2f);
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -457,8 +386,6 @@ public class Weapon : Collectible
     //this does 2 damage.
     public IEnumerator AirAltAttackCoroutine()
     {
-        
-
         //start the attack animation
         if (animator != null)
         {
@@ -479,7 +406,6 @@ public class Weapon : Collectible
         //launch the player downwards.
         player.LaunchPlayer(-player.transform.up, 30f, 1f, 2f);
 
-
         //we need to wait for the player to land on the ground again
         //before continuing.
         while (!player.isGrounded)
@@ -498,12 +424,11 @@ public class Weapon : Collectible
         //particle effect
         //at the player's feet
         if (slamParticles != null)
-        Instantiate(slamParticles, player.GetFeetPosition(), slamParticles.transform.rotation);
+            Instantiate(slamParticles, player.GetFeetPosition(), slamParticles.transform.rotation);
 
         //Execute the coroutine for dealing damage using our collision sensor.
         //Deal 2 damage.
-        yield return DealDamage(2);
-
+        StartCoroutine(DealDamage(2));
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -521,25 +446,18 @@ public class Weapon : Collectible
         yield break;
     }
 
-
-
     //TODO:
     //I want to make it so when you get an attack
     //to land, any attack, you don't start falling yet,
     //because then you can combo against the boss.
     public IEnumerator SpecialAttackCoroutine()
     {
-        
-
         //start the attack animation
         if (animator != null)
             animator.SetTrigger("specialAttack");
 
-
         //don't allow other attacks during our current attack.
         canAttack = false;
-
-
         
         if (animator != null)
         {
@@ -552,7 +470,7 @@ public class Weapon : Collectible
             //Tell the player to stop jumping.
             player.StopJumping();
 
-            player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0.1f, player.rb.linearVelocity.z);
+            player.rb.velocity = new Vector3(player.rb.velocity.x, 0.1f, player.rb.velocity.z);
 
             //Wait until the animation is done
             //yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);
@@ -582,11 +500,9 @@ public class Weapon : Collectible
                     collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(0, 360, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
                 }
 
-               
-
                 //Check and deal damage.
                 //Execute the coroutine for dealing damage using our collision sensor.
-                yield return DealDamage(1);
+                StartCoroutine(DealDamage(damage));
 
                 //if we did hit something, we need to wait 0.33 seconds
                 //before registering another hit in this spin attack.
@@ -611,7 +527,6 @@ public class Weapon : Collectible
 
             //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, player.rb., player.rb.linearVelocity.z);
         }
-
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -640,10 +555,7 @@ public class Weapon : Collectible
         canAttack = true;
     }
 
-
-
     public override void OnCollect(){
-
         //we should not be equipped more than once.
         if (isEquipped)
         {

@@ -7,13 +7,13 @@ public class DotStatusEffect : ItemData
 {
     [Header("DOT Settings")]
     [Tooltip("Damage per tick")]
-    public int dotDamage = 1;
+    public int dotDamage = 25;
 
     [Tooltip("Seconds between damage ticks")]
     public float tickInterval = 3f;
 
     [Tooltip("Total duration of DOT effect")]
-    public float dotDuration = 10f;
+    public float dotDuration = 12f;
 
     [Tooltip("Visual effect prefab for the DOT")]
     public GameObject dotVisualPrefab;

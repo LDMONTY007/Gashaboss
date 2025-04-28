@@ -1,12 +1,13 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
 
 [CreateAssetMenu(fileName = "GachaGambit", menuName = "Items/Gacha Gambit")]
 public class GachaGambit : ItemData
 {
     [Header("Gambit Settings")]
-    [Tooltip("Multiplier for coin rewards from bosses")]
-    public float coinRewardMultiplier = 2.0f;
+    [Tooltip("Multiplier for caps rewards from bosses")]
+    public float capsRewardMultiplier = 2.0f;
 
     [Tooltip("Multiplier for incoming damage while effect is active")]
     public float damageMultiplier = 1.5f;
@@ -18,7 +19,7 @@ public class GachaGambit : ItemData
 
     public override void OnPickup()
     {
-        Debug.Log("Gacha Gambit picked up! High risk, high reward mode activated.");
+        Debug.Log("Gacha Gambit picked up! High risk, high reward mode activated until next boss defeat.");
 
         if (!isApplied)
         {
@@ -71,7 +72,7 @@ public class GachaGambitEffect : MonoBehaviour
         // Modify all bosses in the scene
         UpdateAllBossesInScene();
 
-        Debug.Log($"Gacha Gambit initialized! Bosses will drop {itemData.coinRewardMultiplier}x coins but deal {itemData.damageMultiplier}x damage.");
+        Debug.Log($"Gacha Gambit initialized! Bosses will drop {itemData.capsRewardMultiplier}x caps but deal {itemData.damageMultiplier}x damage until next boss defeat.");
     }
 
     private void CreateDefaultVisual()
@@ -110,9 +111,9 @@ public class GachaGambitEffect : MonoBehaviour
         {
             if (!boss.isDead)
             {
-                int originalCoins = boss.coinsRewarded;
-                boss.coinsRewarded = Mathf.RoundToInt(originalCoins * itemData.coinRewardMultiplier);
-                Debug.Log($"Modified boss {boss.bossName}: Coins {originalCoins} -> {boss.coinsRewarded}");
+                int originalCaps = boss.capsRewarded;
+                boss.capsRewarded = Mathf.RoundToInt(originalCaps * itemData.capsRewardMultiplier);
+                Debug.Log($"Modified boss {boss.bossName}: Caps {originalCaps} -> {boss.capsRewarded}");
             }
         }
     }
@@ -135,9 +136,18 @@ public class GachaGambitEffect : MonoBehaviour
     {
         if (boss != null && !boss.isDead)
         {
-            boss.coinsRewarded = Mathf.RoundToInt(boss.coinsRewarded * itemData.coinRewardMultiplier);
+            boss.capsRewarded = Mathf.RoundToInt(boss.capsRewarded * itemData.capsRewardMultiplier);
             Debug.Log($"Modified newly spawned boss {boss.bossName}");
         }
+    }
+
+    // This method will be called by BossController when a boss is defeated
+    public void OnBossDefeated()
+    {
+        Debug.Log("Gacha Gambit effect expires after boss defeat!");
+
+        // Simply destroy this component
+        Destroy(this);
     }
 
     private void OnDisable()
@@ -148,15 +158,15 @@ public class GachaGambitEffect : MonoBehaviour
             Destroy(gambitVisual);
         }
 
-        // Restore original coin values on bosses
+        // Restore original cap values on bosses
         BossController[] bosses = FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 
         foreach (BossController boss in bosses)
         {
             if (!boss.isDead)
             {
-                boss.coinsRewarded = Mathf.RoundToInt(boss.coinsRewarded / itemData.coinRewardMultiplier);
-                Debug.Log($"Restored boss {boss.bossName} coins to original values");
+                boss.capsRewarded = Mathf.RoundToInt(boss.capsRewarded / itemData.capsRewardMultiplier);
+                Debug.Log($"Restored boss {boss.bossName} caps to original values");
             }
         }
 

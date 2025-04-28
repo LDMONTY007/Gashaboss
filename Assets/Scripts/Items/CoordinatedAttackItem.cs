@@ -12,7 +12,7 @@ public class CoordinatedAttackItem : ItemData
     public float attackDelay = 0.2f;
 
     [Tooltip("Damage done by the companion attack")]
-    public int attackDamage = 1;
+    public int attackDamage = 30;
 
     private static bool isApplied = false;
 

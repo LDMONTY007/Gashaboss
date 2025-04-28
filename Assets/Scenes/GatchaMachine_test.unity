@@ -509,11 +509,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &49949981 stripped
+--- !u!1 &49949981
 GameObject:
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 8661537763559295184, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
-  m_PrefabInstance: {fileID: 965999298}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 49949983}
+  - component: {fileID: 49949982}
+  m_Layer: 0
+  m_Name: 
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!82 &49949982
 AudioSource:
   m_ObjectHideFlags: 0
@@ -611,6 +623,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!4 &49949983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49949981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &90055080
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,7 +833,7 @@ PrefabInstance:
     - target: {fileID: 516627551158126604, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: gachaMachine
       value: 
-      objectReference: {fileID: 1211662093}
+      objectReference: {fileID: 0}
     - target: {fileID: 516627551158126604, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: collectibleButtonPrefab
       value: 
@@ -814,6 +841,10 @@ PrefabInstance:
     - target: {fileID: 564160294640084946, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1868655519134583599, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 55.36035
       objectReference: {fileID: 0}
     - target: {fileID: 2019876262447669746, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Pivot.x
@@ -974,6 +1005,10 @@ PrefabInstance:
     - target: {fileID: 5616444058686173197, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6795442841816961824, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 188.25879
       objectReference: {fileID: 0}
     - target: {fileID: 6810167147490157911, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Layer
@@ -2055,11 +2090,6 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7929057294060633807, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
   m_PrefabInstance: {fileID: 234092451}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1211662093 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6098404018322062433, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
-  m_PrefabInstance: {fileID: 5765394802999621754}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1352092888
 MonoBehaviour:
@@ -3160,6 +3190,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 159833766817239763, guid: 0205de0f35a93f4418767f1ed5968816, type: 3}
+      propertyPath: collectibleName
+      value: Shikigami Charm
+      objectReference: {fileID: 0}
     - target: {fileID: 5500274468445293911, guid: 0205de0f35a93f4418767f1ed5968816, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.1
@@ -3202,7 +3236,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5900340154052288284, guid: 0205de0f35a93f4418767f1ed5968816, type: 3}
       propertyPath: m_Name
-      value: Coordinated Attack Item
+      value: Shikigami Charm
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3217,9 +3251,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1772165263924479032, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
+      propertyPath: collectibleName
+      value: Weighted Dice
+      objectReference: {fileID: 0}
     - target: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_Name
-      value: Crit Fishing
+      value: Weighted Dice
       objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3274,9 +3312,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4920203340645558409, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
+      propertyPath: collectibleName
+      value: Expired Milk
+      objectReference: {fileID: 0}
     - target: {fileID: 5517679711612390859, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
       propertyPath: m_Name
-      value: DOT Status Effect
+      value: Expired Milk
       objectReference: {fileID: 0}
     - target: {fileID: 9186533256741284872, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3504,7 +3546,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1891130999345376837, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
       propertyPath: m_Name
-      value: Shield Effect
+      value: Barrier Crystal
       objectReference: {fileID: 0}
     - target: {fileID: 6805083176444045061, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3545,6 +3587,10 @@ PrefabInstance:
     - target: {fileID: 6805083176444045061, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8724152090650571963, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
+      propertyPath: collectibleName
+      value: Barrier Crystal
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3608,7 +3654,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
---- !u!1001 &6679898141078768156
 --- !u!1001 &5765394802999621754
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3802,7 +3847,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1018710976855967613, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
       propertyPath: m_Name
-      value: Frenzy
+      value: Energy Drink
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034241828464724348, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
+      propertyPath: collectibleName
+      value: Energy Drink
       objectReference: {fileID: 0}
     - target: {fileID: 6438736351889848164, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3959,9 +4008,61 @@ PrefabInstance:
       value: GachaMachine
       objectReference: {fileID: 0}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: drops.Array.size
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: c43b7c81b7833d848ba8ca2850f5f6cf, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[5]'
       value: 
       objectReference: {fileID: 11400000, guid: 958eb208523e63f448f269ff618201b0, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[7]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 795a1e504f5cd9a4cb22a9a6a4c1fab6, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[8]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 9b6ed1082c656fc45aa731aa556132a1, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[9]'
+      value: 
+      objectReference: {fileID: 11400000, guid: bfb104d260baf994bb4919c09898ffe3, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[10]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7e276556b8db4374699a4c21ac0a16c2, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[11]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7bad1e12724926f42abbbb55aa6ad3ea, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[12]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 4b27a1eebc3b81f4daefa22bf05b0de3, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[13]'
+      value: 
+      objectReference: {fileID: 11400000, guid: e4b96f639f57e174a85e2bc121228dc6, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[14]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 5deb2c229b2264140947f88f3a5681fd, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[15]'
+      value: 
+      objectReference: {fileID: 11400000, guid: f6fb36e88abcdb54ba472c88785c3def, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[16]'
+      value: 
+      objectReference: {fileID: 11400000, guid: a60837c2d931d624884df4ac2c173c2f, type: 2}
+    - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
+      propertyPath: 'drops.Array.data[17]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 759fbf96517b7f245afe108ea15ffc41, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4082,7 +4183,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 646868623870559507, guid: 1083793292df30847ad119bdda6460ba, type: 3}
       propertyPath: m_Name
-      value: Gacha Gambit
+      value: Unstable Pipe Bomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699365334489294295, guid: 1083793292df30847ad119bdda6460ba, type: 3}
+      propertyPath: collectibleName
+      value: Unstable Pipe Bomb
       objectReference: {fileID: 0}
     - target: {fileID: 8542632972648941803, guid: 1083793292df30847ad119bdda6460ba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4129,11 +4234,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1083793292df30847ad119bdda6460ba, type: 3}
-  m_SourcePrefab: {fileID: 100100000, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 49949983}
   - {fileID: 2008787965}
   - {fileID: 566192559}
   - {fileID: 2028101121}
@@ -4146,7 +4251,6 @@ SceneRoots:
   - {fileID: 1652076412}
   - {fileID: 689292698}
   - {fileID: 886111096}
-  - {fileID: 627782439}
   - {fileID: 7115397401977322483}
   - {fileID: 3539195000092634479}
   - {fileID: 7393954194873988514}
@@ -4161,3 +4265,5 @@ SceneRoots:
   - {fileID: 2638007176389896999}
   - {fileID: 2444023461547494581}
   - {fileID: 5765394802999621754}
+  - {fileID: 8751657143540695556}
+  - {fileID: 90055085}
