@@ -25,8 +25,7 @@ public class WhiteMaterialToggle : MonoBehaviour
 
     List<Material> defaultMaterials = new();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         //Get all the materials in the children and store them in an array.
         GetAllMaterials();
@@ -40,15 +39,12 @@ public class WhiteMaterialToggle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            isWhite = !isWhite;
-        }
+
     }
 
     Renderer[] childrenRenderers;
 
-    public Material[] childMaterials;
+    Material[] childMaterials;
 
     
 
