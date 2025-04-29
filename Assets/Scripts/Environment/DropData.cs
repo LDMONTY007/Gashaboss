@@ -9,6 +9,4 @@ public class DropData: ScriptableObject{
     public bool isRemovedAfterDrop;
     //these are for things like a new gashapon machine.
     public bool isEnvironmentalUnlock;
-    [HideInInspector]
-    public bool removeFromDropList;
 }

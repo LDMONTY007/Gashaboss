@@ -53,7 +53,11 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         //this is so any drops that are permanantly owned once collected such as a new
         //gashapon machine aren't dispensed more than once in a run regardless of if the 
         //player has died.
-        drops.RemoveAll(d => d.removeFromDropList == true);
+        //we simply check if the collection manager contains an environmental unlock for now.
+        //we can discuss if the drops that only get dropped once also aren't reset.
+        drops.RemoveAll(d => d.isEnvironmentalUnlock == true && CollectionManager.instance.CollectionContains(d));
+
+        
 
         totalWeights = 0;
         foreach (DropData drop in drops){

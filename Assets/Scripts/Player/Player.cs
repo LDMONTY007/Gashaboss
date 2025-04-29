@@ -1387,8 +1387,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         this.caps = gameData.caps;
         //if it isn't null, create the player weapon and set the reference for it.
         this.curWeapon = (gameData.playerWeapon != null && gameData.playerWeapon != string.Empty) ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
-        //say the weapon is equipped.
-        this.curWeapon.isEquipped = true;
+        
 
         //if we spawned a new weapon,
         //set it's local posiition to be 0,0,0
@@ -1396,6 +1395,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         if (this.curWeapon != null)
         {
             this.curWeapon.transform.localPosition = Vector3.zero;
+
+            //say the weapon is equipped.
+            this.curWeapon.isEquipped = true;
         }
 
         this.modifiers = gameData.modifiers;

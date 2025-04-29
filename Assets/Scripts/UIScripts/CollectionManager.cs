@@ -126,10 +126,8 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             {
                 Debug.Log("ENVIRONMENTAL UNLOCK");
                 //instantiate the object so that it unlocks the environmental object.
-                Instantiate(dropToSave.droppedObject);
-                //make sure that whatever drop list this was included in, 
-                //it gets removed.
-                dropToSave.removeFromDropList = true;
+                GameObject tempDrop = Instantiate(dropToSave.droppedObject);
+                tempDrop.GetComponent<GachaDrop>().unlockOnStart = true;
             }
 
             //get the name of the collectible from the collectible itself and store
@@ -147,6 +145,13 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             gameData.collectedCollectibles.Add(kvp.Value.name);
         }
         
+    }
+
+    //used in gacha machine to remove any objects that
+    //have already been collected by the player and are only collected once.
+    public bool CollectionContains(DropData data)
+    {
+        return collectedCollectibles.ContainsValue(data);
     }
 
     private void SetCursorState(bool uiMode)
