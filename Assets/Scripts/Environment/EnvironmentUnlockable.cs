@@ -80,4 +80,14 @@ public class EnvironmentUnlockable : MonoBehaviour
         //disable the script that controls this environment object.
         behaviourToLock.enabled = false;
     }
+
+    public void UnlockObject(string name)
+    {
+        //if the string matches our object name,
+        //unlock this object.
+        if (gameObject.name == name)
+        {
+            unlocked = true;
+        }
+    }
 }

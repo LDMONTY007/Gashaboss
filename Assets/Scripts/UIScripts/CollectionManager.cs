@@ -119,6 +119,19 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             //get the drop using our search function
             DropData dropToSave = SaveDataManager.instance.FindDropData(key);
 
+            //if the drop is an environmental unlock,
+            //make sure to unlock it when we load the data in.
+            //this is where we unlock any gashapon machines the player has unlocked in their save data.
+            if (dropToSave.isEnvironmentalUnlock)
+            {
+                Debug.Log("ENVIRONMENTAL UNLOCK");
+                //instantiate the object so that it unlocks the environmental object.
+                Instantiate(dropToSave.droppedObject);
+                //make sure that whatever drop list this was included in, 
+                //it gets removed.
+                dropToSave.removeFromDropList = true;
+            }
+
             //get the name of the collectible from the collectible itself and store
             //the drop data.
             collectedCollectibles.Add(dropToSave.droppedObject.GetComponent<Collectible>().collectibleName, dropToSave);

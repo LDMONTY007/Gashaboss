@@ -48,7 +48,13 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     public void Start(){
         gachaAudioSource = GetComponent<AudioSource>();
 
-        //loadDrops();
+
+        //always attempt to remove all drops that are flagged for removal,
+        //this is so any drops that are permanantly owned once collected such as a new
+        //gashapon machine aren't dispensed more than once in a run regardless of if the 
+        //player has died.
+        drops.RemoveAll(d => d.removeFromDropList == true);
+
         totalWeights = 0;
         foreach (DropData drop in drops){
             totalWeights += drop.weight;
@@ -57,6 +63,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     }
 
     public GameObject GetRandomDrop(){
+
         int dropRoll = Random.Range(1, totalWeights + 1);
         int currDrop = 0;
         //Go through the objects in the list adding their weights up until
@@ -69,6 +76,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
                     drops.Remove(drop);
                     totalWeights -= drop.weight;
                 }
+                
                 return drop.droppedObject;
             }
         }
