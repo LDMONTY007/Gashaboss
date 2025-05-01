@@ -4,6 +4,25 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 public class BossWeapon: Weapon{
+    // These vars are to modify the collision sensor for attack radius's before boss attacks
+    #region Attack vars
+    [SerializeField] private float atkAngle = 30;
+    [SerializeField] private float atkHeight = 1.0f;
+    #endregion
+    #region AltAttack vars
+    [SerializeField] private bool hasAlt = false;
+    [SerializeField] private float altAtkRadius;
+    [SerializeField] private float altAtkAngle;
+    [SerializeField] private float altAtkHeight;
+    [SerializeField] private GameObject altActions;
+    #endregion
+    #region SpecialAttack vars
+    [SerializeField] private bool hasSpecial = false;
+    [SerializeField] private float specialAtkAngle;
+    [SerializeField] private float specialAtkRadius;
+    [SerializeField] private float specialAtkHeight;
+    [SerializeField] private GameObject specialActions;
+    #endregion
     public override void AltAttack(){
         if (!canAttack){
             //Debug.LogWarning("Cannot attack during cooldown");
@@ -55,14 +74,37 @@ public class BossWeapon: Weapon{
                 else{
                     Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
                 }
-                
             }
         }
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+        yield return new WaitForSeconds(cooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //wait for the animator to finish the attack animation before continuing.
+        //yield return LDUtil.WaitForAnimationFinish(animator);
+
+        //allow us to attack again.
+        canAttack = true;
+
+        yield break;
     }
 
     public override IEnumerator AltAttackCoroutine(){
+        // if boss doesn't have an alt, use a reg attack instead
+        if (hasAlt == false) yield return this.AttackCoroutine();
         //don't allow other attacks during our current attack.
         canAttack = false;
+
+        // Change Collision Parameters to Alt attack parameters
+        collisionSensor.triggerCollider.radius = altAtkRadius;
+        collisionSensor.angle = altAtkAngle;
+        collisionSensor.height = altAtkHeight;
 
         List<GameObject> objs = collisionSensor.ScanForObjects();
         if (objs.Count > 0){
@@ -104,6 +146,12 @@ public class BossWeapon: Weapon{
             }
         }
 
+        // Change Collision Parameters back to reg attack parameters
+        // Needed for attacking/player detection purposes
+        collisionSensor.triggerCollider.radius = attackDistance;
+        collisionSensor.angle = atkAngle;
+        collisionSensor.height = atkHeight;
+
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
 
@@ -119,11 +167,17 @@ public class BossWeapon: Weapon{
         yield break;
     }
     public override IEnumerator SpecialAttackCoroutine(){
+        // if boss doesn't have a special, use an alt attack instead
+        if (hasSpecial == false) yield return this.AltAttackCoroutine();
         //don't allow other attacks during our current attack.
         canAttack = false;
 
-        List<GameObject> objs = collisionSensor.ScanForObjects();
+        // Change Collision Parameters to special attack parameters
+        collisionSensor.triggerCollider.radius = specialAtkRadius;
+        collisionSensor.angle = specialAtkAngle;
+        collisionSensor.height = specialAtkHeight;
 
+        List<GameObject> objs = collisionSensor.ScanForObjects();
         if (objs.Count > 0){
             for (int i = 0; i < objs.Count; i++){
                 if (objs[i] != null){
@@ -168,6 +222,12 @@ public class BossWeapon: Weapon{
                 }
             }
         }
+        // Change Collision Parameters back to reg attack parameters
+        // Needed for attacking/player detection purposes
+        collisionSensor.triggerCollider.radius = attackDistance;
+        collisionSensor.angle = atkAngle;
+        collisionSensor.height = atkHeight;
+
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
 

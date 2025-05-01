@@ -23,7 +23,7 @@ public class CollisionSensor : MonoBehaviour
         }
     }
     private List<GameObject> objects = new List<GameObject>();
-
+    private List<Transform> transforms = new List<Transform>();
     public SphereCollider triggerCollider;
 
     // Start is called before the first frame update
@@ -129,9 +129,6 @@ public class CollisionSensor : MonoBehaviour
         }
 
     }
-
-    List<Transform> transforms = new List<Transform>();
-
 
     //old point in arc method.
     public bool pointInArc(Vector3 point)

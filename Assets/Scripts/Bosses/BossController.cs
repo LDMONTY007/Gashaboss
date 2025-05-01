@@ -440,10 +440,13 @@ public class BossController : Collectible, IDamageable
             switch(randAttack){
                 case 0:
                     StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+                    break;
                 case 1:
                     StartCoroutine(altAttack.ActionCoroutine(this, 1f));
+                    break;
                 case 2:
                     StartCoroutine(specialAttack.ActionCoroutine(this, 1f));
+                    break;
             }
         }
     }

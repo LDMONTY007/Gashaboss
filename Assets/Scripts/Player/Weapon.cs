@@ -38,9 +38,9 @@ public class Weapon : Collectible
     public Animator animator;
 
     //colors used when debugging the collision sensor mesh
-    private Color ogMeshColor;
+    protected Color ogMeshColor;
     //blue with 100 alpha.
-    private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+    protected Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
 
     //when unity engine
     //does the "Loading" prompt
