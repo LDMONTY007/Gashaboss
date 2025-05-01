@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 public class BossWeapon: Weapon{
+    [SerializeField] public BossActionMaterials materials; // Holds the reference to pass to boss actions
+    private List<BossAction> bossActions = new List<BossAction>();// Holds actions for attacks
+
     // These vars are to modify the collision sensor for attack radius's before boss attacks
     #region Attack vars
     [SerializeField] private float atkAngle = 30;
@@ -14,15 +17,24 @@ public class BossWeapon: Weapon{
     [SerializeField] private float altAtkRadius;
     [SerializeField] private float altAtkAngle;
     [SerializeField] private float altAtkHeight;
-    [SerializeField] private GameObject altAction;
+    [SerializeField] private int altAction = -1; // holds the action index to be called as part of the alt
+    [SerializeField] private bool animateAlt = false; // set this to true if animator controls alt action
     #endregion
     #region SpecialAttack vars
     [SerializeField] private bool hasSpecial = false;
     [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkRadius;
     [SerializeField] private float specialAtkHeight;
-    [SerializeField] private GameObject specialAction;
+    [SerializeField] private int specialAction = -1; // holds the action index to be called as part of the special
+    [SerializeField] private bool animateSpecial = false; // set this to true if animator controls special action
     #endregion
+    
+    public void Awake(){
+        // This list holds all the possible boss actions that can be used as part of an attack
+        // Put the index of which action you want to use in for the fields related to the alt action and special action
+        // PillowHop: 0
+        bossActions.append(new PillowHop(materials));
+    }
     public override void AltAttack(){
         if (!canAttack){
             //Debug.LogWarning("Cannot attack during cooldown");
@@ -145,6 +157,10 @@ public class BossWeapon: Weapon{
                 }
             }
         }
+        // preform all the actions associated with this attack
+        if (altAction != -1 && !animateAlt) {
+            yield return bossActions[altAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
+        }
 
         // Change Collision Parameters back to reg attack parameters
         // Needed for attacking/player detection purposes
@@ -222,6 +238,10 @@ public class BossWeapon: Weapon{
                 }
             }
         }
+        // preform all actions associated with the special
+        if (specialAction != -1 && !animateSpecial) {
+            yield return bossActions[specialAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
+        }
         // Change Collision Parameters back to reg attack parameters
         // Needed for attacking/player detection purposes
         collisionSensor.triggerCollider.radius = attackDistance;
@@ -241,5 +261,17 @@ public class BossWeapon: Weapon{
         //allow us to attack again.
         canAttack = true;
         yield break;
+    }
+
+    public IEnumerator AnimatorAltAction(){
+        if (altAction != -1) {
+            yield return bossActions[altAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
+        }
+    }
+
+    public IEnumerator AnimatorSpecialAction(){
+        if (specialAction != -1) {
+            yield return bossActions[specialAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
+        }
     }
 }

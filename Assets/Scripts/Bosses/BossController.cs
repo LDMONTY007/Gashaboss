@@ -452,7 +452,10 @@ public class BossController : Collectible, IDamageable
     }
 
     private Coroutine getCloseForAttackCoroutine = null;
-
+    public Vector3 GetFeetPosition()
+    {
+        return transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
+    }
     public void HandleMove()
     {
         if (!isMoving)

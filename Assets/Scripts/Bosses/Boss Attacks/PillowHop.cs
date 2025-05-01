@@ -1,40 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-public class PillowHop : BossAction
-{
-    public override IEnumerator ActionCoroutine(BossController boss, float duration)
-    {
-        active = true;
-        if (boss.animator != null){
-            //set the trigger animation for jumping
-            boss.animator.SetTrigger("GroundPound");
-        }
-        // Check for collisions during animation?
-        // (Does this natively happen?, or do I need to build a weapon class for this as an attack?)
-        // (Should I move the model? Or does the animation do this?)
-        // Wait for animation to finish
-        yield return LDUtil.WaitForAnimationFinish(boss.animator);
-        PlayShockwave();
-        active = false;
+public class PillowHop : BossAction{
+    private BossActionMaterials materials;
+    public PillowHop(BossActionMaterials mats){
+        materials = mats;
     }
-
-    public void PlayShockwave(){
-        // Thinking of making a projectile attack... 
-        // Oh, maybe I can just add a projectile weapon, that launches multiple projectiles? 
-        // Like, The first can just be an AOE projectile that and then the rest spreading "Shockwaves"
-
-        // Undercurrent setup, I need to add another weapon script to the boss?
-        // That means the boss needs a list of weapon scripts, for all possible attacks
-        // I'll need to add the logic for multiple attacks/attack switching as well, 
-        // this will be determined on a by-boss basis though right?
-        // Will need a seperate component at min for each boss
-        // To tell the boss under which conditions to use each attack, 
-        // as not only will conditions for the attacs change
-        // but the possible moves will change as well (Can't guarntee that every boss will have a melee attack?)
-        
-        // Alternatively, we could for the moment assume boss's have exactly two attacks
-        // A special which, may or may not exist and only gets called if it exists
-        // And then a basic melee attack
+    public override IEnumerator ActionCoroutine(BossController boss, float duration){
+        // Hand set y rotation for the projectile, use quaternity rotation
+        Vector3 spawnPos = boss.GetFeetPosition();
+        Quaternion spawnRotation = Quaternion.identity;
+        spawnShockwaveSet(4, spawnPos, spawnRotation);
+        spawnRotation = spawnRotation * Quaternion.Euler(0, 45f, 0);
+        spawnShockwaveSet(4, spawnPos, spawnRotation);
+        yield break;
     }
+    
+private void spawnShockwaveSet(int numProjectiles, Vector3 spawnPos, Quaternion baseRotation){
+    for (int i = 0; i < numProjectiles; i++){   
+        float angle = (360f / numProjectiles) * i;
+        Quaternion rotation = baseRotation * Quaternion.Euler(0, angle, 0);
+        GameObject.Instantiate(materials.projectiles[0], spawnPos, rotation);
+    }
+}
 }
