@@ -225,10 +225,21 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
+
+
     InputAction attackAction;
     InputAction altAttackAction;
     InputAction specialAttackAction;
     InputAction dashAction;
+
+    //events that are invoked when the player
+    //does certain actions, only currently used for the tutorial.
+    [HideInInspector] public event Action OnAttack;
+    [HideInInspector] public event Action OnAltAttack;
+    [HideInInspector] public event Action OnSpecialAttack;
+    [HideInInspector] public event Action OnDash;
+    [HideInInspector] public event Action OnJump;
+
 
     //Raycast vars
 
@@ -449,16 +460,25 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             if (attackAction.WasPressedThisFrame())
             {
                 curWeapon.Attack();
+
+                //invoke on attack if methods are subscribed to it.
+                OnAttack?.Invoke();
             }
 
             if (altAttackAction.WasPressedThisFrame())
             {
                 curWeapon.AltAttack();
+
+                //invoke on AltAttack if methods are subscribed to it.
+                OnAltAttack?.Invoke();
             }
 
             if (specialAttackAction.WasPressedThisFrame())
             {
                 curWeapon.SpecialAttack();
+
+                //invoke on SpecialAttack if methods are subscribed to it.
+                OnSpecialAttack?.Invoke();
             }
         }
 
@@ -735,7 +755,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             jumping = true;
             jumpCanceled = false;
 
-            
+            //invoke OnJump if methods are subscribed to it.
+            OnJump?.Invoke();
         }
 
         //Where I learned this https://www.youtube.com/watch?v=7KiK0Aqtmzc
@@ -816,7 +837,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             dashing = true;
             dashCount--;
             StartCoroutine(DashCoroutine());
-           
+
+            //invoke OnDash if methods are subscribed to it.
+            OnDash?.Invoke();
         }
     }
 

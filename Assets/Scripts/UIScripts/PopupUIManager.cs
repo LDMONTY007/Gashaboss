@@ -10,7 +10,7 @@ public class PopupUIManager : MonoBehaviour
 
     private Coroutine currentPopupRoutine = null;
 
-    bool isDoingPopup = false;
+    public bool isDoingPopup = false;
 
     bool isPopupInterruptable = true;
 
