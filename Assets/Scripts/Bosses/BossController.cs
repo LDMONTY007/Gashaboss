@@ -437,12 +437,12 @@ public class BossController : Collectible, IDamageable
             // Weapons will just default to melee attacks, if a alt or special attack isn't available anyway, so this should operate fine
             int randAttack = UnityEngine.Random.Range(0,3);
             Debug.Log("Boss wants to attack here!".Color("Red"));
-            switch randAttack{
-                case: 0
+            switch(randAttack){
+                case 0:
                     StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
-                case: 1
+                case 1:
                     StartCoroutine(altAttack.ActionCoroutine(this, 1f));
-                case: 2
+                case 2:
                     StartCoroutine(specialAttack.ActionCoroutine(this, 1f));
             }
         }
