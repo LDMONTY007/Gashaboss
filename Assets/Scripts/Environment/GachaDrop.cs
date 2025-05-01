@@ -102,6 +102,13 @@ public class GachaDrop : Collectible
         
         CollectionManager.instance.AddToCollection(this);
 
+        //if the popup manager exists
+        if (UIManager.Instance.popupUIManager != null)
+        {
+            //display a popup that shows that this gashapon has been unlocked.
+            UIManager.Instance.popupUIManager.DoPopup(collectibleName + " Unlocked!", Color.black, false);
+        }
+
         //After unlocking the gacha machine,
         //destroy ourselves.
         Destroy(gameObject);

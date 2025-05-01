@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Managers")]
     public PlayerUIManager playerUIManager;
     public BossUIManager bossUIManager;
+    public PopupUIManager popupUIManager;
 
     [Header("UI Panels")]
     public GameObject inGameUI;
