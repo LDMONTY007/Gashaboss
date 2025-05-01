@@ -14,14 +14,14 @@ public class BossWeapon: Weapon{
     [SerializeField] private float altAtkRadius;
     [SerializeField] private float altAtkAngle;
     [SerializeField] private float altAtkHeight;
-    [SerializeField] private GameObject altActions;
+    [SerializeField] private GameObject altAction;
     #endregion
     #region SpecialAttack vars
     [SerializeField] private bool hasSpecial = false;
     [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkRadius;
     [SerializeField] private float specialAtkHeight;
-    [SerializeField] private GameObject specialActions;
+    [SerializeField] private GameObject specialAction;
     #endregion
     public override void AltAttack(){
         if (!canAttack){
