@@ -50,6 +50,8 @@ public class UIManager : MonoBehaviour
             Instance.pauseMenuPanel = pauseMenuPanel;
             Instance.inventoryPanel = inventoryPanel;
 
+
+
             //this is necessary so when we load into a scene
             //when the UIManager already exists we reset the state of 
             //the UI ensuring the inventory and pause menu are closed.

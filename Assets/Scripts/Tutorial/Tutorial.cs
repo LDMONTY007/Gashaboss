@@ -127,6 +127,12 @@ public class Tutorial : MonoBehaviour
             yield return null;
         }
 
+        //Say we completed the tutorial
+        SaveDataManager.instance.gameData.didCompleteTutorial = true;
+
+        //make sure to save the game data before we leave this scene.
+        SaveDataManager.instance.SaveGame();
+
         //load into the gashapon scene.
         SceneManager.LoadScene("GatchaMachine_test");
     }
