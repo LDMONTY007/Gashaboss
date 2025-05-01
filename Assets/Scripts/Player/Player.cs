@@ -234,6 +234,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     //events that are invoked when the player
     //does certain actions, only currently used for the tutorial.
+    [HideInInspector] public event Action OnPickup;
     [HideInInspector] public event Action OnAttack;
     [HideInInspector] public event Action OnAltAttack;
     [HideInInspector] public event Action OnSpecialAttack;
@@ -1465,6 +1466,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //assign the new current weapon.
         curWeapon = w;
+
+        //invoke OnPickup if methods are subscribed to it.
+        OnPickup?.Invoke();
     }
 
     void DropCurrentWeapon()

@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 public class GachaMachine : MonoBehaviour, IDamageable {
@@ -45,6 +45,9 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     private AudioSource gachaAudioSource;
 
+    [HideInInspector] public event Action OnDispense;
+    [HideInInspector] public event Action BossDefeated;
+
     public void Start(){
         gachaAudioSource = GetComponent<AudioSource>();
 
@@ -68,7 +71,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     public GameObject GetRandomDrop(){
 
-        int dropRoll = Random.Range(1, totalWeights + 1);
+
+        OnDispense?.Invoke();
+
+        int dropRoll = UnityEngine.Random.Range(1, totalWeights + 1);
         int currDrop = 0;
         //Go through the objects in the list adding their weights up until
         //we find the weight we want
@@ -189,5 +195,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
         //this animation has an event that will call the "SpawnCapsule" method when it ends.
         gachaAnimator.SetTrigger("drop");
+    }
+
+    public void OnBossDefeated()
+    {
+        BossDefeated?.Invoke();
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class CollectionManager : UIInputHandler, IDataPersistence
 {
@@ -19,6 +20,9 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     [Header("Collected Collectibles")]
     private Dictionary<string, DropData> collectedCollectibles;
+
+    public event Action OnCollectionOpen;
+    public event Action OnCollectionClose;
 
     private void Awake()
     {
@@ -62,6 +66,8 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         }
         SetCursorState(true);
         UIManager.Instance.currentUIState = UIManager.UIState.Collection; // <<< USE STATE MACHINE
+
+        OnCollectionOpen?.Invoke();
     }
 
 
@@ -91,6 +97,8 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             Time.timeScale = 1f;
             UIManager.Instance.currentUIState = UIManager.UIState.None;
         }
+
+        OnCollectionClose?.Invoke();
     }
 
     public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, int cost)
