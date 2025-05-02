@@ -126,6 +126,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         {
             //get the drop using our search function
             DropData dropToSave = SaveDataManager.instance.FindDropData(key);
+            Debug.Log(key);
 
             //if the drop is an environmental unlock,
             //make sure to unlock it when we load the data in.
