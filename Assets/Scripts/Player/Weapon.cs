@@ -483,7 +483,7 @@ public class Weapon : Collectible
             //Tell the player to stop jumping.
             player.StopJumping();
 
-            player.rb.velocity = new Vector3(player.rb.velocity.x, 0.1f, player.rb.velocity.z);
+            player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0.1f, player.rb.linearVelocity.z);
 
             //Wait until the animation is done
             //yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);

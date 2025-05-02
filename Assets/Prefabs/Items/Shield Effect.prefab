@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1891130999345376837}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 19.1, y: 2, z: 34.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 11400000, guid: 7bad1e12724926f42abbbb55aa6ad3ea, type: 2}
-  collectibleName: Shield Effect
+  collectibleName: Barrier Crystal
   item: {fileID: 11400000, guid: e27bb39562bf4bf41b45489e3cd0ecbd, type: 2}
   itemModel: {fileID: 5050612760844813662}
 --- !u!136 &4865942407293668524

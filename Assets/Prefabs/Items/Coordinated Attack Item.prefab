@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5900340154052288284}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 19.1, y: 2, z: 34.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 11400000, guid: f6fb36e88abcdb54ba472c88785c3def, type: 2}
-  collectibleName: Coordinated Attack Item
+  collectibleName: Shikigami Charm
   item: {fileID: 11400000, guid: e7c45c8c3c6b98b4c827d76db5a07c01, type: 2}
   itemModel: {fileID: 8299151459979477364}
 --- !u!136 &2723950315800388666
