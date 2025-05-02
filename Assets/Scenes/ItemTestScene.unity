@@ -2366,6 +2366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUIManager: {fileID: 753196673}
   bossUIManager: {fileID: 853423133}
+  popupUIManager: {fileID: 0}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
   inventoryPanel: {fileID: 524064614}
@@ -3234,6 +3235,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shikigami Charm
       objectReference: {fileID: 0}
+    - target: {fileID: 5900340154052288284, guid: 0205de0f35a93f4418767f1ed5968816, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3250,6 +3255,10 @@ PrefabInstance:
     - target: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_Name
       value: Weighted Dice
+      objectReference: {fileID: 0}
+    - target: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3308,6 +3317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Expired Milk
       objectReference: {fileID: 0}
+    - target: {fileID: 5517679711612390859, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9186533256741284872, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.1
@@ -3364,6 +3377,10 @@ PrefabInstance:
     - target: {fileID: 2418545192651581817, guid: 964995a766f4f5c48baa38d0198597ff, type: 3}
       propertyPath: m_Name
       value: Phantom Cloak
+      objectReference: {fileID: 0}
+    - target: {fileID: 2418545192651581817, guid: 964995a766f4f5c48baa38d0198597ff, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8870893196510727503, guid: 964995a766f4f5c48baa38d0198597ff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3462,6 +3479,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Glitchy Stop Watch
       objectReference: {fileID: 0}
+    - target: {fileID: 5299139301318829600, guid: ad093af3d06ce124b817fa847002124b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3519,6 +3540,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Winged Boot
       objectReference: {fileID: 0}
+    - target: {fileID: 8311597373895976805, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3535,6 +3560,10 @@ PrefabInstance:
     - target: {fileID: 1891130999345376837, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
       propertyPath: m_Name
       value: Barrier Crystal
+      objectReference: {fileID: 0}
+    - target: {fileID: 1891130999345376837, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6805083176444045061, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3592,6 +3621,10 @@ PrefabInstance:
     - target: {fileID: 223554777217421323, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_Name
       value: Lucky Amulet
+      objectReference: {fileID: 0}
+    - target: {fileID: 223554777217421323, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3556101689141224544, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3719,6 +3752,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gambler's Coin
       objectReference: {fileID: 0}
+    - target: {fileID: 2577273066622816552, guid: 80913f480e90d4246a22283991c59191, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7842571436054462625, guid: 80913f480e90d4246a22283991c59191, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.1
@@ -3776,6 +3813,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bubble Wand
       objectReference: {fileID: 0}
+    - target: {fileID: 3084018940442511423, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8316057154413129217, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.1
@@ -3832,6 +3873,10 @@ PrefabInstance:
     - target: {fileID: 1018710976855967613, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
       propertyPath: m_Name
       value: Energy Drink
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018710976855967613, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6438736351889848164, guid: dfa8651e3d7dbd54e9f5a617b6c50c7f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3930,6 +3975,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Voucher
       objectReference: {fileID: 0}
+    - target: {fileID: 8948088514212408868, guid: c359cf746e25aea428a7c12ad6f34092, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3989,7 +4038,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: drops.Array.size
-      value: 18
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[3]'
@@ -4164,6 +4213,10 @@ PrefabInstance:
     - target: {fileID: 646868623870559507, guid: 1083793292df30847ad119bdda6460ba, type: 3}
       propertyPath: m_Name
       value: Unstable Pipe Bomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 646868623870559507, guid: 1083793292df30847ad119bdda6460ba, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8542632972648941803, guid: 1083793292df30847ad119bdda6460ba, type: 3}
       propertyPath: m_LocalPosition.x

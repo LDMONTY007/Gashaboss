@@ -61,11 +61,16 @@ public class CoordinatedAttackEffect : MonoBehaviour
         SpawnCompanion();
 
         // Subscribe to weapon attacks
-        playerWeapon = Player.instance.curWeapon;
+/*        playerWeapon = Player.instance.curWeapon;
         if (playerWeapon != null)
         {
             playerWeapon.onAttack += OnPlayerAttack;
-        }
+        }*/
+
+        //for any of the player's attacks call OnPlayerAttack.
+        Player.instance.OnAttack += OnPlayerAttack;
+        Player.instance.OnAltAttack += OnPlayerAttack;
+        Player.instance.OnSpecialAttack += OnPlayerAttack;
 
         Debug.Log("Coordinated Attack effect initialized!");
     }
@@ -201,28 +206,31 @@ public class CompanionController : MonoBehaviour
 
     private void Start()
     {
+        //LD get the premade particle system instead.
+        attackParticles = GetComponentInChildren<ParticleSystem>();
+
         // Create attack particles if not assigned
-        if (attackParticles == null)
-        {
-            GameObject particlesObj = new GameObject("AttackParticles");
-            particlesObj.transform.parent = transform;
-            particlesObj.transform.localPosition = Vector3.zero;
+        /* if (attackParticles == null)
+         {
+             GameObject particlesObj = new GameObject("AttackParticles");
+             particlesObj.transform.parent = transform;
+             particlesObj.transform.localPosition = Vector3.zero;
 
-            attackParticles = particlesObj.AddComponent<ParticleSystem>();
+             attackParticles = particlesObj.AddComponent<ParticleSystem>();
 
-            // Yellow particle burst
-            var main = attackParticles.main;
-            main.startColor = Color.yellow;
-            main.startSize = 0.2f;
-            main.startSpeed = 5f;
-            main.startLifetime = 0.5f;
+             // Yellow particle burst
+             var main = attackParticles.main;
+             main.startColor = Color.yellow;
+             main.startSize = 0.2f;
+             main.startSpeed = 5f;
+             main.startLifetime = 0.5f;
 
-            var emission = attackParticles.emission;
-            emission.rateOverTime = 0;
-            emission.SetBursts(new ParticleSystem.Burst[] {
-                new ParticleSystem.Burst(0f, 20)
-            });
-        }
+             var emission = attackParticles.emission;
+             emission.rateOverTime = 0;
+             emission.SetBursts(new ParticleSystem.Burst[] {
+                 new ParticleSystem.Burst(0f, 20)
+             });
+         }*/
     }
 
     private void Update()
@@ -242,6 +250,7 @@ public class CompanionController : MonoBehaviour
 
     public void AttackTarget(Transform target, int damage)
     {
+        Debug.Log("Shikigami Attack!".Color("Cyan"));
         StartCoroutine(AttackRoutine(target, damage));
     }
 

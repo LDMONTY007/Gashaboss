@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CoordinatedAttackItem
   m_EditorClassIdentifier: 
   description: A passive entity that launches an attack every time the player attacks
-  companionPrefab: {fileID: 0}
+  companionPrefab: {fileID: 5241151418294894153, guid: 399434c5efdc89242ab547c30a497934, type: 3}
   attackDelay: 0.2
   attackDamage: 1

@@ -109,19 +109,10 @@ public class Weapon : Collectible
 
     public IEnumerator DealDamage(int damage)
     {
-        //if we can't attack,
-        //print a message in case something
-        //breaks because of this.
-        if (!canAttack)
-        {
-            //Debug.LogWarning("Cannot attack during cooldown");
-            yield break;
-        }
 
         // NEW CODE FOR ITEMS
         // Trigger the attack event
-        if (onAttack != null)
-            onAttack.Invoke();
+        onAttack?.Invoke();
         // END NEW CODE FOR ITEMS
 
         //Start AttackCoroutine
@@ -226,6 +217,12 @@ public class Weapon : Collectible
 
     public IEnumerator DealDamageAndLaunch(int damage, Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
+        // NEW CODE FOR ITEMS
+        // Trigger the attack event
+        onAttack?.Invoke();
+        // END NEW CODE FOR ITEMS
+
+
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
         if (objs.Count > 0)
@@ -302,12 +299,6 @@ public class Weapon : Collectible
             return;
         }
 
-        // NEW CODE FOR ITEMS
-        // Trigger the attack event
-        if (onAttack != null)
-            onAttack.Invoke();
-        // END NEW CODE FOR ITEMS
-
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
 
@@ -323,11 +314,7 @@ public class Weapon : Collectible
             return;
         }
 
-        // NEW CODE FOR ITEMS
-        // Trigger the attack event for alt attacks too
-        if (onAttack != null)
-            onAttack.Invoke();
-        // END NEW CODE FOR ITEMS
+      
 
         //TODO: 
         //code a different attack that occurs when in the air. this way the player can have a quick downward smash attack that
@@ -356,12 +343,6 @@ public class Weapon : Collectible
             //Debug.LogWarning("Cannot attack during cooldown");
             return;
         }
-
-        // NEW CODE FOR ITEMS
-        // Trigger the attack event
-        if (onAttack != null)
-            onAttack.Invoke();
-        // END NEW CODE FOR ITEMS
 
         //Start specialAttack
         StartCoroutine(SpecialAttackCoroutine());
