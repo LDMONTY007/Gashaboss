@@ -16,6 +16,12 @@ public class SetRandomSeed : MonoBehaviour
         GetComponent<MeshRenderer>().materials[0].SetFloat("_Seed", seed);
     }
 
+    //used when switching with WhiteMaterialToggle.cs
+    public void AssignSeed()
+    {
+        GetComponent<MeshRenderer>().materials[0].SetFloat("_Seed", seed);
+    }
+
     public void GenRandomSeed()
     {
         //LD Montello

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class CollectionManager : UIInputHandler, IDataPersistence
 {
@@ -19,6 +20,9 @@ public class CollectionManager : UIInputHandler, IDataPersistence
 
     [Header("Collected Collectibles")]
     private Dictionary<string, DropData> collectedCollectibles;
+
+    public event Action OnCollectionOpen;
+    public event Action OnCollectionClose;
 
     private void Awake()
     {
@@ -62,6 +66,8 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         }
         SetCursorState(true);
         UIManager.Instance.currentUIState = UIManager.UIState.Collection; // <<< USE STATE MACHINE
+
+        OnCollectionOpen?.Invoke();
     }
 
 
@@ -91,6 +97,8 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             Time.timeScale = 1f;
             UIManager.Instance.currentUIState = UIManager.UIState.None;
         }
+
+        OnCollectionClose?.Invoke();
     }
 
     public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, int cost)
@@ -119,6 +127,17 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             //get the drop using our search function
             DropData dropToSave = SaveDataManager.instance.FindDropData(key);
 
+            //if the drop is an environmental unlock,
+            //make sure to unlock it when we load the data in.
+            //this is where we unlock any gashapon machines the player has unlocked in their save data.
+            if (dropToSave.isEnvironmentalUnlock)
+            {
+                Debug.Log("ENVIRONMENTAL UNLOCK");
+                //instantiate the object so that it unlocks the environmental object.
+                GameObject tempDrop = Instantiate(dropToSave.droppedObject);
+                tempDrop.GetComponent<GachaDrop>().unlockOnStart = true;
+            }
+
             //get the name of the collectible from the collectible itself and store
             //the drop data.
             collectedCollectibles.Add(dropToSave.droppedObject.GetComponent<Collectible>().collectibleName, dropToSave);
@@ -134,6 +153,13 @@ public class CollectionManager : UIInputHandler, IDataPersistence
             gameData.collectedCollectibles.Add(kvp.Value.name);
         }
         
+    }
+
+    //used in gacha machine to remove any objects that
+    //have already been collected by the player and are only collected once.
+    public bool CollectionContains(DropData data)
+    {
+        return collectedCollectibles.ContainsValue(data);
     }
 
     private void SetCursorState(bool uiMode)

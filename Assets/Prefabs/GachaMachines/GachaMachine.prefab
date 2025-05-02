@@ -87,9 +87,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3533069148c1ac1419a5eb26cb841a30, type: 2}
   - {fileID: 11400000, guid: 1b1341d79a8244f47909f30d365c9323, type: 2}
   - {fileID: 11400000, guid: ce1da2e6fc22ebb47a4dcc7db3ef1a33, type: 2}
+  - {fileID: 11400000, guid: 650b37986c2bfa146b1ced0a79d91914, type: 2}
   capsule: {fileID: 4408692558850734106, guid: 0c36a2390d6f192469d7e60c54ddaf16, type: 3}
   capsuleSpawnTransform: {fileID: 5725657859695926706}
   gachaAnimator: {fileID: 781203210463097241}
+  currentDrop: {fileID: 0}
+  isDispensing: 0
   setRandomSeedAnimated: {fileID: 1999788588684373509}
   gachaRollClip: {fileID: 8300000, guid: 648fa0ecd20380841a913424fcf13092, type: 3}
 --- !u!65 &3582258337774004232

@@ -29,6 +29,8 @@ public class BossController : Collectible, IDamageable
 
     public ParticleSystem stunParticles;
 
+    public GachaMachine parentMachine;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -115,10 +117,13 @@ public class BossController : Collectible, IDamageable
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
 
-        // reward the player with the loot
-        // from this boss.
+       //reward the player with the loot
+        //from this boss.
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
+
+        //the boss was defeated so tell the parent machine this.
+        parentMachine.OnBossDefeated();
 
         // Check if the player has a discount voucher and refresh it after boss defeat
         VoucherEffect voucher = playerObject.GetComponent<Player>().GetComponent<VoucherEffect>();

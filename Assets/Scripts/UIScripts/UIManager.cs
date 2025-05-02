@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Managers")]
     public PlayerUIManager playerUIManager;
     public BossUIManager bossUIManager;
+    public PopupUIManager popupUIManager;
 
     [Header("UI Panels")]
     public GameObject inGameUI;
@@ -49,6 +50,17 @@ public class UIManager : MonoBehaviour
             Instance.pauseMenuPanel = pauseMenuPanel;
             Instance.inventoryPanel = inventoryPanel;
 
+
+
+            //this is necessary so when we load into a scene
+            //when the UIManager already exists we reset the state of 
+            //the UI ensuring the inventory and pause menu are closed.
+            // Ensure Pause Menu is disabled on game start
+            if (pauseMenuPanel != null)
+            {
+                pauseMenuPanel.SetActive(false);  // hide the pause menu
+            }
+            if (inventoryPanel != null) inventoryPanel.SetActive(false);
 
             Destroy(gameObject);
             return;

@@ -7,4 +7,6 @@ public class DropData: ScriptableObject{
     public int weight;
     public int cost;
     public bool isRemovedAfterDrop;
+    //these are for things like a new gashapon machine.
+    public bool isEnvironmentalUnlock;
 }

@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 public class GachaMachine : MonoBehaviour, IDamageable {
@@ -45,10 +45,23 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
     private AudioSource gachaAudioSource;
 
+    [HideInInspector] public event Action OnDispense;
+    [HideInInspector] public event Action BossDefeated;
+
     public void Start(){
         gachaAudioSource = GetComponent<AudioSource>();
 
-        //loadDrops();
+
+        //always attempt to remove all drops that are flagged for removal,
+        //this is so any drops that are permanantly owned once collected such as a new
+        //gashapon machine aren't dispensed more than once in a run regardless of if the 
+        //player has died.
+        //we simply check if the collection manager contains an environmental unlock for now.
+        //we can discuss if the drops that only get dropped once also aren't reset.
+        drops.RemoveAll(d => d.isEnvironmentalUnlock == true && CollectionManager.instance.CollectionContains(d));
+
+        
+
         totalWeights = 0;
         foreach (DropData drop in drops){
             totalWeights += drop.weight;
@@ -57,7 +70,11 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     }
 
     public GameObject GetRandomDrop(){
-        int dropRoll = Random.Range(1, totalWeights + 1);
+
+
+        OnDispense?.Invoke();
+
+        int dropRoll = UnityEngine.Random.Range(1, totalWeights + 1);
         int currDrop = 0;
         //Go through the objects in the list adding their weights up until
         //we find the weight we want
@@ -69,6 +86,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
                     drops.Remove(drop);
                     totalWeights -= drop.weight;
                 }
+                
                 return drop.droppedObject;
             }
         }
@@ -187,5 +205,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
 
         //this animation has an event that will call the "SpawnCapsule" method when it ends.
         gachaAnimator.SetTrigger("drop");
+    }
+
+    public void OnBossDefeated()
+    {
+        BossDefeated?.Invoke();
     }
 }

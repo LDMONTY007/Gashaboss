@@ -162,6 +162,12 @@ public class Weapon : Collectible
                             continue;
                         }
 
+                        //if the damageable isn't enabled then we skip it.
+                        if ((damageable as MonoBehaviour).enabled == false)
+                        {
+                            continue;
+                        }
+
                         //make the damageable take damage.
                         //and tell it we gave it damage.
                         damageable.TakeDamage(damage, gameObject);
@@ -234,6 +240,13 @@ public class Weapon : Collectible
                         //if the damageable is a boss, and is dead, skip this object in the loop.
                         BossController boss = objs[i].GetComponent<BossController>();
                         if (boss != null && boss.isDead)
+                        {
+                            continue;
+                        }
+
+
+                        //if the damageable isn't enabled then we skip it.
+                        if ((damageable as MonoBehaviour).enabled == false)
                         {
                             continue;
                         }

@@ -52,5 +52,11 @@ public class Capsule: MonoBehaviour, IDamageable{
         //and assign the current drop to the parent machine 
         //so the parent machine knows a drop exists.
         parentMachine.currentDrop = Instantiate(objectHeld, transform.position, objectHeld.transform.rotation);
+        //if this is a boss, assign the bosses parent machine.
+        if (parentMachine.currentDrop.TryGetComponent<BossController>(out BossController boss))
+        {
+            //assign the bosses parent machine
+            boss.parentMachine = parentMachine;
+        }
     }
 }
