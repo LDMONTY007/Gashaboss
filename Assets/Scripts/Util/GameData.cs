@@ -11,12 +11,14 @@ using UnityEngine;
 //Dictionaries are a good type for collectabiles
 public class GameData{
     public long lastUpdated;
+    public bool didCompleteTutorial;
     public int coins;
     public int caps;
     public string playerWeapon;
     public List<StatModifier> modifiers;
     public List<string> inventory;
     public List<string> collectedCollectibles;
+
 
     //These are the default values the game starts with when no data to load
     public GameData(){

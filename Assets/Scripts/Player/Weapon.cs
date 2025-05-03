@@ -31,8 +31,6 @@ public class Weapon : Collectible
 
     public float attackDistance = 1f;
 
-    LayerMask playerMask;
-
     public Player player;
 
     public Animator animator;
@@ -40,7 +38,13 @@ public class Weapon : Collectible
     //colors used when debugging the collision sensor mesh
     protected Color ogMeshColor;
     //blue with 100 alpha.
-    protected Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+    private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+
+    //used to prevent destroying the weapon we pick up.
+    //sometimes that would happen and this is a really messy solution for that.
+    public bool isEquipped;
+
+    bool swordOnLeft = false;
 
     //when unity engine
     //does the "Loading" prompt
@@ -83,16 +87,161 @@ public class Weapon : Collectible
         ogMeshColor = collisionSensor.sensorColor;
         //weaponCollider.enabled = false;
 
-        //get player mask
-        playerMask = LayerMask.GetMask("Player", "Ignore Raycast"); //Assign our layer mask to player
-        playerMask = ~playerMask; //Invert the layermask value so instead of being just the player it becomes every layer but the mask
-
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+
+    //used for the special spin attack 
+    //to check if there was a successful hit.
+    bool specialDamageHitSuccess = false;
+
+    public IEnumerator DealDamage(int damage)
+    {
+
+        List<GameObject> objs = collisionSensor.ScanForObjects();
+
+        if (objs.Count > 0)
+        {
+            for (int i = 0; i < objs.Count; i++)
+            {
+                if (objs[i] != null)
+                {
+                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        //if the damageable is a boss, and is dead, skip this object in the loop.
+                        BossController boss = objs[i].GetComponent<BossController>();
+                        if (boss != null && boss.isDead)
+                        {
+                            continue;
+                        }
+
+                        //if the damageable isn't enabled then we skip it.
+                        if ((damageable as MonoBehaviour).enabled == false)
+                        {
+                            continue;
+                        }
+
+                        //make the damageable take damage.
+                        //and tell it we gave it damage.
+                        damageable.TakeDamage(damage, gameObject);
+
+                        //tell the special attack that the special damage hit was a success.
+                        specialDamageHitSuccess = true;
+
+
+                        //TODO:
+                        //Spawn a particle system burst that destroys itself
+                        //when we hit a damageable so that the player can see where they hit.
+                        //maybe give each weapon an individualized particle effect.
+                        //spawn a particle effect facing outward from the normal
+                        //at the position that was hit.
+                        //TODO:
+                        //in the future replace this with
+                        //some code that checks the direction
+                        //the attack is coming from, does a box 
+                        //cast and uses the normal and hit point from
+                        //that box cast to calculate where the damage
+                        //particle effect should spawn. 
+                        Collider c = objs[i].GetComponent<Collider>();
+
+
+                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
+
+
+                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
+
+                        //Instantiate(hitParticles, c.transform.position, Quaternion.LookRotation(Camera.main.transform.position));
+
+                        //wait for fixedupdate before launching player.
+                        //if we didn't wait we'd have inconsistent physics.
+                        yield return new WaitForFixedUpdate();
+
+                        //player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
+                }
+
+            }
+        }
+    }
+
+    public IEnumerator DealDamageAndLaunch(int damage, Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
+    {
+
+        List<GameObject> objs = collisionSensor.ScanForObjects();
+
+        if (objs.Count > 0)
+        {
+            for (int i = 0; i < objs.Count; i++)
+            {
+                if (objs[i] != null)
+                {
+                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        //if the damageable is a boss, and is dead, skip this object in the loop.
+                        BossController boss = objs[i].GetComponent<BossController>();
+                        if (boss != null && boss.isDead)
+                        {
+                            continue;
+                        }
+
+
+                        //if the damageable isn't enabled then we skip it.
+                        if ((damageable as MonoBehaviour).enabled == false)
+                        {
+                            continue;
+                        }
+
+                        //make the damageable take damage.
+                        //and tell it we gave it damage.
+                        damageable.TakeDamage(1, gameObject);
+
+                        
+                        //TODO:
+                        //Spawn a particle system burst that destroys itself
+                        //when we hit a damageable so that the player can see where they hit.
+                        //maybe give each weapon an individualized particle effect.
+                        //spawn a particle effect facing outward from the normal
+                        //at the position that was hit.
+                        //TODO:
+                        //in the future replace this with
+                        //some code that checks the direction
+                        //the attack is coming from, does a box 
+                        //cast and uses the normal and hit point from
+                        //that box cast to calculate where the damage
+                        //particle effect should spawn. 
+                        Collider c = objs[i].GetComponent<Collider>();
+
+
+                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
+
+
+                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
+
+                        //wait for fixedupdate before launching player.
+                        //if we didn't wait we'd have inconsistent physics.
+                        yield return new WaitForFixedUpdate();
+
+                        player.LaunchPlayer(direction, height, timeToApex, timeToFall);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
+                }
+
+            }
+        }
     }
 
     public virtual void Attack()
@@ -109,7 +258,8 @@ public class Weapon : Collectible
         //Start AttackCoroutine
         StartCoroutine(AttackCoroutine());
 
-
+        //flip if the sword is on the left or not so we know for the special attack.
+        swordOnLeft = !swordOnLeft;
     }
 
     public virtual void AltAttack()
@@ -120,6 +270,7 @@ public class Weapon : Collectible
             return;
         }
 
+
         //TODO: 
         //code a different attack that occurs when in the air. this way the player can have a quick downward smash attack that
         //works only if they are in the air and do their alt attack with the sword.
@@ -129,6 +280,10 @@ public class Weapon : Collectible
         }
         else
         {
+
+            //flip if the sword is on the left or not so we know for the special attack.
+            swordOnLeft = !swordOnLeft;
+
             //Start AltAttackCoroutine
             StartCoroutine(AltAttackCoroutine());
         }
@@ -165,86 +320,8 @@ public class Weapon : Collectible
         //but for now enable the collider for an attack.
         //weaponCollider.enabled = true;
 
-        List<GameObject> objs = collisionSensor.ScanForObjects();
-
-        if (objs.Count > 0 )
-        {
-            for ( int i = 0; i < objs.Count; i++ )
-            {
-                if (objs[i] != null)
-                {
-                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
-                    if (damageable != null)
-                    {
-                        //if the damageable is a boss, and is dead, skip this object in the loop.
-                        BossController boss = objs[i].GetComponent<BossController>();
-                        if (boss != null && boss.isDead)
-                        {
-                            continue;
-                        }
-
-                        //make the damageable take damage.
-                        //and tell it we gave it damage.
-                        damageable.TakeDamage(1, gameObject);
-
-                        //TODO:
-                        //Spawn a particle system burst that destroys itself
-                        //when we hit a damageable so that the player can see where they hit.
-                        //maybe give each weapon an individualized particle effect.
-                        //spawn a particle effect facing outward from the normal
-                        //at the position that was hit.
-                        //TODO:
-                        //in the future replace this with
-                        //some code that checks the direction
-                        //the attack is coming from, does a box 
-                        //cast and uses the normal and hit point from
-                        //that box cast to calculate where the damage
-                        //particle effect should spawn. 
-                        Collider c = objs[i].GetComponent<Collider>();
-                       
-
-                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-                        
-
-                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
-                }
-                
-            }
-        }
-
-        /*//RaycastHit hits = Physics.SphereCastAll(transform.position, attackRadius, transform.forward, attackDistance, playerMask);
-        RaycastHit sphereHit;
-        
-        if (Physics.SphereCast(transform.position, attackRadius, transform.forward * attackDistance, out sphereHit, attackDistance, playerMask))
-        {
-            //if this hit is in front of us, check for damageables
-            if (Mathf.Abs(Vector3.Dot(transform.position, sphereHit.point)) > 0)
-            {
-                IDamageable damageable = sphereHit.collider.GetComponent<IDamageable>();
-                if (damageable != null)
-                {
-                    //make the damageable take damage.
-                    //and tell it we gave it damage.
-                    damageable.TakeDamage(1, gameObject);
-
-                    //TODO:
-                    //Spawn a particle system burst that destroys itself
-                    //when we hit a damageable so that the player can see where they hit.
-                    //maybe give each weapon an individualized particle effect.
-                    //spawn a particle effect facing outward from the normal
-                    //at the position that was hit.
-                    Debug.Log(sphereHit.point);
-                    Instantiate(hitParticles, sphereHit.point, Quaternion.LookRotation(sphereHit.normal));
-                }
-            }
-
-
-        }*/
+        //Execute the coroutine for dealing damage using our collision sensor.
+        yield return DealDamage(1);
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -275,63 +352,9 @@ public class Weapon : Collectible
         //don't allow other attacks during our current attack.
         canAttack = false;
 
-        List<GameObject> objs = collisionSensor.ScanForObjects();
-
-        if (objs.Count > 0)
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                if (objs[i] != null)
-                {
-                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
-                    if (damageable != null)
-                    {
-                        //if the damageable is a boss, and is dead, skip this object in the loop.
-                        BossController boss = objs[i].GetComponent<BossController>();
-                        if (boss != null && boss.isDead)
-                        {
-                            continue;
-                        }
-
-                        //make the damageable take damage.
-                        //and tell it we gave it damage.
-                        damageable.TakeDamage(1, gameObject);
-
-                        //TODO:
-                        //Spawn a particle system burst that destroys itself
-                        //when we hit a damageable so that the player can see where they hit.
-                        //maybe give each weapon an individualized particle effect.
-                        //spawn a particle effect facing outward from the normal
-                        //at the position that was hit.
-                        //TODO:
-                        //in the future replace this with
-                        //some code that checks the direction
-                        //the attack is coming from, does a box 
-                        //cast and uses the normal and hit point from
-                        //that box cast to calculate where the damage
-                        //particle effect should spawn. 
-                        Collider c = objs[i].GetComponent<Collider>();
-
-
-                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-
-
-                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
-
-                        //wait for fixedupdate before launching player.
-                        //if we didn't wait we'd have inconsistent physics.
-                        yield return new WaitForFixedUpdate();
-
-                        player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
-                }
-
-            }
-        }
+        //Execute the coroutine for dealing damage using our collision sensor.
+        //and launch the player upwards.
+        yield return DealDamageAndLaunch(1, player.transform.up, 30f, 1f, 2f);
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -349,6 +372,7 @@ public class Weapon : Collectible
         yield break;
     }
 
+    //this does 2 damage.
     public virtual IEnumerator AirAltAttackCoroutine()
     {
         
@@ -370,6 +394,7 @@ public class Weapon : Collectible
         //if we didn't wait we'd have inconsistent physics.
         yield return new WaitForFixedUpdate();
 
+        //launch the player downwards.
         player.LaunchPlayer(-player.transform.up, 30f, 1f, 2f);
 
 
@@ -393,62 +418,9 @@ public class Weapon : Collectible
         if (slamParticles != null)
         Instantiate(slamParticles, player.GetFeetPosition(), slamParticles.transform.rotation);
 
-        List<GameObject> objs = collisionSensor.ScanForObjects();
-
-        if (objs.Count > 0)
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                if (objs[i] != null)
-                {
-                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
-                    if (damageable != null)
-                    {
-                        //if the damageable is a boss, and is dead, skip this object in the loop.
-                        BossController boss = objs[i].GetComponent<BossController>();
-                        if (boss != null && boss.isDead)
-                        {
-                            continue;
-                        }
-
-                        //make the damageable take damage.
-                        //and tell it we gave it damage.
-                        //do 2 damage here so that using this attack combo is worth it,
-                        //because the player must first use the alt attack to get into the
-                        //air and then second must use it again while in the air to do the slam attack.
-                        damageable.TakeDamage(2, gameObject);
-
-                        //TODO:
-                        //Spawn a particle system burst that destroys itself
-                        //when we hit a damageable so that the player can see where they hit.
-                        //maybe give each weapon an individualized particle effect.
-                        //spawn a particle effect facing outward from the normal
-                        //at the position that was hit.
-                        //TODO:
-                        //in the future replace this with
-                        //some code that checks the direction
-                        //the attack is coming from, does a box 
-                        //cast and uses the normal and hit point from
-                        //that box cast to calculate where the damage
-                        //particle effect should spawn. 
-                        Collider c = objs[i].GetComponent<Collider>();
-
-
-                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-
-
-                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
-
-                        
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
-                }
-
-            }
-        }
+        //Execute the coroutine for dealing damage using our collision sensor.
+        //Deal 2 damage.
+        yield return DealDamage(2);
 
 
         //set color of debug mesh to show we are in cooldown
@@ -467,12 +439,16 @@ public class Weapon : Collectible
         yield break;
     }
 
+
+
     //TODO:
     //I want to make it so when you get an attack
     //to land, any attack, you don't start falling yet,
     //because then you can combo against the boss.
     public virtual IEnumerator SpecialAttackCoroutine()
     {
+        
+
         //start the attack animation
         if (animator != null)
             animator.SetTrigger("specialAttack");
@@ -497,7 +473,54 @@ public class Weapon : Collectible
             player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, 0.1f, player.rb.linearVelocity.z);
 
             //Wait until the animation is done
-            yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);
+            //yield return LDUtil.WaitForAnimationFinishIgnoreTransition(animator);
+            //I actually need to run the attack check code every so often so that 
+            while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+            {
+                yield return null;
+            }
+
+            float prevAngle = collisionSensor.angle;
+
+            collisionSensor.angle = 45;
+
+            //Wait until the animation is done
+            while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+            {
+                //if the sword is on the left spin collider clockwise
+                if (!swordOnLeft)
+                {
+                    //spin the collision sensor 360 degrees based on the normalized time of the spin animation.
+                    collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(360, 0, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
+                }
+                //else sword is on the right spin collider counter-clockwise 
+                else
+                {
+                    //spin the collision sensor 360 degrees based on the normalized time of the spin animation.
+                    collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(0, 360, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
+                }
+
+               
+
+                //Check and deal damage.
+                //Execute the coroutine for dealing damage using our collision sensor.
+                yield return DealDamage(1);
+
+                //if we did hit something, we need to wait 0.33 seconds
+                //before registering another hit in this spin attack.
+                if (specialDamageHitSuccess)
+                {
+                    //reset the flag.
+                    specialDamageHitSuccess = false;
+                    yield return new WaitForSeconds(0.33f);
+                }
+                else
+                    yield return null;
+            }
+
+            collisionSensor.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+            collisionSensor.angle = prevAngle;
 
             //turn gravity back on and
             //let the player jump again.
@@ -507,63 +530,6 @@ public class Weapon : Collectible
             //player.rb.linearVelocity = new Vector3(player.rb.linearVelocity.x, player.rb., player.rb.linearVelocity.z);
         }
 
-
-        List<GameObject> objs = collisionSensor.ScanForObjects();
-
-        if (objs.Count > 0)
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                if (objs[i] != null)
-                {
-                    IDamageable damageable = objs[i].GetComponent<IDamageable>();
-                    if (damageable != null)
-                    {
-                        //if the damageable is a boss, and is dead, skip this object in the loop.
-                        BossController boss = objs[i].GetComponent<BossController>();
-                        if (boss != null && boss.isDead)
-                        {
-                            continue;
-                        }
-
-                        //make the damageable take damage.
-                        //and tell it we gave it damage.
-                        damageable.TakeDamage(1, gameObject);
-
-                        //TODO:
-                        //Spawn a particle system burst that destroys itself
-                        //when we hit a damageable so that the player can see where they hit.
-                        //maybe give each weapon an individualized particle effect.
-                        //spawn a particle effect facing outward from the normal
-                        //at the position that was hit.
-                        //TODO:
-                        //in the future replace this with
-                        //some code that checks the direction
-                        //the attack is coming from, does a box 
-                        //cast and uses the normal and hit point from
-                        //that box cast to calculate where the damage
-                        //particle effect should spawn. 
-                        Collider c = objs[i].GetComponent<Collider>();
-
-
-                        Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
-
-
-                        Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
-
-                        //wait for fixedupdate before launching player.
-                        //if we didn't wait we'd have inconsistent physics.
-                        yield return new WaitForFixedUpdate();
-
-                        //player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Object was null while checking if it is damageable".Color("Orange"));
-                }
-            }
-        }
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -592,7 +558,7 @@ public class Weapon : Collectible
         canAttack = true;
     }
 
-    bool isEquipped;
+
 
     public override void OnCollect(){
 
@@ -612,9 +578,5 @@ public class Weapon : Collectible
         CollectionManager.instance.AddToCollection(this);
         //swap the weapon on the player for ourselves.
         Player.instance.SwapCurrentWeapon(this);
-
-        //set the collision sensor's mask to be the player mask
-        //so we don't damage the player.
-        collisionSensor.mask = playerMask;
     }
 }

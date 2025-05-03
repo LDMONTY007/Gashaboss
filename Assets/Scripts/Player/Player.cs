@@ -72,6 +72,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
     }
 
+    public event Action onCapsSpent;
+
     #endregion
 
     private int startHealth = 4;
@@ -223,10 +225,22 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //Input actions
     InputAction moveAction;
     InputAction jumpAction;
+
+
     InputAction attackAction;
     InputAction altAttackAction;
     InputAction specialAttackAction;
     InputAction dashAction;
+
+    //events that are invoked when the player
+    //does certain actions, only currently used for the tutorial.
+    [HideInInspector] public event Action OnPickup;
+    [HideInInspector] public event Action OnAttack;
+    [HideInInspector] public event Action OnAltAttack;
+    [HideInInspector] public event Action OnSpecialAttack;
+    [HideInInspector] public event Action OnDash;
+    [HideInInspector] public event Action OnJump;
+
 
     //Raycast vars
 
@@ -447,16 +461,25 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             if (attackAction.WasPressedThisFrame())
             {
                 curWeapon.Attack();
+
+                //invoke on attack if methods are subscribed to it.
+                OnAttack?.Invoke();
             }
 
             if (altAttackAction.WasPressedThisFrame())
             {
                 curWeapon.AltAttack();
+
+                //invoke on AltAttack if methods are subscribed to it.
+                OnAltAttack?.Invoke();
             }
 
             if (specialAttackAction.WasPressedThisFrame())
             {
                 curWeapon.SpecialAttack();
+
+                //invoke on SpecialAttack if methods are subscribed to it.
+                OnSpecialAttack?.Invoke();
             }
         }
 
@@ -733,7 +756,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             jumping = true;
             jumpCanceled = false;
 
-            
+            //invoke OnJump if methods are subscribed to it.
+            OnJump?.Invoke();
         }
 
         //Where I learned this https://www.youtube.com/watch?v=7KiK0Aqtmzc
@@ -814,7 +838,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             dashing = true;
             dashCount--;
             StartCoroutine(DashCoroutine());
-           
+
+            //invoke OnDash if methods are subscribed to it.
+            OnDash?.Invoke();
         }
     }
 
@@ -1102,6 +1128,17 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         DeathUI.instance.OpenDeathUI();
     }
 
+    // Made it a bool, that way the caller can know if the subtraction was succesful
+    public bool SpendCaps(int c){
+        if (c > caps){
+            Debug.LogWarning("Not Enough Caps for that!? Aborting the purchase. Tried to remove " + c + " caps.");
+            return false;
+        }
+        caps -= c;
+        onCapsSpent?.Invoke();// Send out signal that the player has spent caps
+        return true;
+    }
+
     public void TakeDamage(int d, GameObject other)
     {
         //if we're invincible, 
@@ -1132,8 +1169,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //Vector3 vectorAngle = Quaternion.AngleAxis(45, Vector3.Cross((other.transform.position - transform.position).normalized, transform.up)) * (other.transform.position - transform.position).normalized;
 
-
-        Vector3 vectorAngle = Quaternion.AngleAxis(-45, other.transform.right) * (transform.position - other.transform.position).normalized;
+        //rotate -45 degrees away from the boss so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -45);
 
         Debug.Log("HERE");
         Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
@@ -1347,6 +1384,19 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             other.GetComponent<Collectible>().OnCollect();
         }
     }
+    private void OnTriggerStay(Collider other)
+    {
+        //if the collider is a weapon
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            //if it's within the weapon pickup radius.
+            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
+            {
+                //collect the weapon.
+                other.GetComponent<Collectible>().OnCollect();
+            }
+        }
+    }
     
     public bool AddItemToInventory(ItemData item){
         if (!inventory.Contains(item)){
@@ -1362,6 +1412,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //if it isn't null, create the player weapon and set the reference for it.
         this.curWeapon = (gameData.playerWeapon != null && gameData.playerWeapon != string.Empty) ? Instantiate(SaveDataManager.instance.FindDropGameObj(gameData.playerWeapon), transform).GetComponent<Weapon>() : null;
         
+
         //if we spawned a new weapon,
         //set it's local posiition to be 0,0,0
         //so that it's centered on the player.
@@ -1369,6 +1420,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         if (this.curWeapon != null)
         {
             this.curWeapon.transform.localPosition = Vector3.zero;
+
+            //say the weapon is equipped.
+            this.curWeapon.isEquipped = true;
         }
 
         this.modifiers = gameData.modifiers;
@@ -1399,19 +1453,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        //if the collider is a weapon
-        if (other.gameObject.CompareTag("Weapon"))
-        {
-            //if it's within a 2 meter radius
-            if (Vector3.Distance(other.transform.position, transform.position) < weaponPickupRadius)
-            {
-                //collect the weapon.
-                other.GetComponent<Collectible>().OnCollect();
-            }
-        }
-    }
 
     public void SwapCurrentWeapon(Weapon w)
     {
@@ -1426,6 +1467,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         //assign the new current weapon.
         curWeapon = w;
+
+        //invoke OnPickup if methods are subscribed to it.
+        OnPickup?.Invoke();
     }
 
     void DropCurrentWeapon()

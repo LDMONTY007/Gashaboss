@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SquidBossDrop
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 6520624465326032014, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
-  weight: 5
+  weight: 1
   isRemovedAfterDrop: 0

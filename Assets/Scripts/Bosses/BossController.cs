@@ -27,6 +27,10 @@ public class BossController : Collectible, IDamageable
 
     public ParticleSystem movementParticles;
 
+    public ParticleSystem stunParticles;
+
+    public GachaMachine parentMachine;
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;
@@ -113,10 +117,15 @@ public class BossController : Collectible, IDamageable
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
 
+        
+
         //reward the player with the loot
         //from this boss.
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
+
+        //the boss was defeated so tell the parent machine this.
+        parentMachine.OnBossDefeated();
 
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
@@ -130,6 +139,10 @@ public class BossController : Collectible, IDamageable
 
     #endregion
 
+    public float bounceForce = 20f;
+
+    public float stunTime = 0.5f;
+
     //LD Montello
     //time to idle before making a decision
     //by default this is zero but will change 
@@ -140,6 +153,7 @@ public class BossController : Collectible, IDamageable
 
     [Header("Attack Parameters")]
     public float attackCheckRadius = 10f;
+
 
 
     [HideInInspector]
@@ -206,6 +220,7 @@ public class BossController : Collectible, IDamageable
         } 
     }
 
+
     public GameObject animatedModel;
 
     public Weapon weapon;
@@ -250,6 +265,9 @@ public class BossController : Collectible, IDamageable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //start with the max health for this boss.
+        curHealth = maxHealth;
+
         StartUI();
 
         playerObject = Player.instance.gameObject;
@@ -276,10 +294,45 @@ public class BossController : Collectible, IDamageable
         return foundPoint;
     }
 
+    public float groundCheckDist = 0.97f;
+    public float groundCheckScale = 0.4f;
+    public bool isGrounded = false;
+
+    private bool didLand = true;
+
     // Update is called once per frame
     void Update()
     {
+        #region grounded check
+        Collider[] colliders = Physics.OverlapBox(transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2) + (-transform.up * groundCheckDist), new Vector3(GetComponent<Collider>().bounds.size.x * groundCheckScale, 0.1f, GetComponent<Collider>().bounds.size.z * groundCheckScale), transform.rotation);
+        if (colliders.Length > 0 && (colliders.Contains(GetComponent<Collider>()) && colliders.Length != 1))
+        {
+            //if we were jumping or in the air,
+            //then we landed.
+            if (!didLand)
+            {
+                didLand = true;
+                OnLanded();
+            }
 
+            isGrounded = true;
+            //Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.red, 1f);
+
+            //Call on landed.
+
+        }
+        else
+        {
+            //when we are no longer grounded,
+            //say that we didn't land.
+            if (didLand == true)
+            {
+                didLand = false;
+            }
+
+            isGrounded = false;
+        }
+        #endregion
 
         if (doStateMachine)
         {
@@ -293,22 +346,11 @@ public class BossController : Collectible, IDamageable
 
         //Handle the animations.
         HandleAnimation();
+    }
 
-        //Debug test for the GetPathablePosition algorithm
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            Vector3 foundPos = Vector3.zero;
-            //pause the editor so that we can step through the search algorithm.
-            Debug.Break();
-            if (GetPathablePosition(50f, ref foundPos))
-            {
-                Debug.Log("FOUND PATHABLE POSITION");
-            }
-            else
-            {
-               
-            }
-        }
+    public void OnLanded()
+    {
+        //TODO: Play landing particles here.
     }
 
     private void FixedUpdate()
@@ -317,6 +359,32 @@ public class BossController : Collectible, IDamageable
         //rotate towards the direction
         //we are moving in.
         HandleRbRotation();
+    }
+
+    void LateUpdate()
+    {
+        ApplyFinalMovements();
+    }
+
+
+
+    /// <summary>
+    /// Handles applying final data to the rigidbody.
+    /// For example if the boss is in the air make sure we don't
+    /// freeze them on the Z axis and let gravity effect them.
+    /// </summary>
+    public void ApplyFinalMovements()
+    {
+        //when we aren't doing some kind of move, 
+        //the boss can't fall unless we check here and allow them to fall.
+        //we freeze the position otherwise. 
+        //we just allow gravity to take over
+        //so that it can fall back to the ground.
+        if (curState != BossState.stun && curState != BossState.move && !isGrounded)
+        {
+            //freeze all rotation and only allow movement on the y axis.
+            rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        }
     }
 
     public void SwitchToIdle(float idleTime)
@@ -388,6 +456,21 @@ public class BossController : Collectible, IDamageable
                 movementParticles.Stop();
             }
         }
+
+        if (stunParticles != null)
+        {
+            if (!stunParticles.isPlaying && curState == BossState.stun)
+            {
+                stunParticles.Play();
+            }
+            else if (stunParticles.isPlaying && curState != BossState.stun)
+            {
+                stunParticles.Stop();
+                //make sure all the particles are deleted from the system.
+                stunParticles.Clear();
+                Debug.LogWarning("STOPPED");
+            }
+        }
     }
 
     //Here we decide if we want to attack,
@@ -410,16 +493,20 @@ public class BossController : Collectible, IDamageable
             Debug.LogWarning("EXIT IDLE " + curIdleTime);
         }
 
+        //no leaving the stun state early.
+        if (curState != BossState.stun)
+        {
+            if (IsPlayerInAttackRange())
+            {
+                Debug.Log("Boss is in attack range!".Color("orange"));
+                curState = BossState.attack;
+            }
+            else
+            {
+                curState = BossState.move;
+            }
+        }
 
-        if (IsPlayerInAttackRange())
-        {
-            Debug.Log("Boss is in attack range!".Color("orange"));
-            curState = BossState.attack;
-        }
-        else
-        {
-            curState = BossState.move;
-        }
     }
 
 
@@ -988,19 +1075,61 @@ public class BossController : Collectible, IDamageable
         //Set to be low resolution for a small amount of time.
         StartLowResRoutine();
 
+        //rotate -1 degrees away from the player so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
 
-        if (curIFramesRoutine == null)
+        //bounce the boss away from the player.
+        //this is how we simulate knockback.
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
+
+        //LD Montello
+        //Stun the boss for 1f
+        //This gives the player a 0.5 second range to continue their attack combo and keep the boss stunned.
+        StartCoroutine(StunCoroutine(stunTime));
+    }
+
+    public IEnumerator BounceCoroutine(Vector3 direction, float force)
+    {
+        Vector3 startForce = direction * force;
+
+        //stop the boss
+        rb.linearVelocity = Vector3.zero;
+
+        float bounceTime = 0.5f;
+        float curTime = 0f;
+
+        if (curState == BossState.stun)
         {
-            //LD Montello
-            //Stun the boss temporarily.
-            curIFramesRoutine = StartCoroutine(IFramesCoroutine(1f));
-        }
-        else
-        {
-            Debug.LogError("PREVIOUS IFRAMES HAVEN'T FINISHED");
+            //don't freeze position anymore
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
-        
+
+        while (curTime <= bounceTime)
+        {
+            //we need to wait for fixed update so that this can
+            //properly be applied to the boss.
+            yield return new WaitForFixedUpdate();
+
+            rb.linearVelocity = startForce;
+
+            curTime += Time.deltaTime;
+        }
+
+
+        rb.linearVelocity = Vector3.zero;
+
+        if (curState == BossState.stun)
+        {
+            //go back to freezing position
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
+
+        //this only works while the boss is stunned,
+        //they can escape being knocked back much quicker if they
+        //have less i-frame time.
+        //rb.AddForce(direction * force, ForceMode.Impulse);
     }
 
     Coroutine curIFramesRoutine = null;
@@ -1095,6 +1224,13 @@ public class BossController : Collectible, IDamageable
         curIFramesRoutine = null;
     }
 
+    public IEnumerator StunCoroutine(float stunTime)
+    {
+        //We are already in stun,
+        //so wait some amount of time before exiting stun.
+        yield return new WaitForSeconds(stunTime);
+        curState = BossState.idle;
+    }
 
     bool isLowRes = false;
 

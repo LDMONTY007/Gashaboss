@@ -82,12 +82,17 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: 3533069148c1ac1419a5eb26cb841a30, type: 2}
   collectibleName: Bomb
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
+  slamParticles: {fileID: 0}
   collisionSensor: {fileID: 2491471556628608376}
   hasCooldown: 1
   cooldownTime: 0.25
+  altCooldownTime: 1
+  specialCooldownTime: 1
   canAttack: 1
   attackDistance: 1
   player: {fileID: 0}
+  animator: {fileID: 0}
+  isEquipped: 0
   projectile: {fileID: 6673216678060324407, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
   launchTransform: {fileID: 2760899209391356921}
 --- !u!114 &2491471556628608376

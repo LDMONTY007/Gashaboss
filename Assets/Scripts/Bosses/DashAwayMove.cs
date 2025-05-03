@@ -6,6 +6,12 @@ public class DashAwayMove : BossAction
 {
     public override IEnumerator ActionCoroutine(BossController boss, float duration)
     {
+        //Do not dash away if we are in stun.
+        if (boss.curState == BossController.BossState.stun)
+        {
+            yield break;
+        }
+
         //the distance the player is going to dash at.
         //this is here just for readability.
         float dashDist = 50f;
@@ -107,6 +113,8 @@ public class DashAwayMove : BossAction
         //target a y position that we can't
         //reach, so just stay at the same y position.
         dashAwayPos.y = boss.transform.position.y;
+
+
 
         //just yield and return the move to position
         //call.

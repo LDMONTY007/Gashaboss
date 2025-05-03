@@ -55,7 +55,21 @@ public class TitleScreenManager : MonoBehaviour
         //overwrite data with new game data if not loading
         if(!isLoading)SaveDataManager.instance.NewGame();
         SaveDataManager.instance.SaveGame();
-        SceneManager.LoadSceneAsync("GatchaMachine_test"); //TODO: Change to load Gameplay Scene
+
+        Debug.Log(SaveDataManager.instance.gameData.didCompleteTutorial);
+
+        //if we never completed the tutorial, 
+        //load the tutorial scene.
+        if (!SaveDataManager.instance.gameData.didCompleteTutorial)
+        {
+            SceneManager.LoadSceneAsync("Tutorial"); //Load tutorial
+        }
+        //otherwise load into the normal test scene.
+        else
+        {
+            SceneManager.LoadSceneAsync("GatchaMachine_test"); //Load the gameplay scene.
+        }
+        
     }
     public void QuitGame()
     {

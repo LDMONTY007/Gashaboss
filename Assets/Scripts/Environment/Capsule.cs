@@ -8,6 +8,8 @@ public class Capsule: MonoBehaviour, IDamageable{
 
     public Animator capsuleAnimator;
 
+    public GachaMachine parentMachine;
+
     public void SetObjectHeld(GameObject obj){
         objectHeld = obj;
     }
@@ -47,6 +49,14 @@ public class Capsule: MonoBehaviour, IDamageable{
     public void SpawnHeldObject()
     {
         //spawn the held object at the capsule's position.
-        Instantiate(objectHeld, transform.position, objectHeld.transform.rotation);
+        //and assign the current drop to the parent machine 
+        //so the parent machine knows a drop exists.
+        parentMachine.currentDrop = Instantiate(objectHeld, transform.position, objectHeld.transform.rotation);
+        //if this is a boss, assign the bosses parent machine.
+        if (parentMachine.currentDrop.TryGetComponent<BossController>(out BossController boss))
+        {
+            //assign the bosses parent machine
+            boss.parentMachine = parentMachine;
+        }
     }
 }

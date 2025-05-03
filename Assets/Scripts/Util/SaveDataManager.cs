@@ -14,7 +14,7 @@ public class SaveDataManager: MonoBehaviour{
     [SerializeField] private string testSelectedProfile;
     public ScriptableObjectList dropDataList;
     public ScriptableObjectList itemDataList;
-    private GameData gameData;
+    public GameData gameData;
     private List<IDataPersistence> dataPersistenceObjects;
     private FileDataHandler dataHandler;
     private string selectedProfile;
