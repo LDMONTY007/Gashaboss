@@ -3256,9 +3256,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weighted Dice
       objectReference: {fileID: 0}
+    - target: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.1
+      value: 25.1
       objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3266,7 +3270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 34.3
+      value: -15.700001
       objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalRotation.w
