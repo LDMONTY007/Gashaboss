@@ -314,6 +314,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 776053156095317724}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 1
@@ -467,6 +468,7 @@ MonoBehaviour:
   animator: {fileID: 4569046472748348967}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 3751527976013321317}
+  parentMachine: {fileID: 0}
   _maxHealth: 50
   isDead: 0
   bounceForce: 20
@@ -480,7 +482,7 @@ MonoBehaviour:
   avoidanceDistance: 30
   avoidanceAngle: 75
   animatedModel: {fileID: 6700642857748859769}
-  weapon: {fileID: 7522907462399130099}
+  weapon: {fileID: 0}
   lookTransform: {fileID: 4933938187196310911}
   playerObject: {fileID: 0}
   groundCheckDist: 0.97
@@ -523,7 +525,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

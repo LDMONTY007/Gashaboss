@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 962506245638998795}
-  - component: {fileID: -8830932164855806683}
+  - component: {fileID: 7855998922813734183}
   - component: {fileID: 3447418482842328150}
   - component: {fileID: -2277745465586692568}
   - component: {fileID: 4001675472758333998}
@@ -36,7 +36,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8830932164855806683
+--- !u!114 &7855998922813734183
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,16 +45,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1111534917611664777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e24ec742f05394c4599c9d5b9f4e696f, type: 3}
+  m_Script: {fileID: 11500000, guid: 07b2427182ac2a34fa74364c48a04ee3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitParticles: {fileID: 0}
+  hitParticles: {fileID: 7610817457315636926, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   doesSplashDamage: 0
   splashDamageRadius: 15
-  destroyOnCollision: 1
+  destroyOnCollision: 0
   damage: 1
   launchOnStart: 1
-  launchSpeed: 10
+  launchSpeed: 50
   gravity: 0
   rb: {fileID: 0}
 --- !u!33 &3447418482842328150
@@ -123,7 +123,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 187
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -153,7 +153,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0

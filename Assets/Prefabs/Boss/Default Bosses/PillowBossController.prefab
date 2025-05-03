@@ -194,7 +194,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -489,6 +489,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 8584689668303243228}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 1.5
@@ -689,7 +690,7 @@ PrefabInstance:
       addedObject: {fileID: 2998781361653774966}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1411690048357251351}
+      addedObject: {fileID: 6611115359159960206}
   m_SourcePrefab: {fileID: 100100000, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
 --- !u!4 &6150730650149202073 stripped
 Transform:
@@ -723,7 +724,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1411690048357251351
+--- !u!114 &6611115359159960206
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -16,7 +16,7 @@ public class AltAttack : BossAction
             {
                 //set the attack trigger animation
                 //so we do the attack animation.
-                boss.animator.SetTrigger("altattack");
+                boss.animator.SetTrigger("altAttack");
             }
             boss.weapon.AltAttack();
 

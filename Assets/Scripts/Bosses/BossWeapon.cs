@@ -261,6 +261,7 @@ public class BossWeapon: Weapon{
 
     public IEnumerator AnimatorAltAction(){
         if (altAction != -1) {
+            Debug.Log("Animation is triggering the AltAction");
             yield return bossActions[altAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
         }
     }

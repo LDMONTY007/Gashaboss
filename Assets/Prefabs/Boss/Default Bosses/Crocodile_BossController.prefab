@@ -60,6 +60,7 @@ MonoBehaviour:
   animator: {fileID: 8816747777273190341}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 5995315671783149573}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   bounceForce: 20
@@ -116,7 +117,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -486,6 +487,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 1421720976596736270}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 1
@@ -494,17 +496,22 @@ MonoBehaviour:
   attackDistance: 15
   player: {fileID: 0}
   animator: {fileID: 0}
+  isEquipped: 0
+  materials: {fileID: 0}
   atkAngle: 10
   atkHeight: 3
   hasAlt: 0
   altAtkRadius: 0
   altAtkAngle: 0
   altAtkHeight: 0
+  altAction: -1
+  animateAlt: 0
   hasSpecial: 0
   specialAtkAngle: 0
   specialAtkRadius: 0
   specialAtkHeight: 0
-  isEquipped: 0
+  specialAction: -1
+  animateSpecial: 0
 --- !u!114 &1421720976596736270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,9 +529,6 @@ MonoBehaviour:
   debugTargets: 1
   debug: 1
   sensorColor: {r: 0, g: 0, b: 1, a: 1}
-  mask:
-    serializedVersion: 2
-    m_Bits: 0
   triggerCollider: {fileID: 2347861928408988028}
 --- !u!135 &2347861928408988028
 SphereCollider:

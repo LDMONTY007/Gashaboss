@@ -280,12 +280,18 @@ MonoBehaviour:
   collectibleData: {fileID: 0}
   collectibleName: 
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
+  slamParticles: {fileID: 0}
   collisionSensor: {fileID: 2683351818666409076}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
+  altCooldownTime: 1
+  specialCooldownTime: 1
   canAttack: 1
   attackDistance: 5
   player: {fileID: 0}
+  animator: {fileID: 0}
+  isEquipped: 0
 --- !u!114 &2683351818666409076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -546,21 +552,27 @@ MonoBehaviour:
   bossCollider: {fileID: 0}
   animator: {fileID: 0}
   movementParticles: {fileID: 0}
+  stunParticles: {fileID: 0}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
+  bounceForce: 20
+  stunTime: 0.5
   curIdleTime: 0
   doStateMachine: 1
   attackCheckRadius: 10
   rb: {fileID: 0}
   moveSpeed: 20
-  rotationSpeed: 5
   avoidanceForceMultiplier: 25
   avoidanceDistance: 5
   avoidanceAngle: 90
   animatedModel: {fileID: 8088744811269085005}
-  weapon: {fileID: 6818133242696300460}
+  weapon: {fileID: 0}
   lookTransform: {fileID: 410040115047980711}
   playerObject: {fileID: 0}
+  groundCheckDist: 0.97
+  groundCheckScale: 0.4
+  isGrounded: 0
 --- !u!54 &6498016807078793078
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -598,7 +610,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

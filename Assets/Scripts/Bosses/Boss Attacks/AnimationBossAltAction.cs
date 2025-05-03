@@ -3,6 +3,7 @@ public class AnimationAltBossAction: MonoBehaviour{
     [SerializeField] private BossWeapon weapon;
 
     public void AnimatorTrigger(){
-        weapon.AnimatorAltAction();
+        Debug.Log("Got trigger");
+        StartCoroutine(weapon.AnimatorAltAction());
     }
 }

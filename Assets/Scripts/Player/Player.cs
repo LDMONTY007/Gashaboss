@@ -1174,7 +1174,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //rotate -45 degrees away from the boss so we get bounced at an angle away from it.
         Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -45);
 
-        Debug.Log("HERE");
         Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
 
         StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
