@@ -1472,7 +1472,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //add all saved item data to the player's inventory.
         foreach (string s in gameData.inventory)
         {
-            AddItemToInventory(SaveDataManager.instance.FindItemData(s));
+            ItemData itemData = SaveDataManager.instance.FindItemData(s);
+            AddItemToInventory(itemData);
+            //Make sure to call on pickup so the item knows it's been picked
+            //up by the player.
+            itemData.OnPickup();
         }
        
     }
