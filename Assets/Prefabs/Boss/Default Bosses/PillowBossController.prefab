@@ -137,12 +137,13 @@ MonoBehaviour:
   animator: {fileID: 2998781361653774966}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 1160992282999167062}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   bounceForce: 20
   stunTime: 0.5
   curIdleTime: 0
-  doStateMachine: 0
+  doStateMachine: 1
   attackCheckRadius: 10
   rb: {fileID: 0}
   moveSpeed: 15
@@ -496,6 +497,7 @@ MonoBehaviour:
   attackDistance: 10
   player: {fileID: 0}
   animator: {fileID: 0}
+  isEquipped: 0
   materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 75
   atkHeight: 1
@@ -511,7 +513,6 @@ MonoBehaviour:
   specialAtkHeight: 0
   specialAction: -1
   animateSpecial: 0
-  isEquipped: 0
 --- !u!114 &8584689668303243228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -529,9 +530,6 @@ MonoBehaviour:
   debugTargets: 1
   debug: 1
   sensorColor: {r: 0, g: 0, b: 1, a: 1}
-  mask:
-    serializedVersion: 2
-    m_Bits: 0
   triggerCollider: {fileID: 3227318971385609079}
 --- !u!135 &3227318971385609079
 SphereCollider:

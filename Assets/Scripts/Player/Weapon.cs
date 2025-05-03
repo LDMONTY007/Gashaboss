@@ -38,7 +38,7 @@ public class Weapon : Collectible
     //colors used when debugging the collision sensor mesh
     protected Color ogMeshColor;
     //blue with 100 alpha.
-    private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+    protected Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
 
     //used to prevent destroying the weapon we pick up.
     //sometimes that would happen and this is a really messy solution for that.

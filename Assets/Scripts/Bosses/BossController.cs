@@ -223,7 +223,7 @@ public class BossController : Collectible, IDamageable
 
     public GameObject animatedModel;
 
-    public Weapon weapon;
+    public BossWeapon weapon;
 
     private MeshRenderer bossRenderer;
 
@@ -336,9 +336,7 @@ public class BossController : Collectible, IDamageable
 
         if (doStateMachine)
         {
-            HandleStateMachine();
-
-            
+            HandleStateMachine();            
         }
 
         //Handle the particle FX
@@ -529,11 +527,21 @@ public class BossController : Collectible, IDamageable
                     StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
                     break;
                 case 1:
+                    // if boss doesn't have an alt, use a reg attack instead
+                    if (!weapon.hasAlt){
+                        meleeAttack.ActionCoroutine(this, 1f);
+                        break;
+                    }
                     StartCoroutine(altAttack.ActionCoroutine(this, 1f));
                     break;
                 case 2:
+                    // if boss doesn't have a special, use an alt attack instead
+                    if (!weapon.hasSpecial){
+                        altAttack.ActionCoroutine(this, 1f);
+                        break;
+                    }
                     StartCoroutine(specialAttack.ActionCoroutine(this, 1f));
-                    break;
+                    break;         
             }
         }
     }

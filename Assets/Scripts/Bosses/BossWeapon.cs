@@ -13,7 +13,7 @@ public class BossWeapon: Weapon{
     [SerializeField] private float atkHeight = 1.0f;
     #endregion
     #region AltAttack vars
-    [SerializeField] private bool hasAlt = false;
+    [SerializeField] public bool hasAlt = false;
     [SerializeField] private float altAtkRadius;
     [SerializeField] private float altAtkAngle;
     [SerializeField] private float altAtkHeight;
@@ -21,7 +21,7 @@ public class BossWeapon: Weapon{
     [SerializeField] private bool animateAlt = false; // set this to true if animator controls alt action
     #endregion
     #region SpecialAttack vars
-    [SerializeField] private bool hasSpecial = false;
+    [SerializeField] public bool hasSpecial = false;
     [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkRadius;
     [SerializeField] private float specialAtkHeight;
@@ -108,8 +108,6 @@ public class BossWeapon: Weapon{
     }
 
     public override IEnumerator AltAttackCoroutine(){
-        // if boss doesn't have an alt, use a reg attack instead
-        if (hasAlt == false) yield return this.AttackCoroutine();
         //don't allow other attacks during our current attack.
         canAttack = false;
 
@@ -183,8 +181,6 @@ public class BossWeapon: Weapon{
         yield break;
     }
     public override IEnumerator SpecialAttackCoroutine(){
-        // if boss doesn't have a special, use an alt attack instead
-        if (hasSpecial == false) yield return this.AltAttackCoroutine();
         //don't allow other attacks during our current attack.
         canAttack = false;
 
