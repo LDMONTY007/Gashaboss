@@ -33,7 +33,7 @@ public class BossWeapon: Weapon{
         // This list holds all the possible boss actions that can be used as part of an attack
         // Put the index of which action you want to use in for the fields related to the alt action and special action
         // PillowHop: 0
-        bossActions.append(new PillowHop(materials));
+        bossActions.Add(new PillowHop(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
