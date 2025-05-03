@@ -489,6 +489,7 @@ MonoBehaviour:
   attackDistance: 10
   player: {fileID: 0}
   animator: {fileID: 0}
+  materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 75
   atkHeight: 1
   hasAlt: 1
@@ -496,7 +497,7 @@ MonoBehaviour:
   altAtkAngle: 180
   altAtkHeight: 0.5
   altAction: 0
-  animateAlt: 0
+  animateAlt: 1
   hasSpecial: 0
   specialAtkAngle: 0
   specialAtkRadius: 0
