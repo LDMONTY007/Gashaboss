@@ -3616,19 +3616,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 223554777217421323, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3556101689141224544, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.1
+      value: 26.1
       objectReference: {fileID: 0}
     - target: {fileID: 3556101689141224544, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3556101689141224544, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 34.3
+      value: 36.3
       objectReference: {fileID: 0}
     - target: {fileID: 3556101689141224544, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
       propertyPath: m_LocalRotation.w
