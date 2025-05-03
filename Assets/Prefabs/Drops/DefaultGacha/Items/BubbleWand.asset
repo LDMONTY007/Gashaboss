@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
   m_Name: BubbleWand
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 5279676522511768380, guid: 6177217961e6507468b547782bbba3c6, type: 3}
+  droppedObject: {fileID: 3084018940442511423, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
   weight: 5
+  cost: 0
   isRemovedAfterDrop: 1
+  isEnvironmentalUnlock: 0

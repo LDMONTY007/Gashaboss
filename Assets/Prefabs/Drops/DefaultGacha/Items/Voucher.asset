@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
   m_Name: Voucher
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 5279676522511768380, guid: 6177217961e6507468b547782bbba3c6, type: 3}
+  droppedObject: {fileID: 8948088514212408868, guid: c359cf746e25aea428a7c12ad6f34092, type: 3}
   weight: 1
+  cost: 0
   isRemovedAfterDrop: 1
+  isEnvironmentalUnlock: 0

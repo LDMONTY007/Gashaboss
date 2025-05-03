@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
   m_Name: CoordinatedAttackItem
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 5241151418294894153, guid: 399434c5efdc89242ab547c30a497934, type: 3}
+  droppedObject: {fileID: 5900340154052288284, guid: 0205de0f35a93f4418767f1ed5968816, type: 3}
   weight: 3
   cost: 0
   isRemovedAfterDrop: 1

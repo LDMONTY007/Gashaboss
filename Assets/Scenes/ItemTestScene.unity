@@ -3256,10 +3256,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weighted Dice
       objectReference: {fileID: 0}
-    - target: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5929340651833714416, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.1
@@ -3498,11 +3494,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 511790156356734134, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.1
+      value: 4.1000004
       objectReference: {fileID: 0}
     - target: {fileID: 511790156356734134, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 511790156356734134, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3542,7 +3538,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8311597373895976805, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
   m_Name: LuckyAmulet
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 5279676522511768380, guid: 6177217961e6507468b547782bbba3c6, type: 3}
+  droppedObject: {fileID: 223554777217421323, guid: 2fa96ac761098d048ad0484da192a53d, type: 3}
   weight: 1
+  cost: 0
   isRemovedAfterDrop: 1
+  isEnvironmentalUnlock: 0

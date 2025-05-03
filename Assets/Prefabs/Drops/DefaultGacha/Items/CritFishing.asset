@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
   m_Name: CritFishing
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 5279676522511768380, guid: 6177217961e6507468b547782bbba3c6, type: 3}
+  droppedObject: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
   weight: 10
+  cost: 0
   isRemovedAfterDrop: 1
+  isEnvironmentalUnlock: 0
