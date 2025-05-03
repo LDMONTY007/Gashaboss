@@ -47,6 +47,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public ParticleSystem dashParticles;
     public ParticleSystem walkParticles;
     public GameObject landingParticles;
+    // Transform component that holds where the wepon should be held relative to player
+    public Transform handTransform;
     #region Items and Modifier vars
     [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
@@ -1414,13 +1416,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         
 
         //if we spawned a new weapon,
-        //set it's local posiition to be 0,0,0
-        //so that it's centered on the player.
-        //TODO: Change this to a Mount point for that the weapon stores relative to the player
+        //set it's local posiition to the mount point for player hand
         if (this.curWeapon != null)
         {
-            this.curWeapon.transform.localPosition = Vector3.zero;
-
+            this.curWeapon.transform.SetParent(transform, false);
+            this.curWeapon.transform.localPosition = handTransform.localPosition - this.curWeapon.handleTransform.localPosition;
             //say the weapon is equipped.
             this.curWeapon.isEquipped = true;
         }
@@ -1434,7 +1434,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         {
             AddItemToInventory(SaveDataManager.instance.FindItemData(s));
         }
-       
     }
 
     
@@ -1450,7 +1449,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         gameData.inventory.Clear();
         for (int i = 0; i < inventory.Count; i++)
         { gameData.inventory.Add(inventory[i].name); }
-        
     }
 
 
@@ -1459,9 +1457,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         DropCurrentWeapon();
         //set the weapons parent transform to be this player.
         w.transform.SetParent(transform, false);
-        //set the position to be zero locally
-        //so that it is zero relative to the parent as well.
-        w.transform.localPosition = Vector3.zero;
+        //set the position to the hand transform + the handle transform
+        //That way it is held in the correct position relative to player locally
+        w.transform.localPosition = handTransform.localPosition - w.handleTransform.localPosition;
         //set to no rotation (0, 0, 0);
         w.transform.localRotation = Quaternion.identity;
 

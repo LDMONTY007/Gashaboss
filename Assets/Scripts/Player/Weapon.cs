@@ -17,6 +17,9 @@ public class Weapon : Collectible
 
     public CollisionSensor collisionSensor;
 
+    // Transform component that tells the player where to hold the weapon
+    public Transform handleTransform;
+
     //public Collider weaponCollider;
 
     public bool hasCooldown = false;

@@ -1509,14 +1509,6 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
-      propertyPath: timeToApex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
-      propertyPath: timeToFall
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4672448699689248683, guid: 625c24ec28c99364d8205997c154afe4, type: 3}
       propertyPath: ragdollChest
       value: 
       objectReference: {fileID: 2028101122}
@@ -2252,6 +2244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUIManager: {fileID: 753196673}
   bossUIManager: {fileID: 853423133}
+  popupUIManager: {fileID: 0}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
   inventoryPanel: {fileID: 524064614}
