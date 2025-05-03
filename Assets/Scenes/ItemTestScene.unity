@@ -3536,10 +3536,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Winged Boot
       objectReference: {fileID: 0}
-    - target: {fileID: 8311597373895976805, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3811,11 +3807,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3084018940442511423, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8316057154413129217, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.1
+      value: 27.1
       objectReference: {fileID: 0}
     - target: {fileID: 8316057154413129217, guid: 9e7cd4782fa334049aee52418b3659b9, type: 3}
       propertyPath: m_LocalPosition.y

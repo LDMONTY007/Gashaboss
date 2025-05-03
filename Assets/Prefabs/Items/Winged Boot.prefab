@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22505acdcc2864647b815c9fd53a244b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectibleData: {fileID: 11400000, guid: bfb104d260baf994bb4919c09898ffe3, type: 2}
+  collectibleData: {fileID: 11400000, guid: c43b7c81b7833d848ba8ca2850f5f6cf, type: 2}
   collectibleName: Bubble Wand
-  item: {fileID: 11400000, guid: 33bf895077ba66c4bb12afcc0fb8fbdf, type: 2}
+  item: {fileID: 11400000, guid: b7726ccf13c320d488c6faaca30403aa, type: 2}
   itemModel: {fileID: 5131226736869583252}
 --- !u!136 &2553104844938006899
 CapsuleCollider:

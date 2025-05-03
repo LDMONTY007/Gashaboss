@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 534580895252998622}
+  - {fileID: 8256229577813347547}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2537667087725795436
@@ -49,7 +49,7 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: bfb104d260baf994bb4919c09898ffe3, type: 2}
   collectibleName: Bubble Wand
   item: {fileID: 11400000, guid: 33bf895077ba66c4bb12afcc0fb8fbdf, type: 2}
-  itemModel: {fileID: 3537230032087021135}
+  itemModel: {fileID: 8188785829034563801}
 --- !u!136 &6757856908312872275
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -73,7 +73,7 @@ CapsuleCollider:
   m_Height: 5
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &3537230032087021135
+--- !u!1 &8188785829034563801
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,80 +81,89 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 534580895252998622}
-  - component: {fileID: 7660049591959335948}
-  - component: {fileID: 3754506737422806456}
+  - component: {fileID: 8256229577813347547}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: BubbleWandAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &534580895252998622
+--- !u!4 &8256229577813347547
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537230032087021135}
+  m_GameObject: {fileID: 8188785829034563801}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.003, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7557340416582240668}
   m_Father: {fileID: 8316057154413129217}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7660049591959335948
-MeshFilter:
+--- !u!1001 &8028695946817384055
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8256229577813347547}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.65
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.1500015
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.5665501
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.8240273
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -110.98
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+      propertyPath: m_Name
+      value: BubbleWand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+--- !u!4 &7557340416582240668 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1ae185d77aeb0ed4b86e6909057b17af, type: 3}
+  m_PrefabInstance: {fileID: 8028695946817384055}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537230032087021135}
-  m_Mesh: {fileID: 0}
---- !u!23 &3754506737422806456
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537230032087021135}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials: []
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
