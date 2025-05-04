@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30f227dc79f5730428a051aa15b4466a, type: 3}
-  m_Name: BossActionMaterials
+  m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
+  m_Name: PillowAlienDrop
   m_EditorClassIdentifier: 
-  projectiles:
-  - {fileID: 1111534917611664777, guid: 302daf4a8437cf24a9c477d20cb5fbe1, type: 3}
-  - {fileID: 1111534917611664777, guid: d3484dcdce6c3954a9c60b57e4fc64fd, type: 3}
+  droppedObject: {fileID: 2190712066403661329, guid: 532b21d353c3e9c438b2839f733bad31, type: 3}
+  weight: 5
+  cost: 15
+  isRemovedAfterDrop: 0
+  isEnvironmentalUnlock: 0

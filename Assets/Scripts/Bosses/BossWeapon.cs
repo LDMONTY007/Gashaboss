@@ -34,8 +34,10 @@ public class BossWeapon: Weapon{
         // Put the index of which action you want to use in for the fields related to the alt action and special action
         // PillowHop: 0
         // LaserAttack: 1
+        // LaserSwarm: 2
         bossActions.Add(new PillowHop(materials));
         bossActions.Add(new LaserAttack(materials));
+        bossActions.Add(new LaserSwarm(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
