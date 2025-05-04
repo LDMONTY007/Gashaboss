@@ -31,6 +31,8 @@ public class BossController : Collectible, IDamageable
 
     public GachaMachine parentMachine;
 
+    public Transform launchTransform; // used for bosses that need projectiles spawned from a specific point
+
     #region health vars
     [Header("Health Variables")]
     public int _maxHealth = 3;

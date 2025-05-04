@@ -33,7 +33,9 @@ public class BossWeapon: Weapon{
         // This list holds all the possible boss actions that can be used as part of an attack
         // Put the index of which action you want to use in for the fields related to the alt action and special action
         // PillowHop: 0
+        // LaserAttack: 1
         bossActions.Add(new PillowHop(materials));
+        bossActions.Add(new LaserAttack(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
@@ -261,7 +263,6 @@ public class BossWeapon: Weapon{
 
     public IEnumerator AnimatorAltAction(){
         if (altAction != -1) {
-            Debug.Log("Animation is triggering the AltAction");
             yield return bossActions[altAction].ActionCoroutine(transform.GetComponentInParent<BossController>(), 1.0f);
         }
     }

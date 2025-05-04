@@ -3,6 +3,6 @@ public class AnimationSpecialBossAction: MonoBehaviour{
     [SerializeField] private BossWeapon weapon;
 
     public void AnimatorTrigger(){
-        weapon.AnimatorSpecialAction();
+        StartCoroutine(weapon.AnimatorSpecialAction());
     }
 }
