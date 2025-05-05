@@ -3,7 +3,7 @@ using UnityEngine;
 public class BombProjectile : Projectile
 {
 
-    private int bouncesBeforeExplosion = 2;
+    public int bouncesBeforeExplosion = 2;
 
     private void Update()
     {
@@ -61,5 +61,15 @@ public class BombProjectile : Projectile
         {
             Destroy(gameObject);
         }
+    }
+
+    //this is used to forcefully detonate the bomb when we want through code.
+    public void Detonate()
+    {
+        //Deal the splash damage
+        DealSplashDamage();
+
+        //Destroy the bomb.
+        Destroy(gameObject);
     }
 }

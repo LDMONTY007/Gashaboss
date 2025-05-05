@@ -37,4 +37,42 @@ public class ProjectileWeapon : Weapon
 
         yield break;
     }
+
+    public override IEnumerator AltAttackCoroutine()
+    {
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("altAttack");
+
+        //don't allow other attacks during our current attack.
+        canAttack = false;
+
+        //Instantly spawn and detonate a bomb at our feet,
+        //Create projectile with the launch transform rotation at launch position
+        BombProjectile p = Instantiate(projectile, launchTransform.position, launchTransform.rotation).GetComponent<BombProjectile>();
+        
+        //make the bomb explode instantly where it was spawned.
+        p.Detonate();
+
+
+
+
+        //launch the player upwards.
+        player.LaunchPlayer(player.transform.up, 30f, 1f, 2f);
+
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+            yield return new WaitForSeconds(altCooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //allow us to attack again.
+        canAttack = true;
+
+        yield break;
+    }
 }
