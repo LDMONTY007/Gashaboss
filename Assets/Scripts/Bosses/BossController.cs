@@ -164,6 +164,7 @@ public class BossController : Collectible, IDamageable
 
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
+    public float minStopDist = 1f;
 
     [Header("Collision Avoidance Parameters")]
     public float avoidanceForceMultiplier = 50f;
@@ -374,7 +375,7 @@ public class BossController : Collectible, IDamageable
     /// For example if the boss is in the air make sure we don't
     /// freeze them on the Z axis and let gravity effect them.
     /// </summary>
-    public void ApplyFinalMovements()
+    public virtual void ApplyFinalMovements()
     {
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.

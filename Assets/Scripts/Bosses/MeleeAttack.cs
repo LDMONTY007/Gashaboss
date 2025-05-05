@@ -22,6 +22,7 @@ public class MeleeAttack : BossAction
 
             //wait for the animation to finish before 
             //exiting this coroutine.
+            if (boss.animator != null)
             yield return LDUtil.WaitForAnimationFinish(boss.animator);
         }
         else
@@ -29,7 +30,6 @@ public class MeleeAttack : BossAction
             Debug.LogError("The boss has no weapon equipped, please ensure there is one equipped.");
         }
 
-       
 
         DashAwayMove dashAwayMove = new DashAwayMove();
 
@@ -37,13 +37,13 @@ public class MeleeAttack : BossAction
 
         //yield return null;
 
-        
-
         //return the dash away coroutine so we
         //just reuse the dash away move at the end of our attack.
         yield return dashAwayMove.ActionCoroutine(boss, duration);
 
         active = false;
+
+        Debug.Log("INACTIVE");
     }
 
 

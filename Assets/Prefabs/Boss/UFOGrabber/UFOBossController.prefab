@@ -438,7 +438,7 @@ MonoBehaviour:
   collisionSensor: {fileID: 228893530067643418}
   handleTransform: {fileID: 0}
   hasCooldown: 0
-  cooldownTime: 1
+  cooldownTime: 0.33
   altCooldownTime: 1
   specialCooldownTime: 1
   canAttack: 1
@@ -556,7 +556,7 @@ MonoBehaviour:
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 1488098221061821844}
   bossCollider: {fileID: 3347216728575436806}
-  animator: {fileID: 2092586588155318241}
+  animator: {fileID: 0}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 0}
   parentMachine: {fileID: 0}
