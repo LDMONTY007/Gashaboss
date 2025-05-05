@@ -22,9 +22,6 @@ public class ProjectileWeapon : Weapon
         //Create projectile with the launch transform rotation at launch position
         Instantiate(projectile, launchTransform.position, launchTransform.rotation);
 
-
-        Projectile p = projectile.GetComponent<Projectile>();
-
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
             yield return new WaitForSeconds(cooldownTime);
@@ -66,6 +63,45 @@ public class ProjectileWeapon : Weapon
         //if we have a cooldown, wait the cooldown time before attacking.
         if (hasCooldown)
             yield return new WaitForSeconds(altCooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //allow us to attack again.
+        canAttack = true;
+
+        yield break;
+    }
+
+    public override IEnumerator SpecialAttackCoroutine()
+    {
+
+
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("specialAttack");
+
+
+        //don't allow other attacks during our current attack.
+        canAttack = false;
+
+
+
+        //Create projectile at launch position but launch it directly upwards.
+        BombProjectile p = Instantiate(projectile, launchTransform.position, Quaternion.LookRotation(player.transform.up)).GetComponent<BombProjectile>();
+        //change the starting launch speed to 130 so it goes higher.
+        p.launchSpeed = 130f;
+
+        //make it instantly explode when it hits something.
+        p.bouncesBeforeExplosion = 0;
+
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //this special attack has no cooldown other than it's animation time.
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+            yield return new WaitForSeconds(specialCooldownTime);
 
         //restore default color
         collisionSensor.sensorColor = ogMeshColor;

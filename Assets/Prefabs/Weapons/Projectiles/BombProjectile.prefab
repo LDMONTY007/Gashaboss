@@ -55,7 +55,9 @@ MonoBehaviour:
   launchOnStart: 1
   launchSpeed: 80
   gravity: 156.96
+  persistenceTime: 5
   rb: {fileID: 0}
+  bouncesBeforeExplosion: 2
 --- !u!135 &3493703411128624093
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -103,7 +105,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1001 &3438192056385576230
 PrefabInstance:
   m_ObjectHideFlags: 0

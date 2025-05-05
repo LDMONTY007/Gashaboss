@@ -29,9 +29,12 @@ public class BombProjectile : Projectile
     public new void OnCollisionEnter(Collision collision)
     {
 
+        
+
         //if the object we hit is damageable, immediately explode.
         IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
+        //Ignore the player so they don't get damaged by the bomb.
+        if (Player.instance.gameObject != collision.gameObject && damageable != null)
         {
             DealDamage(damageable);
         }
