@@ -562,9 +562,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446ef7485d6fc664d849c5b6f90e6101, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectibleData: {fileID: 0}
-  collectibleName: 
-  bossName: BaseBoss
+  collectibleData: {fileID: 11400000, guid: 3d0cb10b7a9c5dd4cb99101a96b1c2c3, type: 2}
+  collectibleName: UFO
+  bossName: UFO
   coinsRewarded: 3
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 1488098221061821844}

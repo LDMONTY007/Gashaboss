@@ -396,7 +396,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (isGrounded)
         {
-
+            //if we were launched, say we are no longer launched.
+            if (didLaunch)
+            {
+                didLaunch = false;
+            }
 
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
@@ -409,11 +413,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
                 Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
 
-                //if we were launched, say we are no longer launched.
-                if (didLaunch)
-                {
-                    didLaunch = false;
-                }
+                
             }
             //reset dash count when grounded, and not dashing.
             if (!dashing)
