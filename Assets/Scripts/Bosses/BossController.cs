@@ -126,6 +126,7 @@ public class BossController : Collectible, IDamageable
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
+        if (parentMachine != null)
         //the boss was defeated so tell the parent machine this.
         parentMachine.OnBossDefeated();
 
