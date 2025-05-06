@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: UFOBossDropData
+  m_Name: MechaRexDropData
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 8844612180304265273, guid: 94ad5e4059fe7c649b2374b709a92565, type: 3}
+  droppedObject: {fileID: 1171149156322651485, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
   weight: 3
   cost: 15
   isRemovedAfterDrop: 0
