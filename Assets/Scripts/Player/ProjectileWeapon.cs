@@ -98,9 +98,9 @@ public class ProjectileWeapon : Weapon
         BombProjectile bomb = p.GetComponent<BombProjectile>();
         if (bomb != null){
             //change the starting launch speed to 130 so it goes higher.
-            p.launchSpeed = 130f;
+            bomb.launchSpeed = 130f;
             //make it instantly explode when it hits something.
-            p.bouncesBeforeExplosion = 0;
+            bomb.bouncesBeforeExplosion = 0;
         }else{
             //For the non-explosive Special we will fire two shots, in quick succession
             yield return new WaitForSeconds(specialWaitTime);
