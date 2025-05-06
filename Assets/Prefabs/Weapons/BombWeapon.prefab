@@ -127,6 +127,8 @@ MonoBehaviour:
   animator: {fileID: 0}
   isEquipped: 0
   projectile: {fileID: 6673216678060324407, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
+  specialWaitTime: 1
+  altSizeMult: 1.5
   launchTransform: {fileID: 2760899209391356921}
 --- !u!114 &2491471556628608376
 MonoBehaviour:
