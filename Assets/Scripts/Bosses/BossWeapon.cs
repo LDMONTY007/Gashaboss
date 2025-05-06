@@ -38,6 +38,7 @@ public class BossWeapon: Weapon{
         bossActions.Add(new PillowHop(materials));
         bossActions.Add(new LaserAttack(materials));
         bossActions.Add(new LaserSwarm(materials));
+        bossActions.Add(new TrexStomp(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
