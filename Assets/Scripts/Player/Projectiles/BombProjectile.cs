@@ -3,7 +3,7 @@ using UnityEngine;
 public class BombProjectile : Projectile
 {
 
-    private int bouncesBeforeExplosion = 2;
+    public int bouncesBeforeExplosion = 2;
 
     private void Update()
     {
@@ -29,9 +29,12 @@ public class BombProjectile : Projectile
     public new void OnCollisionEnter(Collision collision)
     {
 
+        
+
         //if the object we hit is damageable, immediately explode.
         IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
+        //Ignore the player so they don't get damaged by the bomb.
+        if (Player.instance.gameObject != collision.gameObject && damageable != null)
         {
             DealDamage(damageable);
         }
@@ -61,5 +64,15 @@ public class BombProjectile : Projectile
         {
             Destroy(gameObject);
         }
+    }
+
+    //this is used to forcefully detonate the bomb when we want through code.
+    public void Detonate()
+    {
+        //Deal the splash damage
+        DealSplashDamage();
+
+        //Destroy the bomb.
+        Destroy(gameObject);
     }
 }

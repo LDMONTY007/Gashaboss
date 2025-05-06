@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angle: 75
-  height: 3
+  height: 5
   debugTargets: 1
   debug: 1
   sensorColor: {r: 0, g: 0, b: 1, a: 1}

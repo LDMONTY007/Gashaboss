@@ -4983,6 +4983,7 @@ MonoBehaviour:
   multiplier: 100
   timeToApex: 1
   timeToFall: 2
+  didLaunch: 0
   useGravity: 1
   doJump: 0
   playerCollider: {fileID: 1463052221125900097}

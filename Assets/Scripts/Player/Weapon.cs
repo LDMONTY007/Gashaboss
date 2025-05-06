@@ -207,7 +207,7 @@ public class Weapon : Collectible
 
                         //make the damageable take damage.
                         //and tell it we gave it damage.
-                        damageable.TakeDamage(1, gameObject);
+                        damageable.TakeDamage(damage, gameObject);
 
                         
                         //TODO:

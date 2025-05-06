@@ -67,7 +67,33 @@ public class CollisionSensor : MonoBehaviour
             //we add the GetWidthAlongDirection calculation here so
             //that the point we check also takes into account the width
             //of the collider in the up direction of the collision sensor.
-            if (IsPointWithinArc(colliders[i].transform.position, transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2))
+
+            //This ends up looking so nasty but the first check is for the orgin point of the collider being in our arc,
+            //then the following is the closest point on the collider to us being in our arc,
+            //and everything after that is basically a truth table of 3 values which can be positive or negative
+            //so I just did the truth table pattern for making sure I cover each direction to check for a point of the bounding box.
+            //TFF
+            //FFF
+            //TTF
+            //FTF
+            //TFT
+            //FFT
+            //TTT
+            //This is overlycomplex and it used to work fine for our use case but because the collider of the UFO was really big this had to happen.
+            //If collisions are horrible in the future, this is why. 
+            //- LD Montello
+            if (IsPointWithinArc(colliders[i].transform.position, transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].ClosestPoint(transform.position), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(colliders[i].bounds.extents.x, -colliders[i].bounds.extents.y, -colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(-colliders[i].bounds.extents.x, -colliders[i].bounds.extents.y, -colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(colliders[i].bounds.extents.x, colliders[i].bounds.extents.y, -colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(-colliders[i].bounds.extents.x, colliders[i].bounds.extents.y, -colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(colliders[i].bounds.extents.x, -colliders[i].bounds.extents.y, colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(-colliders[i].bounds.extents.x, -colliders[i].bounds.extents.y, colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(colliders[i].bounds.extents.x, colliders[i].bounds.extents.y, colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                || IsPointWithinArc(colliders[i].transform.position + new Vector3(-colliders[i].bounds.extents.x, colliders[i].bounds.extents.y, colliders[i].bounds.extents.z), transform.position, transform.forward, transform.up, angle, height + GetWidthAlongDirection(colliders[i].bounds, transform.up) / 2)
+                )
+
             {
                 //add the collider to our list
                 //because it is within collision sensor.

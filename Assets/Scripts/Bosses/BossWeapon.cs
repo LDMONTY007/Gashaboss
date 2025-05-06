@@ -84,6 +84,7 @@ public class BossWeapon: Weapon{
 
                         Vector3 closestPoint = c.ClosestPoint(Camera.main.transform.position);
 
+                        if (hitParticles != null)
                         Instantiate(hitParticles, closestPoint + (-Camera.main.transform.forward.normalized * 0.25f), Quaternion.LookRotation(Camera.main.transform.position));
                     }
                 }

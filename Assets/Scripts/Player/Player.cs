@@ -194,6 +194,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float timeToApex = 0.01f;
     public float timeToFall = 0.5f;
 
+    //was the player launched?
+    public bool didLaunch = false;
+
     //The gravity we return to 
     //after modifying gravity.
     float baseGravity = 9.81f;
@@ -393,7 +396,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (isGrounded)
         {
-
+            //if we were launched, say we are no longer launched.
+            if (didLaunch)
+            {
+                didLaunch = false;
+            }
 
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
@@ -403,8 +410,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
                 jumpCanceled = false;
                 //set gravity back to base.
                 gravity = baseGravity;
-                //Debug.Log("BACK TO BASE".Color("Green"));
+                Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
+
+                
             }
             //reset dash count when grounded, and not dashing.
             if (!dashing)
@@ -421,23 +430,34 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (jumping && !jumpCanceled)
         {
-            if (!jumpAction.IsPressed()) //If we stop giving input for jump cancel jump so we can have a variable jump.
+            //If we stop giving input for jump cancel jump so we can have a variable jump.
+            //Also if we were launched, ignore this check.
+            if (!jumpAction.IsPressed() && !didLaunch) 
             {
                 jumpCanceled = true;
+                Debug.Log("JUMP CANCELED".Color("Orange"));
                 //gravity = fallGravity;
             }
 
-            if (jumpTime >= buttonTime) //When we reach our projected time stop jumping and begin falling.
+            //This check should execute even when launched because
+            //it handles knowing when we've reached the "apex" of our jump/arc. 
+            //When we reach our projected time stop jumping and begin falling.
+            if (jumpTime >= buttonTime) 
             {
                 Debug.Log("JUMP CANCELED BY BUTTON TIME".Color("Green"));
                 //pause the editor
                 //Debug.Break();
                 jumpCanceled = true;
-
+                Debug.Log("JUMP CANCELED".Color("Orange"));
                 //set gravity back to fall gravity
                 gravity = fallGravity;
                 //gravity = baseGravity;
 
+                //if we were launched, say we are no longer launched.
+                if (didLaunch)
+                {
+                    didLaunch = false;
+                }
 
                 //jumpDist = Vector2.Distance(transform.position, ogJump); //Not needed, just calculates distance from where we started jumping to our highest point in the jump.
                 //jumpDist = transform.position.y - ogJump.y;
@@ -447,6 +467,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         if (jumpCanceled)
         {
             jumping = false;
+            Debug.Log("JUMP CANCELED".Color("Red"));
         }
 
         doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown && !stunned;
@@ -732,6 +753,13 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (doJump)
         {
+            //if we were launched, say we are no longer launched,
+            //this lets us start a jump right after being launched.
+            if (didLaunch)
+            {
+                didLaunch = false;
+            }
+
             //say we didn't yet land.
             didLand = false;
 
@@ -824,8 +852,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         jumpTime = 0;
         jumping = true;
         jumpCanceled = false;
+        didLand = false;
 
-
+        //Say we launched the player
+        didLaunch = true;
 
         //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
