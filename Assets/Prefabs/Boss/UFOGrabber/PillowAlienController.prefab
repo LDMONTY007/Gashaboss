@@ -449,7 +449,7 @@ MonoBehaviour:
   atkAngle: 75
   atkHeight: 1
   hasAlt: 1
-  altAtkRadius: 5
+  altAtkRadius: 2
   altAtkAngle: 180
   altAtkHeight: 0.5
   altAction: 0
@@ -459,7 +459,7 @@ MonoBehaviour:
   specialAtkRadius: 2
   specialAtkHeight: 0.5
   specialAction: 2
-  animateSpecial: 0
+  animateSpecial: 1
 --- !u!114 &8584689668303243228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -625,6 +625,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cbdba1cef9a636b43945c2426515615e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5973204655981670208}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cbdba1cef9a636b43945c2426515615e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1957069182363593764}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cbdba1cef9a636b43945c2426515615e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8252806623535635978}
   m_SourcePrefab: {fileID: 100100000, guid: cbdba1cef9a636b43945c2426515615e, type: 3}
 --- !u!4 &8471614177951262844 stripped
 Transform:
@@ -658,3 +664,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1957069182363593764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9140874138808939206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee05289a0af89f043943b413ade18104, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 7294310384592750280}
+--- !u!114 &8252806623535635978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9140874138808939206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1f0f3d9bd23d934db3c13a497522701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 7294310384592750280}

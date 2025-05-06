@@ -16,7 +16,7 @@ public class SpecialAttack : BossAction
             {
                 //set the attack trigger animation
                 //so we do the attack animation.
-                boss.animator.SetTrigger("specialattack");
+                boss.animator.SetTrigger("specialAttack");
             }
             boss.weapon.SpecialAttack();
 

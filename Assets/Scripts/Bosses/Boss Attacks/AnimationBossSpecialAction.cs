@@ -2,7 +2,7 @@ using UnityEngine;
 public class AnimationSpecialBossAction: MonoBehaviour{
     [SerializeField] private BossWeapon weapon;
 
-    public void AnimatorTrigger(){
+    public void SpecialAnimatorTrigger(){
         StartCoroutine(weapon.AnimatorSpecialAction());
     }
 }
