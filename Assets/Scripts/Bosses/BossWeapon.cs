@@ -36,10 +36,12 @@ public class BossWeapon: Weapon{
         // LaserAttack: 1
         // LaserSwarm: 2
         // TrexStomp: 3
+        // MechaRexLaser: 4
         bossActions.Add(new PillowHop(materials));
         bossActions.Add(new LaserAttack(materials));
         bossActions.Add(new LaserSwarm(materials));
         bossActions.Add(new TrexStomp(materials));
+        bossActions.Add(new MechaRexLaser(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
@@ -51,6 +53,9 @@ public class BossWeapon: Weapon{
     public override IEnumerator AttackCoroutine(){
         //don't allow other attacks during our current attack.
         canAttack = false;
+
+        //say we are currently attacking
+        isAttacking = true;
 
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
@@ -111,12 +116,19 @@ public class BossWeapon: Weapon{
         //allow us to attack again.
         canAttack = true;
 
+
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
     public override IEnumerator AltAttackCoroutine(){
         //don't allow other attacks during our current attack.
         canAttack = false;
+
+        //say we are currently attacking
+        isAttacking = true;
 
         // Change Collision Parameters to Alt attack parameters
         collisionSensor.triggerCollider.radius = altAtkRadius;
@@ -185,11 +197,17 @@ public class BossWeapon: Weapon{
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
     public override IEnumerator SpecialAttackCoroutine(){
         //don't allow other attacks during our current attack.
         canAttack = false;
+
+        //say we are currently attacking
+        isAttacking = true;
 
         // Change Collision Parameters to special attack parameters
         collisionSensor.triggerCollider.radius = specialAtkRadius;
@@ -263,6 +281,10 @@ public class BossWeapon: Weapon{
 
         //allow us to attack again.
         canAttack = true;
+
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 

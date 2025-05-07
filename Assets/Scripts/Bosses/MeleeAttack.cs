@@ -30,6 +30,14 @@ public class MeleeAttack : BossAction
             Debug.LogError("The boss has no weapon equipped, please ensure there is one equipped.");
         }
 
+        //Wait for the bosses weapon attack
+        //to end so we wait here until the boss is allowed to attack
+        //again, AKA when it has finished executing the attack.
+        //This prevents us from exiting an attack early.
+        while (boss.weapon.isAttacking)
+        {
+            yield return null;
+        }
 
         DashAwayMove dashAwayMove = new DashAwayMove();
 

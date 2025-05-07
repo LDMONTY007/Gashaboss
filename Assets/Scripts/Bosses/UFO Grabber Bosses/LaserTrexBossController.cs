@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class LaserTrexBossController : BossController
 {
+    public Animator laserAnimator;
+
     public override void HandleStateMachine()
     {
 

@@ -30,6 +30,9 @@ public class Weapon : Collectible
 
     public float specialCooldownTime = 1f;
 
+    //used to know when the weapon is executing an attack.
+    public bool isAttacking = false;
+
     public bool canAttack = true;
 
     public float attackDistance = 1f;
@@ -311,6 +314,9 @@ public class Weapon : Collectible
 
     public virtual IEnumerator AttackCoroutine()
     {
+        //say we are currently attacking
+        isAttacking = true;
+
         //start the attack animation
         if (animator != null)
         animator.SetTrigger("attack");
@@ -342,12 +348,18 @@ public class Weapon : Collectible
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
 
     public virtual IEnumerator AltAttackCoroutine()
     {
+        //say we are currently attacking
+        isAttacking = true;
+
         //start the attack animation
         if (animator != null)
             animator.SetTrigger("altAttack");
@@ -372,13 +384,17 @@ public class Weapon : Collectible
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
     //this does 2 damage.
     public virtual IEnumerator AirAltAttackCoroutine()
     {
-        
+        //say we are currently attacking
+        isAttacking = true;
 
         //start the attack animation
         if (animator != null)
@@ -439,6 +455,9 @@ public class Weapon : Collectible
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
@@ -450,7 +469,8 @@ public class Weapon : Collectible
     //because then you can combo against the boss.
     public virtual IEnumerator SpecialAttackCoroutine()
     {
-        
+        //say we are currently attacking
+        isAttacking = true;
 
         //start the attack animation
         if (animator != null)
@@ -547,6 +567,9 @@ public class Weapon : Collectible
 
         //allow us to attack again.
         canAttack = true;
+
+        //say we are no longer attacking
+        isAttacking = false;
 
         yield break;
     }
