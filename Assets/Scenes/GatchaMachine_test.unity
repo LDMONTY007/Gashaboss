@@ -2861,10 +2861,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1884348975897861356, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2655557678262545132, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
       propertyPath: m_Name
       value: World
@@ -2909,10 +2905,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8001251965469382699, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: 075b179de2b106b429d55dcb1bcbeedc, type: 2}
     - target: {fileID: 8197494247657850279, guid: b7b6778629c68e743abbc667a22509bf, type: 3}
       propertyPath: collectionPanelUI
       value: 

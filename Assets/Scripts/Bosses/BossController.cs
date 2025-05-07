@@ -650,10 +650,13 @@ public class BossController : Collectible, IDamageable
         RigidbodyConstraints prevConstraints = rb.constraints;
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
 
+        Vector3 rotDir = (new Vector3(Player.instance.transform.position.x, 0, Player.instance.transform.position.z) - transform.position).normalized;
+        rotDir.y = 0;
+
         //LD Montello
         //Rotation is locked on our rigidbody settings
         //so only code can rotate the object.
-        rb.MoveRotation(Quaternion.LookRotation((new Vector3(Player.instance.transform.position.x, Player.instance.transform.position.y, Player.instance.transform.position.z) - transform.position).normalized, transform.up));
+        rb.MoveRotation(Quaternion.LookRotation(rotDir, transform.up));
 
         rb.constraints = prevConstraints;
 
