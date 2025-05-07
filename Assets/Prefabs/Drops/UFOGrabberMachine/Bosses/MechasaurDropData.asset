@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: MechaRexDropData
+  m_Name: MechasaurDropData
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 1171149156322651485, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
   weight: 3

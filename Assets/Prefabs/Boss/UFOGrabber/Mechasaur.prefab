@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 516031504090502149}
   - component: {fileID: 6472741233322915068}
   m_Layer: 0
-  m_Name: MechaRexBossController
+  m_Name: Mechasaur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 11400000, guid: 01ac7a7bab796eb4d95a431df8f97348, type: 2}
-  collectibleName: MechaRex
-  bossName: Mecha Rex
+  collectibleName: Mechasaur
+  bossName: Mechasaur
   coinsRewarded: 3
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 6969848140918174848}
@@ -68,7 +68,6 @@ MonoBehaviour:
   stunTime: 0.5
   curIdleTime: 0
   doStateMachine: 1
-  attackCheckRadius: 20
   rb: {fileID: 0}
   moveSpeed: 7.5
   minStopDist: 1
@@ -82,6 +81,7 @@ MonoBehaviour:
   groundCheckDist: 0.97
   groundCheckScale: 0.4
   isGrounded: 0
+  manualRotation: 0
   laserAnimator: {fileID: 4176535757421445911}
 --- !u!54 &516031504090502149
 Rigidbody:
@@ -244,6 +244,7 @@ MonoBehaviour:
   cooldownTime: 0.45
   altCooldownTime: 1
   specialCooldownTime: 1
+  isAttacking: 0
   canAttack: 1
   attackDistance: 20
   player: {fileID: 0}
@@ -252,16 +253,19 @@ MonoBehaviour:
   materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 45
   atkHeight: 5
+  atkCheckRadius: 15
   hasAlt: 0
   altAtkRadius: 15
   altAtkAngle: 180
   altAtkHeight: 0.5
+  altAtkCheckRadius: 15
   altAction: 3
   animateAlt: 1
   hasSpecial: 1
   specialAtkAngle: 0
   specialAtkRadius: 0
   specialAtkHeight: 0
+  specialAtkCheckRadius: 15
   specialAction: 1
   animateSpecial: 0
 --- !u!114 &5681084695639750416
@@ -5578,15 +5582,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491583725895070783, guid: b2b217a8dea2c404ab19fec37d26fa60, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00002670288
+      value: -0.000011444092
       objectReference: {fileID: 0}
     - target: {fileID: 491583725895070783, guid: b2b217a8dea2c404ab19fec37d26fa60, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.1973553
+      value: 4.1973343
       objectReference: {fileID: 0}
     - target: {fileID: 491583725895070783, guid: b2b217a8dea2c404ab19fec37d26fa60, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 13.437881
+      value: 10.437881
       objectReference: {fileID: 0}
     - target: {fileID: 491583725895070783, guid: b2b217a8dea2c404ab19fec37d26fa60, type: 3}
       propertyPath: m_LocalRotation.w

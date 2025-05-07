@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class LaserTrexBossController : BossController
+public class MechasaurBossController
+
+    : BossController
 {
     public Animator laserAnimator;
 

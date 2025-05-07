@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
-public class MechaRexLaser : BossAction{
+public class MechasaurLaser : BossAction{
     private BossActionMaterials materials;
     public bool isRunning = false;
 
-    public MechaRexLaser(BossActionMaterials mats){
+    public MechasaurLaser(BossActionMaterials mats){
         materials = mats;
     }
     public override IEnumerator ActionCoroutine(BossController boss, float duration){
@@ -14,12 +14,8 @@ public class MechaRexLaser : BossAction{
         //so it isn't overwritten by the velocity.
         boss.manualRotation = true;
 
-        yield return new WaitForFixedUpdate();
         //Start looking at the player.
         boss.LookAtPlayer();
-        yield return new WaitForFixedUpdate();
-
-        Debug.Log(boss.rb.rotation.eulerAngles.ToString());
 
         Debug.LogWarning("START LASER ATTACK");
         
@@ -27,7 +23,7 @@ public class MechaRexLaser : BossAction{
         //it'll crouch down and open it's mouth to start playing the
         //charge up laser particles. 
         //Don't let the player get near it during this part.
-        LaserTrexBossController Mechasaur = boss as LaserTrexBossController;
+        MechasaurBossController Mechasaur = boss as MechasaurBossController;
 
         //Fire the Mechasaur laser.
         Mechasaur.laserAnimator.SetBool("Fire", true);
