@@ -121,26 +121,6 @@ public class Weapon : Collectible
         onAttack?.Invoke();
         // END NEW CODE FOR ITEMS
 
-        //Start AttackCoroutine
-        StartCoroutine(AttackCoroutine());
-        
-        yield break;
-    }
-
-    public virtual IEnumerator AttackCoroutine()
-    {
-        //start the attack animation
-        if (animator != null)
-            animator.SetTrigger("attack");
-
-        //don't allow other attacks during our current attack.
-        canAttack = false;
-
-        //TODO:
-        //implement an animation for attacking,
-        //but for now enable the collider for an attack.
-        //weaponCollider.enabled = true;
-
         List<GameObject> objs = collisionSensor.ScanForObjects();
 
         if (objs.Count > 0)
@@ -205,21 +185,10 @@ public class Weapon : Collectible
             }
         }
 
-        //set color of debug mesh to show we are in cooldown
-        collisionSensor.sensorColor = cooldownMeshColor;
-
-        //if we have a cooldown, wait the cooldown time before attacking.
-        if (hasCooldown)
-            yield return new WaitForSeconds(cooldownTime);
-
-        //restore default color
-        collisionSensor.sensorColor = ogMeshColor;
-
-        //allow us to attack again.
-        canAttack = true;
-
         yield break;
     }
+
+
 
     public IEnumerator DealDamageAndLaunch(int damage, Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
@@ -312,6 +281,49 @@ public class Weapon : Collectible
         swordOnLeft = !swordOnLeft;
     }
 
+    public virtual IEnumerator AttackCoroutine()
+    {
+        //say we are currently attacking
+        isAttacking = true;
+
+        //start the attack animation
+        if (animator != null)
+            animator.SetTrigger("attack");
+
+        //don't allow other attacks during our current attack.
+        canAttack = false;
+
+        //TODO:
+        //implement an animation for attacking,
+        //but for now enable the collider for an attack.
+        //weaponCollider.enabled = true;
+
+        //Execute the coroutine for dealing damage using our collision sensor.
+        yield return DealDamage(1);
+
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+            yield return new WaitForSeconds(cooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //wait for the animator to finish the attack animation before continuing.
+        //yield return LDUtil.WaitForAnimationFinish(animator);
+
+        //allow us to attack again.
+        canAttack = true;
+
+        //say we are no longer attacking
+        isAttacking = false;
+
+        yield break;
+    }
+
+
     public virtual void AltAttack()
     {
         if (!canAttack)
@@ -354,48 +366,7 @@ public class Weapon : Collectible
         StartCoroutine(SpecialAttackCoroutine());
     }
 
-    public virtual IEnumerator AttackCoroutine()
-    {
-        //say we are currently attacking
-        isAttacking = true;
-
-        //start the attack animation
-        if (animator != null)
-        animator.SetTrigger("attack");
-
-        //don't allow other attacks during our current attack.
-        canAttack = false;
-
-        //TODO:
-        //implement an animation for attacking,
-        //but for now enable the collider for an attack.
-        //weaponCollider.enabled = true;
-
-        //Execute the coroutine for dealing damage using our collision sensor.
-        yield return DealDamage(1);
-
-        //set color of debug mesh to show we are in cooldown
-        collisionSensor.sensorColor = cooldownMeshColor;
-
-        //if we have a cooldown, wait the cooldown time before attacking.
-        if (hasCooldown)
-        yield return new WaitForSeconds(cooldownTime);
-
-        //restore default color
-        collisionSensor.sensorColor = ogMeshColor;
-
-        //wait for the animator to finish the attack animation before continuing.
-        //yield return LDUtil.WaitForAnimationFinish(animator);
-
-        //allow us to attack again.
-        canAttack = true;
-
-        //say we are no longer attacking
-        isAttacking = false;
-
-        yield break;
-    }
-
+    
 
     public virtual IEnumerator AltAttackCoroutine()
     {
