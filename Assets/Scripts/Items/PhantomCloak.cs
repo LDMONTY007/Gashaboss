@@ -112,6 +112,7 @@ public class PhantomCloak : ItemData
     // Set player model visibility
     private void SetPlayerVisibility(bool visible)
     {
+
         if (Player.instance == null)
             return;
 
@@ -131,37 +132,40 @@ public class PhantomCloak : ItemData
                         try
                         {
                             // Get current material color
-                            Color color = renderer.material.color;
+                            // Color color = renderer.material.color;
 
                             // Set alpha based on visibility
-                            color.a = visible ? 1f : 0.3f;
+                            // color.a = visible ? 1f : 0.3f;
 
                             // Apply color with new alpha
-                            renderer.material.color = color;
+                            // renderer.material.color = color;
 
                             // Make sure the material is set to use transparency
                             if (!visible)
                             {
-                                renderer.material.SetFloat("_Mode", 3); // Transparent rendering mode
+                                renderer.enabled = false;
+                                /*renderer.material.SetFloat("_Mode", 3); // Transparent rendering mode
                                 renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                                 renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                                 renderer.material.SetInt("_ZWrite", 0);
                                 renderer.material.DisableKeyword("_ALPHATEST_ON");
                                 renderer.material.EnableKeyword("_ALPHABLEND_ON");
                                 renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                                renderer.material.renderQueue = 3000;
+                                renderer.material.renderQueue = 3000;*/
                             }
                             else
                             {
+                                renderer.enabled = true;
+
                                 // Restore opaque rendering
-                                renderer.material.SetFloat("_Mode", 0); // Opaque rendering mode
+/*                                renderer.material.SetFloat("_Mode", 0); // Opaque rendering mode
                                 renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                                 renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                                 renderer.material.SetInt("_ZWrite", 1);
                                 renderer.material.DisableKeyword("_ALPHATEST_ON");
                                 renderer.material.DisableKeyword("_ALPHABLEND_ON");
                                 renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                                renderer.material.renderQueue = -1;
+                                renderer.material.renderQueue = -1;*/
                             }
                         }
                         catch (System.Exception e)

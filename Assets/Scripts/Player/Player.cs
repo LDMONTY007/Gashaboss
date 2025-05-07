@@ -1479,6 +1479,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     }
 
     public void LoadData(GameData gameData){
+        if (Player.instance == null)
+        {
+            Player.instance = this;
+        }
+        
         this.curHealth = gameData.coins;
         this.caps = gameData.caps;
         //if it isn't null, create the player weapon and set the reference for it.
