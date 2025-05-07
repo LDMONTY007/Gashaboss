@@ -577,6 +577,14 @@ public class BossController : Collectible, IDamageable
                     attackCheckRadius = weapon.altAtkCheckRadius;
                     break;
                 case 2:
+                    // if boss doesn't have an alt or a special, use a reg attack instead
+                    if (!weapon.hasAlt && !weapon.hasSpecial)
+                    {
+                        nextAttack = meleeAttack;
+                        //Set the attack check radius to be that of the normal attack.
+                        attackCheckRadius = weapon.atkCheckRadius;
+                        break;
+                    }
                     // if boss doesn't have a special, use an alt attack instead
                     if (!weapon.hasSpecial)
                     {
