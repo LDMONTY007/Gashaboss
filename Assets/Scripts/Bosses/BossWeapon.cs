@@ -35,6 +35,7 @@ public class BossWeapon: Weapon{
         // PillowHop: 0
         // LaserAttack: 1
         // LaserSwarm: 2
+        // TrexStomp: 3
         bossActions.Add(new PillowHop(materials));
         bossActions.Add(new LaserAttack(materials));
         bossActions.Add(new LaserSwarm(materials));

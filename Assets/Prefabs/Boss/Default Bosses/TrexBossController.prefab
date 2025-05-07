@@ -331,7 +331,7 @@ MonoBehaviour:
   altAtkRadius: 15
   altAtkAngle: 180
   altAtkHeight: 0.5
-  altAction: 0
+  altAction: 3
   animateAlt: 1
   hasSpecial: 0
   specialAtkAngle: 0
@@ -441,7 +441,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4261816378586283534
 Transform:
   m_ObjectHideFlags: 0
