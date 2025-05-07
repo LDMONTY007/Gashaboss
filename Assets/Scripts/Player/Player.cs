@@ -80,9 +80,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
     private int startHealth = 4;
 
-    
+
+    private bool _isVisible = true;
+
     // Player visibility for invis item
-    public bool isVisible = true;
+    public bool isVisible { get { return _isVisible; } set { _isVisible = value; UIManager.Instance.playerUIManager.UpdateInvisiblePopup(!value); } }
 
     #region health vars
     [Header("Health Variables")]

@@ -4842,8 +4842,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUIManager: {fileID: 753196673}
   bossUIManager: {fileID: 853423133}
+  popupUIManager: {fileID: 0}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
+  inventoryPanel: {fileID: 0}
+  uiBlock: 0
+  currentUIState: 0
 --- !u!4 &1782145154
 Transform:
   m_ObjectHideFlags: 0
@@ -6117,7 +6121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5265037060798185742, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.120228
+      value: -20.879772
       objectReference: {fileID: 0}
     - target: {fileID: 5265037060798185742, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6125,7 +6129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5265037060798185742, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 21.147835
+      value: 50.147835
       objectReference: {fileID: 0}
     - target: {fileID: 5265037060798185742, guid: cdb69f74ba35b8846b788e55c6e644b1, type: 3}
       propertyPath: m_LocalRotation.w

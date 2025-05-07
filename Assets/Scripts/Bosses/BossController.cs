@@ -1042,8 +1042,7 @@ public class BossController : Collectible, IDamageable
             // If player is invisible, don't move toward them, just wait
             if (!Player.instance.isVisible)
             {
-                yield return new WaitForSeconds(0.5f);
-                continue;
+                yield break;
             }
             //if we're not in the move state
             //anymore than stop moving.

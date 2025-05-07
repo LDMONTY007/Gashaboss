@@ -15,6 +15,7 @@ public class PlayerUIManager : MonoBehaviour
     public Image weaponImage; // Chris Li - Added weaponImage for displaying the current weapon icon
 
     public GameObject stunnedPopup;
+    public GameObject invisiblePopup;
 
     //LD Montello
     //updates the visual for how many coins the player has.
@@ -86,6 +87,18 @@ public class PlayerUIManager : MonoBehaviour
         else
         {
             stunnedPopup.SetActive(false);
+        }
+    }
+
+    public void UpdateInvisiblePopup(bool isInvisible)
+    {
+        if (isInvisible)
+        {
+            invisiblePopup.SetActive(true);
+        }
+        else
+        {
+            invisiblePopup.SetActive(false);
         }
     }
 }
