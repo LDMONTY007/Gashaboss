@@ -5107,26 +5107,28 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: 843efc63262e21b4ba52340bb5ae8bca, type: 2}
   collectibleName: Squid
   bossName: Squid
-  coinsRewarded: 3
-  capsRewarded: 1
+  coinsRewarded: 5
+  capsRewarded: 2
   debugInfoTextMesh: {fileID: 8360802870174635090}
   bossCollider: {fileID: 8846168522096661766}
   animator: {fileID: 6610936195214905957}
   movementParticles: {fileID: 3234350318697314325}
   stunParticles: {fileID: 6757230002650760367}
   parentMachine: {fileID: 0}
-  _maxHealth: 3
+  launchTransform: {fileID: 0}
+  _maxHealth: 2000
   isDead: 0
   bounceForce: 20
-  stunTime: 0.5
+  stunTime: 0.15
   curIdleTime: 0
   doStateMachine: 1
-  attackCheckRadius: 10
   rb: {fileID: 0}
   moveSpeed: 15
+  minStopDist: 1
   avoidanceForceMultiplier: 50
   avoidanceDistance: 5
   avoidanceAngle: 75
+  incomingDamageMultiplier: 1
   animatedModel: {fileID: 3015649465965333844}
   weapon: {fileID: 4285133830365013823}
   lookTransform: {fileID: 6553980640563702}
@@ -5134,6 +5136,7 @@ MonoBehaviour:
   groundCheckDist: 0.97
   groundCheckScale: 0.4
   isGrounded: 0
+  manualRotation: 0
 --- !u!54 &5795446772522244048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5327,24 +5330,29 @@ MonoBehaviour:
   cooldownTime: 0.45
   altCooldownTime: 1
   specialCooldownTime: 1
+  isAttacking: 0
   canAttack: 1
   attackDistance: 10
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  damage: 1
   materials: {fileID: 0}
   atkAngle: 75
   atkHeight: 1
+  atkCheckRadius: 15
   hasAlt: 0
   altAtkRadius: 0
   altAtkAngle: 0
   altAtkHeight: 0
+  altAtkCheckRadius: 15
   altAction: -1
   animateAlt: 0
   hasSpecial: 0
-  specialAtkAngle: 0
   specialAtkRadius: 0
+  specialAtkAngle: 0
   specialAtkHeight: 0
+  specialAtkCheckRadius: 15
   specialAction: -1
   animateSpecial: 0
 --- !u!114 &3482512846733107697

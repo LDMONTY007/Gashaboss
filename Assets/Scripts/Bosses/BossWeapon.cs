@@ -24,8 +24,8 @@ public class BossWeapon: Weapon{
     #endregion
     #region SpecialAttack vars
     [SerializeField] public bool hasSpecial = false;
-    [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkRadius;
+    [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkHeight;
     public float specialAtkCheckRadius = 15;
     [SerializeField] private int specialAction = -1; // holds the action index to be called as part of the special

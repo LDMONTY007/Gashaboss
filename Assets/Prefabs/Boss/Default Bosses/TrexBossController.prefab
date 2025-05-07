@@ -319,24 +319,29 @@ MonoBehaviour:
   cooldownTime: 0.45
   altCooldownTime: 1
   specialCooldownTime: 1
+  isAttacking: 0
   canAttack: 1
   attackDistance: 20
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  damage: 1
   materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 45
   atkHeight: 5
+  atkCheckRadius: 15
   hasAlt: 1
   altAtkRadius: 15
   altAtkAngle: 180
   altAtkHeight: 0.5
+  altAtkCheckRadius: 15
   altAction: 3
   animateAlt: 1
   hasSpecial: 0
-  specialAtkAngle: 0
   specialAtkRadius: 0
+  specialAtkAngle: 0
   specialAtkHeight: 0
+  specialAtkCheckRadius: 15
   specialAction: -1
   animateSpecial: 0
 --- !u!114 &2812468555961438695
@@ -476,8 +481,8 @@ MonoBehaviour:
   collectibleData: {fileID: 11400000, guid: 1b1341d79a8244f47909f30d365c9323, type: 2}
   collectibleName: Trex
   bossName: T-Rex
-  coinsRewarded: 3
-  capsRewarded: 1
+  coinsRewarded: 7
+  capsRewarded: 3
   debugInfoTextMesh: {fileID: 2478662086867864425}
   bossCollider: {fileID: 8941966420125196475}
   animator: {fileID: 4569046472748348967}
@@ -485,19 +490,19 @@ MonoBehaviour:
   stunParticles: {fileID: 3751527976013321317}
   parentMachine: {fileID: 0}
   launchTransform: {fileID: 0}
-  _maxHealth: 50
+  _maxHealth: 4000
   isDead: 0
   bounceForce: 20
-  stunTime: 0.5
+  stunTime: 0.1
   curIdleTime: 0
   doStateMachine: 1
-  attackCheckRadius: 20
   rb: {fileID: 0}
   moveSpeed: 7.5
   minStopDist: 1
   avoidanceForceMultiplier: 50
   avoidanceDistance: 30
   avoidanceAngle: 75
+  incomingDamageMultiplier: 1
   animatedModel: {fileID: 6700642857748859769}
   weapon: {fileID: 4066445645354376695}
   lookTransform: {fileID: 4933938187196310911}
@@ -505,6 +510,7 @@ MonoBehaviour:
   groundCheckDist: 0.97
   groundCheckScale: 0.4
   isGrounded: 0
+  manualRotation: 0
 --- !u!54 &8974334499713880060
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -120,6 +120,6 @@ public class DashAwayMove : BossAction
 
         //just yield and return the move to position
         //call.
-        yield return boss.MoveToPosition(dashAwayPos, 50f, boss.minStopDist, 0.5f);
+        yield return boss.MoveToPosition(dashAwayPos, 50f, boss.minStopDist, 0.1f);
     }
 }

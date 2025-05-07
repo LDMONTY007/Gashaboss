@@ -62,10 +62,10 @@ MonoBehaviour:
   stunParticles: {fileID: 6956548318857973268}
   parentMachine: {fileID: 0}
   launchTransform: {fileID: 0}
-  _maxHealth: 50
+  _maxHealth: 7500
   isDead: 0
   bounceForce: 20
-  stunTime: 0.5
+  stunTime: 0.2
   curIdleTime: 0
   doStateMachine: 1
   rb: {fileID: 0}
@@ -74,6 +74,7 @@ MonoBehaviour:
   avoidanceForceMultiplier: 50
   avoidanceDistance: 30
   avoidanceAngle: 75
+  incomingDamageMultiplier: 1
   animatedModel: {fileID: 2919333831361572460}
   weapon: {fileID: 7442707519828746820}
   lookTransform: {fileID: 7295535380385914638}
@@ -250,6 +251,7 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  damage: 1
   materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 45
   atkHeight: 5
@@ -262,8 +264,8 @@ MonoBehaviour:
   altAction: 3
   animateAlt: 1
   hasSpecial: 1
-  specialAtkAngle: 0
   specialAtkRadius: 0
+  specialAtkAngle: 0
   specialAtkHeight: 0
   specialAtkCheckRadius: 100
   specialAction: 4
