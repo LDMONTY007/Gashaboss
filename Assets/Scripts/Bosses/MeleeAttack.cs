@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class MeleeAttack : BossAction
 {
+
+    //This is how you set an attack to do melee damage,
+    //set it here in the constructor.
+    public MeleeAttack() { dealMeleeDamage = true; meleeDamage = 1; }
+
     public override IEnumerator ActionCoroutine(BossController boss, float duration)
     {
         active = true;
