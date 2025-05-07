@@ -20,6 +20,9 @@ public class SpecialAttack : BossAction
             }
             boss.weapon.SpecialAttack();
 
+            //Do the bosses special attack coroutine.
+            //yield return boss.weapon.SpecialAttackCoroutine();
+
             //wait for the animation to finish before 
             //exiting this coroutine.
             yield return LDUtil.WaitForAnimationFinish(boss.animator);
@@ -52,5 +55,8 @@ public class SpecialAttack : BossAction
         yield return dashAwayMove.ActionCoroutine(boss, duration);
 
         active = false;
+
+        //say this was executed.
+        didExecute = true;
     }
 }

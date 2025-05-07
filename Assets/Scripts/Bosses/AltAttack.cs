@@ -18,7 +18,11 @@ public class AltAttack : BossAction
                 //so we do the attack animation.
                 boss.animator.SetTrigger("altAttack");
             }
+            
             boss.weapon.AltAttack();
+
+            //Do the bosses attack coroutine.
+            //yield return boss.weapon.AltAttackCoroutine();
 
             //wait for the animation to finish before 
             //exiting this coroutine.
@@ -52,5 +56,8 @@ public class AltAttack : BossAction
         yield return dashAwayMove.ActionCoroutine(boss, duration);
 
         active = false;
+
+        //say this was executed.
+        didExecute = true;
     }
 }

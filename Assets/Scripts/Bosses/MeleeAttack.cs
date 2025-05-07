@@ -20,10 +20,13 @@ public class MeleeAttack : BossAction
             }
             boss.weapon.Attack();
 
+            //Do the bosses attack coroutine.
+            //yield return boss.weapon.AttackCoroutine();
+
             //wait for the animation to finish before 
             //exiting this coroutine.
             if (boss.animator != null)
-            yield return LDUtil.WaitForAnimationFinish(boss.animator);
+                yield return LDUtil.WaitForAnimationFinish(boss.animator);
         }
         else
         {
@@ -52,6 +55,9 @@ public class MeleeAttack : BossAction
         active = false;
 
         Debug.Log("INACTIVE");
+
+        //say this was executed.
+        didExecute = true;
     }
 
 

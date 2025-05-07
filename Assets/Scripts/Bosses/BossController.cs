@@ -5,11 +5,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
-using static UnityEditor.PlayerSettings;
 
 public class BossController : Collectible, IDamageable
 {
@@ -119,7 +117,7 @@ public class BossController : Collectible, IDamageable
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
 
-        
+
 
         //reward the player with the loot
         //from this boss.
@@ -127,15 +125,15 @@ public class BossController : Collectible, IDamageable
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
         if (parentMachine != null)
-        //the boss was defeated so tell the parent machine this.
-        parentMachine.OnBossDefeated();
+            //the boss was defeated so tell the parent machine this.
+            parentMachine.OnBossDefeated();
 
         //Destroy the boss object after stopping all coroutines on this object
         StopAllCoroutines();
         Destroy(gameObject);
     }
 
-    
+
 
     [HideInInspector]
     public bool isDead = false;
@@ -155,7 +153,7 @@ public class BossController : Collectible, IDamageable
     public bool doStateMachine = false;
 
     [Header("Attack Parameters")]
-    public float attackCheckRadius = 10f;
+    private float attackCheckRadius = 10f;
 
 
 
@@ -170,7 +168,7 @@ public class BossController : Collectible, IDamageable
     public float avoidanceForceMultiplier = 50f;
     public float avoidanceDistance = 30f;
     public float avoidanceAngle = 75f;
-    
+
     bool isMoving = false;
 
     bool isShaking = false;
@@ -190,12 +188,12 @@ public class BossController : Collectible, IDamageable
     //whenever it changes just to make sure that it
     //changes only when appropriate.
     //it also lets me change the debug info text to display the state.
-    public BossState curState { 
-        get { 
-            return _curState; 
-        } 
-        set { 
-            Debug.LogWarning("State switched from " + _curState + " to " + value);  
+    public BossState curState {
+        get {
+            return _curState;
+        }
+        set {
+            Debug.LogWarning("State switched from " + _curState + " to " + value);
 
             if (value == BossState.move)
             {
@@ -208,8 +206,8 @@ public class BossController : Collectible, IDamageable
                 rb.constraints = RigidbodyConstraints.FreezeAll;
             }
 
-            _curState = value; 
-            debugInfoTextMesh.text = _curState.ToString(); 
+            _curState = value;
+            debugInfoTextMesh.text = _curState.ToString();
 
             //last resort for stopping the getCloseForAttackCoroutine,
             //which should be able to stop itself, and doesn't
@@ -221,7 +219,7 @@ public class BossController : Collectible, IDamageable
                 StopCoroutine(getCloseForAttackCoroutine);
                 getCloseForAttackCoroutine = null;
             }*/
-        } 
+        }
     }
 
 
@@ -244,7 +242,7 @@ public class BossController : Collectible, IDamageable
         //return true. 
         if (objs.Any<Collider>(c => c.GetComponent<Player>() != null))
         {
-            
+
             return true;
         }
 
@@ -340,7 +338,20 @@ public class BossController : Collectible, IDamageable
 
         if (doStateMachine)
         {
-            HandleStateMachine();            
+            //Debug.LogWarning("Next: " + nextAttack.didExecute + " , " + nextAttack.active);
+
+            //if the next attack has already ended then 
+            //set it to null so we can get a new next attack
+            //in the next Idle state.
+            if (nextAttack != null && nextAttack.didExecute)
+            {
+                //Debug.Break();
+                //reset the attack's didExecute flag.
+                nextAttack.didExecute = false;
+                nextAttack = null;
+            }
+
+            HandleStateMachine();
         }
 
         //Handle the particle FX
@@ -399,6 +410,8 @@ public class BossController : Collectible, IDamageable
 
     public virtual void HandleStateMachine()
     {
+
+
         #region boss state switching
 
         //old code to go straight to attacking,
@@ -498,6 +511,17 @@ public class BossController : Collectible, IDamageable
         //no leaving the stun state early.
         if (curState != BossState.stun)
         {
+            //if  the next attack is null,
+            //get the next attack before checking the attack range
+            //as different attacks will change the attack range.
+            if (nextAttack == null)
+            {
+                GetNextAttack();
+            }
+
+            //Then check the attack range
+            //to see if the next attack is 
+            //ready to be used.
             if (IsPlayerInAttackRange())
             {
                 Debug.Log("Boss is in attack range!".Color("orange"));
@@ -516,38 +540,64 @@ public class BossController : Collectible, IDamageable
     AltAttack altAttack = new AltAttack();
     SpecialAttack specialAttack = new SpecialAttack();
 
-    public void HandleAttack()
-    {   
+    private BossAction _nextAttack;
+
+    public BossAction nextAttack {  get { return _nextAttack; } set { _nextAttack = value; if (value != null) Debug.Log("Set Next Attack: " + value.ToString()); } }
+
+    public void GetNextAttack()
+    {
         //if the boss isn't already attacking,
         //then start one.
         if (!meleeAttack.active && !altAttack.active && !specialAttack.active)
         {
             // Temp logic for attack handling, for now we'll just pick a random attack out of the three options
             // Weapons will just default to melee attacks, if a alt or special attack isn't available anyway, so this should operate fine
-            int randAttack = UnityEngine.Random.Range(0,3);
+            int randAttack = UnityEngine.Random.Range(0, 3);
             Debug.Log("Boss wants to attack here!".Color("Red"));
-            switch(randAttack){
+            switch (randAttack)
+            {
                 case 0:
-                    StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
+                    nextAttack = meleeAttack;
+                    //Set the attack check radius to be that of the normal attack.
+                    attackCheckRadius = weapon.atkCheckRadius;
                     break;
                 case 1:
                     // if boss doesn't have an alt, use a reg attack instead
-                    if (!weapon.hasAlt){
-                        meleeAttack.ActionCoroutine(this, 1f);
+                    if (!weapon.hasAlt)
+                    {
+                        nextAttack = meleeAttack;
+                        //Set the attack check radius to be that of the normal attack.
+                        attackCheckRadius = weapon.atkCheckRadius;
                         break;
                     }
-                    StartCoroutine(altAttack.ActionCoroutine(this, 1f));
+                    nextAttack = altAttack;
+                    //Set the attack check radius to be that of the alt attack.
+                    attackCheckRadius = weapon.altAtkCheckRadius;
                     break;
                 case 2:
                     // if boss doesn't have a special, use an alt attack instead
-                    if (!weapon.hasSpecial){
-                        altAttack.ActionCoroutine(this, 1f);
+                    if (!weapon.hasSpecial)
+                    {
+                        nextAttack = altAttack;
+                        //Set the attack check radius to be that of the alt attack.
+                        attackCheckRadius = weapon.altAtkCheckRadius;
                         break;
                     }
-                    StartCoroutine(specialAttack.ActionCoroutine(this, 1f));
-                    break;         
+                    nextAttack = specialAttack;
+                    //Set the attack check radius to be that of the special attack.
+                    attackCheckRadius = weapon.specialAtkCheckRadius;
+                    break;
             }
         }
+    }
+
+    public void HandleAttack()
+    {   
+       //if we have our next attack and aren't attacking, execute it.
+       if (nextAttack != null && !meleeAttack.active && !altAttack.active && !specialAttack.active)
+       {
+            StartCoroutine(nextAttack.ActionCoroutine(this, 1f));
+       }
     }
 
     private Coroutine getCloseForAttackCoroutine = null;

@@ -3031,6 +3031,18 @@ PrefabInstance:
       propertyPath: specialAction
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 7442707519828746820, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
+      propertyPath: atkCheckRadius
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7442707519828746820, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
+      propertyPath: altAtkCheckRadius
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7442707519828746820, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
+      propertyPath: specialAtkCheckRadius
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

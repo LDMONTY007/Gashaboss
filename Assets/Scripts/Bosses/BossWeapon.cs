@@ -11,12 +11,14 @@ public class BossWeapon: Weapon{
     #region Attack vars
     [SerializeField] private float atkAngle = 30;
     [SerializeField] private float atkHeight = 1.0f;
+    public float atkCheckRadius = 15;
     #endregion
     #region AltAttack vars
     [SerializeField] public bool hasAlt = false;
     [SerializeField] private float altAtkRadius;
     [SerializeField] private float altAtkAngle;
     [SerializeField] private float altAtkHeight;
+    public float altAtkCheckRadius = 15;
     [SerializeField] private int altAction = -1; // holds the action index to be called as part of the alt
     [SerializeField] private bool animateAlt = false; // set this to true if animator controls alt action
     #endregion
@@ -25,6 +27,7 @@ public class BossWeapon: Weapon{
     [SerializeField] private float specialAtkAngle;
     [SerializeField] private float specialAtkRadius;
     [SerializeField] private float specialAtkHeight;
+    public float specialAtkCheckRadius = 15;
     [SerializeField] private int specialAction = -1; // holds the action index to be called as part of the special
     [SerializeField] private bool animateSpecial = false; // set this to true if animator controls special action
     #endregion
