@@ -388,12 +388,14 @@ public class BossController : Collectible, IDamageable
     /// </summary>
     public virtual void ApplyFinalMovements()
     {
+        Debug.Log(rb.rotation.eulerAngles.ToString());
+
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.
         //we freeze the position otherwise. 
         //we just allow gravity to take over
         //so that it can fall back to the ground.
-        if (curState != BossState.stun && curState != BossState.move && !isGrounded)
+        if (!manualRotation && curState != BossState.stun && curState != BossState.move && !isGrounded)
         {
             //freeze all rotation and only allow movement on the y axis.
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
@@ -625,11 +627,13 @@ public class BossController : Collectible, IDamageable
         }
     }
 
+    public bool manualRotation = false;
+
     //LD Montello
     public void HandleRbRotation()
     {
         //rotate towards the velocity direction but don't rotate upwards.
-        if (new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
+        if (!manualRotation && new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
         {
             //LD Montello
             //Rotation is locked on our rigidbody settings
@@ -638,6 +642,20 @@ public class BossController : Collectible, IDamageable
         }
 
         
+
+    }
+
+    public void LookAtPlayer()
+    {
+        RigidbodyConstraints prevConstraints = rb.constraints;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
+        //LD Montello
+        //Rotation is locked on our rigidbody settings
+        //so only code can rotate the object.
+        rb.MoveRotation(Quaternion.LookRotation((new Vector3(Player.instance.transform.position.x, Player.instance.transform.position.y, Player.instance.transform.position.z) - transform.position).normalized, transform.up));
+
+        rb.constraints = prevConstraints;
 
     }
 

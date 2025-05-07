@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class MechaRexLaser : BossAction{
     private BossActionMaterials materials;
-    private int numProjectiles = 4;
     public bool isRunning = false;
 
     public MechaRexLaser(BossActionMaterials mats){
@@ -11,7 +10,17 @@ public class MechaRexLaser : BossAction{
     }
     public override IEnumerator ActionCoroutine(BossController boss, float duration){
 
-        
+        //turn on manual rotation
+        //so it isn't overwritten by the velocity.
+        boss.manualRotation = true;
+
+        yield return new WaitForFixedUpdate();
+        //Start looking at the player.
+        boss.LookAtPlayer();
+        yield return new WaitForFixedUpdate();
+
+        Debug.Log(boss.rb.rotation.eulerAngles.ToString());
+
         Debug.LogWarning("START LASER ATTACK");
         
         //Tell the boss to start it's laser animation, 
@@ -44,12 +53,8 @@ public class MechaRexLaser : BossAction{
         //Wait an additional 1 second before exiting this attack.
         yield return new WaitForSeconds(1f);
 
-        // Hand set y rotation for the projectile, use quaternity rotation
-        /*        Vector3 spawnPos = boss.launchTransform.position;
-                for (int i = 0; i < numProjectiles; i++){
-                    GameObject.Instantiate(materials.projectiles[1], spawnPos, boss.launchTransform.rotation);
-                    yield return new WaitForSeconds(1);
-                }*/
+        //Return to velocity based rotation
+        boss.manualRotation = false;
 
         Debug.LogWarning("END");
 
