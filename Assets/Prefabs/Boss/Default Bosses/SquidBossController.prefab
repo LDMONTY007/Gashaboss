@@ -5114,6 +5114,7 @@ MonoBehaviour:
   animator: {fileID: 6610936195214905957}
   movementParticles: {fileID: 3234350318697314325}
   stunParticles: {fileID: 6757230002650760367}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   bounceForce: 20
@@ -5127,7 +5128,7 @@ MonoBehaviour:
   avoidanceDistance: 5
   avoidanceAngle: 75
   animatedModel: {fileID: 3015649465965333844}
-  weapon: {fileID: 3606864933855598784}
+  weapon: {fileID: 4285133830365013823}
   lookTransform: {fileID: 6553980640563702}
   playerObject: {fileID: 0}
   groundCheckDist: 0.97
@@ -5170,7 +5171,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -5226,7 +5227,7 @@ GameObject:
   - component: {fileID: 6259181729202295314}
   - component: {fileID: 3122568028613190622}
   - component: {fileID: 5349326566996630588}
-  - component: {fileID: 3606864933855598784}
+  - component: {fileID: 4285133830365013823}
   - component: {fileID: 3482512846733107697}
   - component: {fileID: 6938911633118917388}
   m_Layer: 2
@@ -5304,7 +5305,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3606864933855598784
+--- !u!114 &4285133830365013823
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5313,7 +5314,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8080378445457422567}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
+  m_Script: {fileID: 11500000, guid: f56f324d3f94d9c41b1cb312824ef9d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 0}
@@ -5321,6 +5322,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 3482512846733107697}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 1
@@ -5330,6 +5332,21 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  materials: {fileID: 0}
+  atkAngle: 75
+  atkHeight: 1
+  hasAlt: 0
+  altAtkRadius: 0
+  altAtkAngle: 0
+  altAtkHeight: 0
+  altAction: -1
+  animateAlt: 0
+  hasSpecial: 0
+  specialAtkAngle: 0
+  specialAtkRadius: 0
+  specialAtkHeight: 0
+  specialAction: -1
+  animateSpecial: 0
 --- !u!114 &3482512846733107697
 MonoBehaviour:
   m_ObjectHideFlags: 0

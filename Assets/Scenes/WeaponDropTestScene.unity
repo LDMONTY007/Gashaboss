@@ -912,6 +912,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3829498065155545927, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3829498065155545927, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3829498065155545927, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3948688920133332187, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Name
       value: GameUICanvas
@@ -3509,6 +3521,7 @@ MonoBehaviour:
   bossUIManager: {fileID: 853423133}
   inGameUI: {fileID: 753196671}
   pauseMenuPanel: {fileID: 1210537993}
+  inventoryPanel: {fileID: 0}
   uiBlock: 0
   currentUIState: 0
 --- !u!4 &1782145154
@@ -4445,7 +4458,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 648fa0ecd20380841a913424fcf13092, type: 3}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: drops.Array.size
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[0]'
@@ -4454,7 +4467,7 @@ PrefabInstance:
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: 500dde9cbe9ae994eb580fb06ea54cd0, type: 2}
+      objectReference: {fileID: 11400000, guid: e5179402f07374245a78f25ee96e2b05, type: 2}
     - target: {fileID: 8702240499978245536, guid: 1aa1341a4579807448ea8867dffca8ea, type: 3}
       propertyPath: 'drops.Array.data[2]'
       value: 

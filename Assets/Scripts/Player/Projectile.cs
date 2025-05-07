@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Projectile : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class Projectile : MonoBehaviour
 
     public float gravity = 9.81f;
 
+    public float persistenceTime = 5f; //Time before the projectile should be despawned 
+
     [HideInInspector]
     public Rigidbody rb;
 
@@ -33,6 +36,7 @@ public class Projectile : MonoBehaviour
 
         if (launchOnStart)
         rb.AddForce(transform.forward.normalized * launchSpeed, ForceMode.Impulse);
+        StartCoroutine(this.ProjectileTimeout(persistenceTime, this));
     }
 
     private void LateUpdate()
@@ -123,6 +127,13 @@ public class Projectile : MonoBehaviour
         //we also use vector3.up because we're going to assume gravity
         //is currently going up or down relative to world space.
         rb.AddForce(-Vector3.up * gravity * rb.mass);
+    }
+    
+    public IEnumerator ProjectileTimeout(float time, Projectile p){
+        yield return new WaitForSeconds(time);
+        if (p != null){
+            Destroy(p.gameObject);
+        }
     }
 }
 

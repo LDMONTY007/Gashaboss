@@ -4871,6 +4871,7 @@ Transform:
   - {fileID: 8588802474676005429}
   - {fileID: 581660060944427641}
   - {fileID: 2696545246981942805}
+  - {fileID: 8011639831050333775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4672448699689248683
@@ -4894,6 +4895,7 @@ MonoBehaviour:
   dashParticles: {fileID: 7108178822967578991}
   walkParticles: {fileID: 213442657710818105}
   landingParticles: {fileID: 8082174744428417983, guid: 26a67eb306e4f1a44a81d42091cae702, type: 3}
+  handTransform: {fileID: 8011639831050333775}
   inventory: []
   bounceForce: 20
   invincible: 0
@@ -4958,8 +4960,7 @@ MonoBehaviour:
   slowDownMultiplier: 0.15
   currentSpeed: 0
   moveSpeed: 15
-  walkSpeed: 15
-  sprintSpeed: 20
+  rotationSpeed: 5
   lastMoveVector: {x: 0, y: 0, z: 0}
   doDash: 0
   dashSpeed: 100
@@ -4968,6 +4969,7 @@ MonoBehaviour:
   dashDist: 35
   isDashCooldown: 0
   dashCooldown: 0.67
+  canJump: 1
   groundCheckDist: 0.97
   jumpCount: 3
   jumpTotal: 1
@@ -4979,8 +4981,9 @@ MonoBehaviour:
   fallMultiplier: 9
   lowJumpMultiplier: 2
   multiplier: 100
-  timeToApex: 0.5
-  timeToFall: 0.5
+  timeToApex: 1
+  timeToFall: 2
+  didLaunch: 0
   useGravity: 1
   doJump: 0
   playerCollider: {fileID: 1463052221125900097}
@@ -5120,6 +5123,37 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!1 &1542495482258306207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8011639831050333775}
+  m_Layer: 6
+  m_Name: HandTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8011639831050333775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542495482258306207}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5, y: -0.7, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5881323034138899602}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4235393040638722578
 GameObject:
   m_ObjectHideFlags: 0

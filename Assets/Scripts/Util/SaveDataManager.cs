@@ -78,8 +78,6 @@ public class SaveDataManager: MonoBehaviour{
         Debug.Log("Saved Game");
     }
 
-
-
     //find the prefab stored in a dropData in our global dropData scriptable object list.
     public GameObject FindDropGameObj(string key)
     {

@@ -60,6 +60,7 @@ MonoBehaviour:
   animator: {fileID: 8816747777273190341}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 5995315671783149573}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   bounceForce: 20
@@ -73,7 +74,7 @@ MonoBehaviour:
   avoidanceDistance: 15
   avoidanceAngle: 75
   animatedModel: {fileID: 3849179499225034906}
-  weapon: {fileID: 7159060078302827702}
+  weapon: {fileID: 4532287005889657168}
   lookTransform: {fileID: 5400327615028338775}
   playerObject: {fileID: 0}
   groundCheckDist: 0.97
@@ -116,7 +117,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -391,7 +392,7 @@ GameObject:
   - component: {fileID: 1261100142510515226}
   - component: {fileID: 1472580006392949065}
   - component: {fileID: 3163949005946307528}
-  - component: {fileID: 7159060078302827702}
+  - component: {fileID: 4532287005889657168}
   - component: {fileID: 1421720976596736270}
   - component: {fileID: 2347861928408988028}
   m_Layer: 2
@@ -469,7 +470,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7159060078302827702
+--- !u!114 &4532287005889657168
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -478,7 +479,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7030717933626012425}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
+  m_Script: {fileID: 11500000, guid: f56f324d3f94d9c41b1cb312824ef9d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 0}
@@ -486,6 +487,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 1421720976596736270}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 1
@@ -495,6 +497,21 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  materials: {fileID: 0}
+  atkAngle: 10
+  atkHeight: 3
+  hasAlt: 0
+  altAtkRadius: 0
+  altAtkAngle: 0
+  altAtkHeight: 0
+  altAction: -1
+  animateAlt: 0
+  hasSpecial: 0
+  specialAtkAngle: 0
+  specialAtkRadius: 0
+  specialAtkHeight: 0
+  specialAction: -1
+  animateSpecial: 0
 --- !u!114 &1421720976596736270
 MonoBehaviour:
   m_ObjectHideFlags: 0

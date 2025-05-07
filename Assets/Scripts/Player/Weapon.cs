@@ -22,6 +22,9 @@ public class Weapon : Collectible
 
     public CollisionSensor collisionSensor;
 
+    // Transform component that tells the player where to hold the weapon
+    public Transform handleTransform;
+
     //public Collider weaponCollider;
 
     public bool hasCooldown = false;
@@ -32,6 +35,9 @@ public class Weapon : Collectible
 
     public float specialCooldownTime = 1f;
 
+    //used to know when the weapon is executing an attack.
+    public bool isAttacking = false;
+
     public bool canAttack = true;
 
     public float attackDistance = 1f;
@@ -41,9 +47,9 @@ public class Weapon : Collectible
     public Animator animator;
 
     //colors used when debugging the collision sensor mesh
-    private Color ogMeshColor;
+    protected Color ogMeshColor;
     //blue with 100 alpha.
-    private Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
+    protected Color cooldownMeshColor = new Color(0, 0, 1, 100f / 255f);
 
     //used to prevent destroying the weapon we pick up.
     //sometimes that would happen and this is a really messy solution for that.
@@ -348,8 +354,54 @@ public class Weapon : Collectible
         StartCoroutine(SpecialAttackCoroutine());
     }
 
-    public IEnumerator AltAttackCoroutine()
+    public virtual IEnumerator AttackCoroutine()
     {
+        //say we are currently attacking
+        isAttacking = true;
+
+        //start the attack animation
+        if (animator != null)
+        animator.SetTrigger("attack");
+
+        //don't allow other attacks during our current attack.
+        canAttack = false;
+
+        //TODO:
+        //implement an animation for attacking,
+        //but for now enable the collider for an attack.
+        //weaponCollider.enabled = true;
+
+        //Execute the coroutine for dealing damage using our collision sensor.
+        yield return DealDamage(1);
+
+        //set color of debug mesh to show we are in cooldown
+        collisionSensor.sensorColor = cooldownMeshColor;
+
+        //if we have a cooldown, wait the cooldown time before attacking.
+        if (hasCooldown)
+        yield return new WaitForSeconds(cooldownTime);
+
+        //restore default color
+        collisionSensor.sensorColor = ogMeshColor;
+
+        //wait for the animator to finish the attack animation before continuing.
+        //yield return LDUtil.WaitForAnimationFinish(animator);
+
+        //allow us to attack again.
+        canAttack = true;
+
+        //say we are no longer attacking
+        isAttacking = false;
+
+        yield break;
+    }
+
+
+    public virtual IEnumerator AltAttackCoroutine()
+    {
+        //say we are currently attacking
+        isAttacking = true;
+
         //start the attack animation
         if (animator != null)
             animator.SetTrigger("altAttack");
@@ -374,12 +426,18 @@ public class Weapon : Collectible
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
     //this does 2 damage.
-    public IEnumerator AirAltAttackCoroutine()
+    public virtual IEnumerator AirAltAttackCoroutine()
     {
+        //say we are currently attacking
+        isAttacking = true;
+
         //start the attack animation
         if (animator != null)
         {
@@ -437,6 +495,9 @@ public class Weapon : Collectible
         //allow us to attack again.
         canAttack = true;
 
+        //say we are no longer attacking
+        isAttacking = false;
+
         yield break;
     }
 
@@ -444,8 +505,11 @@ public class Weapon : Collectible
     //I want to make it so when you get an attack
     //to land, any attack, you don't start falling yet,
     //because then you can combo against the boss.
-    public IEnumerator SpecialAttackCoroutine()
+    public virtual IEnumerator SpecialAttackCoroutine()
     {
+        //say we are currently attacking
+        isAttacking = true;
+
         //start the attack animation
         if (animator != null)
             animator.SetTrigger("specialAttack");
@@ -535,6 +599,9 @@ public class Weapon : Collectible
 
         //allow us to attack again.
         canAttack = true;
+
+        //say we are no longer attacking
+        isAttacking = false;
 
         yield break;
     }

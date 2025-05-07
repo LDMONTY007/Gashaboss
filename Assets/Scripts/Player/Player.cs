@@ -47,6 +47,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public ParticleSystem dashParticles;
     public ParticleSystem walkParticles;
     public GameObject landingParticles;
+    // Transform component that holds where the wepon should be held relative to player
+    public Transform handTransform;
     #region Items and Modifier vars
     [SerializeField] public List<StatModifier> modifiers = new List<StatModifier>();
     public List<ItemData> inventory = new List<ItemData>();
@@ -195,6 +197,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     public float multiplier = 100f;
     public float timeToApex = 0.01f;
     public float timeToFall = 0.5f;
+
+    //was the player launched?
+    public bool didLaunch = false;
 
     //The gravity we return to 
     //after modifying gravity.
@@ -395,7 +400,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (isGrounded)
         {
-
+            //if we were launched, say we are no longer launched.
+            if (didLaunch)
+            {
+                didLaunch = false;
+            }
 
             //reset jump count and jump canceled, and gravity
             //when not jumping and grounded.
@@ -405,8 +414,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
                 jumpCanceled = false;
                 //set gravity back to base.
                 gravity = baseGravity;
-                //Debug.Log("BACK TO BASE".Color("Green"));
+                Debug.Log("BACK TO BASE".Color("Green"));
                 //animator.SetTrigger("landing");
+
+                
             }
             //reset dash count when grounded, and not dashing.
             if (!dashing)
@@ -423,23 +434,34 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (jumping && !jumpCanceled)
         {
-            if (!jumpAction.IsPressed()) //If we stop giving input for jump cancel jump so we can have a variable jump.
+            //If we stop giving input for jump cancel jump so we can have a variable jump.
+            //Also if we were launched, ignore this check.
+            if (!jumpAction.IsPressed() && !didLaunch) 
             {
                 jumpCanceled = true;
+                Debug.Log("JUMP CANCELED".Color("Orange"));
                 //gravity = fallGravity;
             }
 
-            if (jumpTime >= buttonTime) //When we reach our projected time stop jumping and begin falling.
+            //This check should execute even when launched because
+            //it handles knowing when we've reached the "apex" of our jump/arc. 
+            //When we reach our projected time stop jumping and begin falling.
+            if (jumpTime >= buttonTime) 
             {
                 Debug.Log("JUMP CANCELED BY BUTTON TIME".Color("Green"));
                 //pause the editor
                 //Debug.Break();
                 jumpCanceled = true;
-
+                Debug.Log("JUMP CANCELED".Color("Orange"));
                 //set gravity back to fall gravity
                 gravity = fallGravity;
                 //gravity = baseGravity;
 
+                //if we were launched, say we are no longer launched.
+                if (didLaunch)
+                {
+                    didLaunch = false;
+                }
 
                 //jumpDist = Vector2.Distance(transform.position, ogJump); //Not needed, just calculates distance from where we started jumping to our highest point in the jump.
                 //jumpDist = transform.position.y - ogJump.y;
@@ -449,6 +471,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         if (jumpCanceled)
         {
             jumping = false;
+            Debug.Log("JUMP CANCELED".Color("Red"));
         }
 
         doDash |= dashAction.WasPressedThisFrame() && dashCount > 0 && !dashing && !isDashCooldown && !stunned;
@@ -734,6 +757,13 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         if (doJump)
         {
+            //if we were launched, say we are no longer launched,
+            //this lets us start a jump right after being launched.
+            if (didLaunch)
+            {
+                didLaunch = false;
+            }
+
             //say we didn't yet land.
             didLand = false;
 
@@ -826,8 +856,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         jumpTime = 0;
         jumping = true;
         jumpCanceled = false;
+        didLand = false;
 
-
+        //Say we launched the player
+        didLaunch = true;
 
         //rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
@@ -1213,7 +1245,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //rotate -45 degrees away from the boss so we get bounced at an angle away from it.
         Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -45);
 
-        Debug.Log("HERE");
         Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 1f);
 
         StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
@@ -1455,12 +1486,11 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         
 
         //if we spawned a new weapon,
-        //set it's local posiition to be 0,0,0
-        //so that it's centered on the player.
+        //set it's local posiition to the mount point for player hand
         if (this.curWeapon != null)
         {
-            this.curWeapon.transform.localPosition = Vector3.zero;
-
+            this.curWeapon.transform.SetParent(transform, false);
+            this.curWeapon.transform.localPosition = handTransform.localPosition - this.curWeapon.handleTransform.localPosition;
             //say the weapon is equipped.
             this.curWeapon.isEquipped = true;
         }
@@ -1478,7 +1508,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
             //up by the player.
             itemData.OnPickup();
         }
-       
     }
 
     
@@ -1494,7 +1523,6 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         gameData.inventory.Clear();
         for (int i = 0; i < inventory.Count; i++)
         { gameData.inventory.Add(inventory[i].name); }
-        
     }
 
 
@@ -1503,9 +1531,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         DropCurrentWeapon();
         //set the weapons parent transform to be this player.
         w.transform.SetParent(transform, false);
-        //set the position to be zero locally
-        //so that it is zero relative to the parent as well.
-        w.transform.localPosition = Vector3.zero;
+        //set the position to the hand transform + the handle transform
+        //That way it is held in the correct position relative to player locally
+        w.transform.localPosition = handTransform.localPosition - w.handleTransform.localPosition;
         //set to no rotation (0, 0, 0);
         w.transform.localRotation = Quaternion.identity;
 

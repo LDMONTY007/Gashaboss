@@ -5,11 +5,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.TextCore.Text;
-using static UnityEditor.PlayerSettings;
 
 public class BossController : Collectible, IDamageable
 {
@@ -30,6 +28,8 @@ public class BossController : Collectible, IDamageable
     public ParticleSystem stunParticles;
 
     public GachaMachine parentMachine;
+
+    public Transform launchTransform; // used for bosses that need projectiles spawned from a specific point
 
     #region health vars
     [Header("Health Variables")]
@@ -117,13 +117,16 @@ public class BossController : Collectible, IDamageable
         //turn off the boss UI.
         UIManager.Instance.SetBossUI(false);
 
-       //reward the player with the loot
+
+
+        //reward the player with the loot
         //from this boss.
         playerObject.GetComponent<Player>().caps += capsRewarded;
         playerObject.GetComponent<Player>().curHealth += coinsRewarded;
 
-        //the boss was defeated so tell the parent machine this.
-        parentMachine.OnBossDefeated();
+        if (parentMachine != null)
+            //the boss was defeated so tell the parent machine this.
+            parentMachine.OnBossDefeated();
 
         // Check if the player has a discount voucher and refresh it after boss defeat
         VoucherEffect voucher = playerObject.GetComponent<Player>().GetComponent<VoucherEffect>();
@@ -146,7 +149,7 @@ public class BossController : Collectible, IDamageable
         Destroy(gameObject);
     }
 
-    
+
 
     [HideInInspector]
     public bool isDead = false;
@@ -166,7 +169,7 @@ public class BossController : Collectible, IDamageable
     public bool doStateMachine = false;
 
     [Header("Attack Parameters")]
-    public float attackCheckRadius = 10f;
+    private float attackCheckRadius = 10f;
 
 
 
@@ -175,6 +178,7 @@ public class BossController : Collectible, IDamageable
 
     [Header("Move Parameters")]
     public float moveSpeed = 5f;
+    public float minStopDist = 1f;
 
     [Header("Collision Avoidance Parameters")]
     public float avoidanceForceMultiplier = 50f;
@@ -203,12 +207,12 @@ public class BossController : Collectible, IDamageable
     //whenever it changes just to make sure that it
     //changes only when appropriate.
     //it also lets me change the debug info text to display the state.
-    public BossState curState { 
-        get { 
-            return _curState; 
-        } 
-        set { 
-            Debug.LogWarning("State switched from " + _curState + " to " + value);  
+    public BossState curState {
+        get {
+            return _curState;
+        }
+        set {
+            Debug.LogWarning("State switched from " + _curState + " to " + value);
 
             if (value == BossState.move)
             {
@@ -221,8 +225,8 @@ public class BossController : Collectible, IDamageable
                 rb.constraints = RigidbodyConstraints.FreezeAll;
             }
 
-            _curState = value; 
-            debugInfoTextMesh.text = _curState.ToString(); 
+            _curState = value;
+            debugInfoTextMesh.text = _curState.ToString();
 
             //last resort for stopping the getCloseForAttackCoroutine,
             //which should be able to stop itself, and doesn't
@@ -234,13 +238,13 @@ public class BossController : Collectible, IDamageable
                 StopCoroutine(getCloseForAttackCoroutine);
                 getCloseForAttackCoroutine = null;
             }*/
-        } 
+        }
     }
 
 
     public GameObject animatedModel;
 
-    public Weapon weapon;
+    public BossWeapon weapon;
 
     private MeshRenderer bossRenderer;
 
@@ -262,7 +266,7 @@ public class BossController : Collectible, IDamageable
         //return true. 
         if (objs.Any<Collider>(c => c.GetComponent<Player>() != null))
         {
-            
+
             return true;
         }
 
@@ -358,9 +362,20 @@ public class BossController : Collectible, IDamageable
 
         if (doStateMachine)
         {
-            HandleStateMachine();
+            //Debug.LogWarning("Next: " + nextAttack.didExecute + " , " + nextAttack.active);
 
-            
+            //if the next attack has already ended then 
+            //set it to null so we can get a new next attack
+            //in the next Idle state.
+            if (nextAttack != null && nextAttack.didExecute)
+            {
+                //Debug.Break();
+                //reset the attack's didExecute flag.
+                nextAttack.didExecute = false;
+                nextAttack = null;
+            }
+
+            HandleStateMachine();
         }
 
         //Handle the particle FX
@@ -395,14 +410,16 @@ public class BossController : Collectible, IDamageable
     /// For example if the boss is in the air make sure we don't
     /// freeze them on the Z axis and let gravity effect them.
     /// </summary>
-    public void ApplyFinalMovements()
+    public virtual void ApplyFinalMovements()
     {
+        Debug.Log(rb.rotation.eulerAngles.ToString());
+
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.
         //we freeze the position otherwise. 
         //we just allow gravity to take over
         //so that it can fall back to the ground.
-        if (curState != BossState.stun && curState != BossState.move && !isGrounded)
+        if (!manualRotation && curState != BossState.stun && curState != BossState.move && !isGrounded)
         {
             //freeze all rotation and only allow movement on the y axis.
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
@@ -419,6 +436,8 @@ public class BossController : Collectible, IDamageable
 
     public virtual void HandleStateMachine()
     {
+
+
         #region boss state switching
 
         //old code to go straight to attacking,
@@ -518,6 +537,17 @@ public class BossController : Collectible, IDamageable
         //no leaving the stun state early.
         if (curState != BossState.stun)
         {
+            //if  the next attack is null,
+            //get the next attack before checking the attack range
+            //as different attacks will change the attack range.
+            if (nextAttack == null)
+            {
+                GetNextAttack();
+            }
+
+            //Then check the attack range
+            //to see if the next attack is 
+            //ready to be used.
             if (IsPlayerInAttackRange())
             {
                 Debug.Log("Boss is in attack range!".Color("orange"));
@@ -533,30 +563,74 @@ public class BossController : Collectible, IDamageable
 
 
     MeleeAttack meleeAttack = new MeleeAttack();
+    AltAttack altAttack = new AltAttack();
+    SpecialAttack specialAttack = new SpecialAttack();
+
+    private BossAction _nextAttack;
+
+    public BossAction nextAttack {  get { return _nextAttack; } set { _nextAttack = value; if (value != null) Debug.Log("Set Next Attack: " + value.ToString()); } }
+
+    public void GetNextAttack()
+    {
+        //if the boss isn't already attacking,
+        //then start one.
+        if (!meleeAttack.active && !altAttack.active && !specialAttack.active)
+        {
+            // Temp logic for attack handling, for now we'll just pick a random attack out of the three options
+            // Weapons will just default to melee attacks, if a alt or special attack isn't available anyway, so this should operate fine
+            int randAttack = UnityEngine.Random.Range(0, 3);
+            Debug.Log("Boss wants to attack here!".Color("Red"));
+            switch (randAttack)
+            {
+                case 0:
+                    nextAttack = meleeAttack;
+                    //Set the attack check radius to be that of the normal attack.
+                    attackCheckRadius = weapon.atkCheckRadius;
+                    break;
+                case 1:
+                    // if boss doesn't have an alt, use a reg attack instead
+                    if (!weapon.hasAlt)
+                    {
+                        nextAttack = meleeAttack;
+                        //Set the attack check radius to be that of the normal attack.
+                        attackCheckRadius = weapon.atkCheckRadius;
+                        break;
+                    }
+                    nextAttack = altAttack;
+                    //Set the attack check radius to be that of the alt attack.
+                    attackCheckRadius = weapon.altAtkCheckRadius;
+                    break;
+                case 2:
+                    // if boss doesn't have a special, use an alt attack instead
+                    if (!weapon.hasSpecial)
+                    {
+                        nextAttack = altAttack;
+                        //Set the attack check radius to be that of the alt attack.
+                        attackCheckRadius = weapon.altAtkCheckRadius;
+                        break;
+                    }
+                    nextAttack = specialAttack;
+                    //Set the attack check radius to be that of the special attack.
+                    attackCheckRadius = weapon.specialAtkCheckRadius;
+                    break;
+            }
+        }
+    }
 
     public void HandleAttack()
-    {
-
-
-        //TODO:
-        //choose the attack based on our pattern
-        //and execute it.
-        //attacks should be a seperate script to make modular bosses and boss design easier.
-
-
-        //if the boss isn't already in a melee attack,
-        //then start one.
-        if (!meleeAttack.active)
-        {
-            Debug.Log("Boss wants to attack here!".Color("Red"));
-            StartCoroutine(meleeAttack.ActionCoroutine(this, 1f));
-        }
-        
-
+    {   
+       //if we have our next attack and aren't attacking, execute it.
+       if (nextAttack != null && !meleeAttack.active && !altAttack.active && !specialAttack.active)
+       {
+            StartCoroutine(nextAttack.ActionCoroutine(this, 1f));
+       }
     }
 
     private Coroutine getCloseForAttackCoroutine = null;
-
+    public Vector3 GetFeetPosition()
+    {
+        return this.GetComponent<Collider>().bounds.center + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
+    }
     public void HandleMove()
     {
         if (!isMoving)
@@ -577,11 +651,13 @@ public class BossController : Collectible, IDamageable
         }
     }
 
+    public bool manualRotation = false;
+
     //LD Montello
     public void HandleRbRotation()
     {
         //rotate towards the velocity direction but don't rotate upwards.
-        if (new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
+        if (!manualRotation && new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
         {
             //LD Montello
             //Rotation is locked on our rigidbody settings
@@ -590,6 +666,23 @@ public class BossController : Collectible, IDamageable
         }
 
         
+
+    }
+
+    public void LookAtPlayer()
+    {
+        RigidbodyConstraints prevConstraints = rb.constraints;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
+        Vector3 rotDir = (new Vector3(Player.instance.transform.position.x, 0, Player.instance.transform.position.z) - transform.position).normalized;
+        rotDir.y = 0;
+
+        //LD Montello
+        //Rotation is locked on our rigidbody settings
+        //so only code can rotate the object.
+        rb.MoveRotation(Quaternion.LookRotation(rotDir, transform.up));
+
+        rb.constraints = prevConstraints;
 
     }
 

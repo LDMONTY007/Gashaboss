@@ -137,12 +137,13 @@ MonoBehaviour:
   animator: {fileID: 2998781361653774966}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 1160992282999167062}
+  parentMachine: {fileID: 0}
   _maxHealth: 3
   isDead: 0
   bounceForce: 20
   stunTime: 0.5
   curIdleTime: 0
-  doStateMachine: 0
+  doStateMachine: 1
   attackCheckRadius: 10
   rb: {fileID: 0}
   moveSpeed: 15
@@ -150,7 +151,7 @@ MonoBehaviour:
   avoidanceDistance: 5
   avoidanceAngle: 75
   animatedModel: {fileID: 6777944225526870563}
-  weapon: {fileID: 2850824892343764346}
+  weapon: {fileID: 7294310384592750280}
   lookTransform: {fileID: 1176440948467183918}
   playerObject: {fileID: 0}
   groundCheckDist: 0.97
@@ -193,7 +194,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 249
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -393,11 +394,11 @@ GameObject:
   - component: {fileID: 792876336077375964}
   - component: {fileID: 5926003753032567099}
   - component: {fileID: 1209471621513640356}
-  - component: {fileID: 2850824892343764346}
+  - component: {fileID: 7294310384592750280}
   - component: {fileID: 8584689668303243228}
   - component: {fileID: 3227318971385609079}
   m_Layer: 2
-  m_Name: DefaultMeleeWeapon
+  m_Name: PillowHop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -471,7 +472,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2850824892343764346
+--- !u!114 &7294310384592750280
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -480,7 +481,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8480761909344800527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7374970ee799d43910e36d41bf0ca1, type: 3}
+  m_Script: {fileID: 11500000, guid: f56f324d3f94d9c41b1cb312824ef9d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 0}
@@ -488,15 +489,31 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 8584689668303243228}
+  handleTransform: {fileID: 0}
   hasCooldown: 1
   cooldownTime: 0.45
-  altCooldownTime: 1
+  altCooldownTime: 1.5
   specialCooldownTime: 1
   canAttack: 1
   attackDistance: 10
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
+  atkAngle: 75
+  atkHeight: 1
+  hasAlt: 1
+  altAtkRadius: 15
+  altAtkAngle: 180
+  altAtkHeight: 0.5
+  altAction: 0
+  animateAlt: 1
+  hasSpecial: 0
+  specialAtkAngle: 0
+  specialAtkRadius: 0
+  specialAtkHeight: 0
+  specialAction: -1
+  animateSpecial: 0
 --- !u!114 &8584689668303243228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,6 +613,70 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7646845112805564682, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -7646845112805564682, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 18.109526
+      objectReference: {fileID: 0}
+    - target: {fileID: -6914167429984788900, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 27.35116
+      objectReference: {fileID: 0}
+    - target: {fileID: -6914167429984788900, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 19.10755
+      objectReference: {fileID: 0}
+    - target: {fileID: -6914167429984788900, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 9.043573
+      objectReference: {fileID: 0}
+    - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -28.140722
+      objectReference: {fileID: 0}
+    - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -12.299775
+      objectReference: {fileID: 0}
+    - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 5.871199
+      objectReference: {fileID: 0}
+    - target: {fileID: -5821295507300260617, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -26.383728
+      objectReference: {fileID: 0}
+    - target: {fileID: -5821295507300260617, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 25.02221
+      objectReference: {fileID: 0}
+    - target: {fileID: -5821295507300260617, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -11.718561
+      objectReference: {fileID: 0}
+    - target: {fileID: -4145714021466459549, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -89.98021
+      objectReference: {fileID: 0}
+    - target: {fileID: -709475690215949317, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -89.98021
+      objectReference: {fileID: 0}
+    - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 28.598959
+      objectReference: {fileID: 0}
+    - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -5.1793394
+      objectReference: {fileID: 0}
+    - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -2.4844437
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_Name
       value: Pillow
@@ -607,6 +688,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2998781361653774966}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6611115359159960206}
   m_SourcePrefab: {fileID: 100100000, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
 --- !u!4 &6150730650149202073 stripped
 Transform:
@@ -640,6 +724,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6611115359159960206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777944225526870563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1f0f3d9bd23d934db3c13a497522701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 7294310384592750280}
 --- !u!1001 &6663968779356413085
 PrefabInstance:
   m_ObjectHideFlags: 0

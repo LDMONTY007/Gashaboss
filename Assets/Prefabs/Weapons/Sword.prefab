@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angle: 75
-  height: 3
+  height: 5
   debugTargets: 1
   debug: 1
   sensorColor: {r: 0, g: 0, b: 1, a: 1}
@@ -246,6 +246,7 @@ Transform:
   m_Children:
   - {fileID: 4278642964264479097}
   - {fileID: 8690879436075887271}
+  - {fileID: 1433242183933158623}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3584174674595279152
@@ -318,6 +319,7 @@ MonoBehaviour:
   hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 7241007279958015534, guid: 38635f5a3cc910543877dec0c185ac42, type: 3}
   collisionSensor: {fileID: 4119237376946075307}
+  handleTransform: {fileID: 1433242183933158623}
   hasCooldown: 1
   cooldownTime: 0.45
   altCooldownTime: 0.45
@@ -326,6 +328,7 @@ MonoBehaviour:
   attackDistance: 7
   player: {fileID: 0}
   animator: {fileID: 1265195092187752908}
+  isEquipped: 0
 --- !u!135 &4471090823642522675
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -347,6 +350,37 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 3.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &7572201214192134365
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1433242183933158623}
+  m_Layer: 2
+  m_Name: HandleTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1433242183933158623
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572201214192134365}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4463684173311591945}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &9157662681433476428
 PrefabInstance:
   m_ObjectHideFlags: 0
