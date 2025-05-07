@@ -185,10 +185,10 @@ public class GachaMachine : MonoBehaviour, IDamageable {
             return true;
         }
 
-        if (p.curHealth > 1)
+        if (p.curHealth > 0)
         {
             //Decrement player coins.
-            p.curHealth--;
+            p.TakeDamage(1);
             //Give player a cap if they use gacha machine, cause *shrugs*
             p.caps += 1;
             return true;
