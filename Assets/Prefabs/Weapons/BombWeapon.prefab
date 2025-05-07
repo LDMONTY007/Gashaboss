@@ -121,11 +121,13 @@ MonoBehaviour:
   cooldownTime: 0.25
   altCooldownTime: 1
   specialCooldownTime: 1
+  isAttacking: 0
   canAttack: 1
   attackDistance: 1
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  damage: 80
   projectile: {fileID: 6673216678060324407, guid: 43ba89e143a4a3741a447e0574777d56, type: 3}
   specialWaitTime: 1
   altSizeMult: 1.5

@@ -324,11 +324,13 @@ MonoBehaviour:
   cooldownTime: 0.45
   altCooldownTime: 0.45
   specialCooldownTime: 0
+  isAttacking: 0
   canAttack: 1
   attackDistance: 7
   player: {fileID: 0}
   animator: {fileID: 1265195092187752908}
   isEquipped: 0
+  damage: 30
 --- !u!135 &4471090823642522675
 SphereCollider:
   m_ObjectHideFlags: 0

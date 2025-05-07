@@ -51,7 +51,7 @@ MonoBehaviour:
   doesSplashDamage: 1
   splashDamageRadius: 5
   destroyOnCollision: 1
-  damage: 1
+  damage: 80
   launchOnStart: 1
   launchSpeed: 80
   gravity: 156.96
