@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Collectable
   - Weapon
+  - Gashamachine
   layers:
   - Default
   - TransparentFX

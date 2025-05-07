@@ -917,7 +917,7 @@ GameObject:
   - component: {fileID: 4522689503701001788}
   m_Layer: 0
   m_Name: UFOGrabber_Gacha
-  m_TagString: Untagged
+  m_TagString: Gashamachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
