@@ -40,11 +40,13 @@ public class BossWeapon: Weapon{
         // LaserSwarm: 2
         // TrexStomp: 3
         // MechaRexLaser: 4
+        // DualCannonLaser: 5
         bossActions.Add(new PillowHop(materials));
         bossActions.Add(new LaserAttack(materials));
         bossActions.Add(new LaserSwarm(materials));
         bossActions.Add(new TrexStomp(materials));
         bossActions.Add(new MechasaurLaser(materials));
+        bossActions.Add(new DualCannonLaserAttack(materials));
     }
     public override void AltAttack(){
         if (!canAttack){
