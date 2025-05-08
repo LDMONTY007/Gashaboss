@@ -6,13 +6,15 @@ public class DashAwayMove : BossAction
 {
     public override IEnumerator ActionCoroutine(BossController boss, float duration)
     {
-
+        active = true;
 
         //Do not dash away if we are in stun.
         if (boss.curState == BossController.BossState.stun)
         {
             yield break;
         }
+
+        boss.curState = BossController.BossState.move;
 
         //the distance the player is going to dash at.
         //this is here just for readability.
@@ -121,5 +123,9 @@ public class DashAwayMove : BossAction
         //just yield and return the move to position
         //call.
         yield return boss.MoveToPosition(dashAwayPos, 50f, boss.minStopDist, 0.1f);
+
+        active = false;
+
+        didExecute = true;
     }
 }

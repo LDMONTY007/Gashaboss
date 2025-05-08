@@ -23,6 +23,12 @@ public class MeleeAttack : BossAction
                 //so we do the attack animation.
                 boss.animator.SetTrigger("attack");
             }
+
+            //Make the boss look at the player.
+            boss.manualRotation = true;
+            boss.LookAtPlayer();
+            boss.manualRotation = false;
+
             boss.weapon.Attack();
 
             //Do the bosses attack coroutine.
@@ -38,6 +44,8 @@ public class MeleeAttack : BossAction
             Debug.LogError("The boss has no weapon equipped, please ensure there is one equipped.");
         }
 
+
+
         //Wait for the bosses weapon attack
         //to end so we wait here until the boss is allowed to attack
         //again, AKA when it has finished executing the attack.
@@ -49,7 +57,7 @@ public class MeleeAttack : BossAction
 
         //DashAwayMove dashAwayMove = new DashAwayMove();
 
-        //boss.SwitchToIdle(0f);
+        
 
         //yield return null;
 
@@ -57,12 +65,16 @@ public class MeleeAttack : BossAction
         //just reuse the dash away move at the end of our attack.
         //yield return dashAwayMove.ActionCoroutine(boss, duration);
 
+
+
         active = false;
 
         Debug.Log("INACTIVE");
 
         //say this was executed.
         didExecute = true;
+
+        boss.SwitchToIdle(0f);
     }
 
 

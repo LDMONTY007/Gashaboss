@@ -447,15 +447,17 @@ public class BossController : Collectible, IDamageable
         // Add periodic check to force recovery if boss seems stuck
         if (Time.frameCount % 300 == 0) // Every ~5 seconds at 60fps
         {
-            // Check if we've been in the same state for too long
-            // Implementation depends on how you want to track state duration
+            
+        }
 
-            // For now, just ensure nextAttack is properly cleared if it's stuck
-            if (nextAttack != null && nextAttack.didExecute)
-            {
-                nextAttack.didExecute = false;
-                nextAttack = null;
-            }
+        // Check if we've been in the same state for too long
+        // Implementation depends on how you want to track state duration
+
+        // For now, just ensure nextAttack is properly cleared if it's stuck
+        if (nextAttack != null && nextAttack.didExecute)
+        {
+            nextAttack.didExecute = false;
+            nextAttack = null;
         }
 
         switch (curState)
@@ -566,6 +568,8 @@ public class BossController : Collectible, IDamageable
     MeleeAttack meleeAttack = new MeleeAttack();
     AltAttack altAttack = new AltAttack();
     SpecialAttack specialAttack = new SpecialAttack();
+    DashAwayMove dashAwayMove = new DashAwayMove();
+
 
     private BossAction _nextAttack;
 
@@ -579,7 +583,7 @@ public class BossController : Collectible, IDamageable
         {
             // Temp logic for attack handling, for now we'll just pick a random attack out of the three options
             // Weapons will just default to melee attacks, if a alt or special attack isn't available anyway, so this should operate fine
-            int randAttack = UnityEngine.Random.Range(0, 3);
+            int randAttack = UnityEngine.Random.Range(0, 4);
             Debug.Log("Boss wants to attack here!".Color("Red"));
             switch (randAttack)
             {
@@ -622,6 +626,10 @@ public class BossController : Collectible, IDamageable
                     //Set the attack check radius to be that of the special attack.
                     attackCheckRadius = weapon.specialAtkCheckRadius;
                     break;
+                case 3:
+                    //Have the boss dash away from the player.
+                    StartCoroutine(dashAwayMove.ActionCoroutine(this, 1f));
+                    break;
             }
         }
     }
@@ -631,6 +639,7 @@ public class BossController : Collectible, IDamageable
        //if we have our next attack and aren't attacking, execute it.
        if (nextAttack != null && !meleeAttack.active && !altAttack.active && !specialAttack.active)
        {
+            Debug.Log("HERE 2");
             StartCoroutine(nextAttack.ActionCoroutine(this, 1f));
        }
     }
