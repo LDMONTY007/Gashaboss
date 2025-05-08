@@ -35,7 +35,6 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         }
 
         collectionPanel.SetActive(false); // UI starts hidden
-        closeCollectionButton.onClick.AddListener(CloseCollection);
         collectedCollectibles = new Dictionary<string, DropData>(); // Initialize dictionary
     }
 
