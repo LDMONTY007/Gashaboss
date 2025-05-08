@@ -35,7 +35,6 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         }
 
         collectionPanel.SetActive(false); // UI starts hidden
-        closeCollectionButton.onClick.AddListener(CloseCollection);
         collectedCollectibles = new Dictionary<string, DropData>(); // Initialize dictionary
     }
 
@@ -64,7 +63,7 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         {
             LoadMenuItem(collectible.Value.droppedObject, collectible.Key, collectible.Value.cost);
         }
-        SetCursorState(true);
+        UIManager.Instance.TogglePause();
         UIManager.Instance.currentUIState = UIManager.UIState.Collection; // <<< USE STATE MACHINE
 
         OnCollectionOpen?.Invoke();
@@ -81,26 +80,13 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         collectionPanel.SetActive(false);
 
         // --- Proper cursor and state handling ---
-        if (ObjectViewer.instance.objectViewerPanel.alpha != 0f)
-        {
-            // If Object Viewer is still open
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            Time.timeScale = 0f;
-            UIManager.Instance.currentUIState = UIManager.UIState.ObjectViewer;
+        if (ObjectViewer.instance.objectViewerPanel.alpha != 0f){
+            ObjectViewer.instance.CloseViewer();
         }
-        else
-        {
-            // Everything is closed
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            Time.timeScale = 1f;
-            UIManager.Instance.currentUIState = UIManager.UIState.None;
-        }
-
+        UIManager.Instance.TogglePause();
+        UIManager.Instance.currentUIState = UIManager.UIState.None;
         OnCollectionClose?.Invoke();
     }
-
     public void LoadMenuItem(GameObject collectiblePrefab, string collectibleName, int cost)
     {
         Debug.Log("Loading Menu Item");
@@ -115,7 +101,15 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         // add event to view button
         listing.transform.Find("CollectibleButton").GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
         // add event to buy button
-        listing.transform.Find("BuyButton").GetComponent<Button>().onClick.AddListener(() => BuyCollectible(collectibleName, cost));
+        Transform buyButton = listing.transform.Find("BuyButton");
+        buyButton.GetComponent<Button>().onClick.AddListener(() => BuyCollectible(collectibleName, cost));
+        
+        //Update the buy button to show cost        
+        TextMeshProUGUI costText = buyButton.transform.Find("CostText").GetComponent<TextMeshProUGUI>();
+        if (costText != null)
+        {
+            costText.text = "Buy: " + cost;
+        }
     }
 
     public void LoadData(GameData gameData)

@@ -52,18 +52,18 @@ public class DisplayCase : MonoBehaviour
         // 1) Make sure UIManager is present
         if (UIManager.Instance == null) return;
 
-        // 2) Only allow "E" if no other UI is open.
-        //    i.e., only if currentUIState is None
-        if (UIManager.Instance.currentUIState != UIManager.UIState.None)
+        // 2) If player is already in Collections, close it
+        if (UIManager.Instance.currentUIState == UIManager.UIState.Collection && Input.GetKeyDown(KeyCode.E)){
+            CollectionManager.instance.CloseCollection();
+            // return here, so logic doesn't try to open the window again
             return;
-
-        
+        }
+        // 3) Only allow "E" if no other UI is open.
+        //    i.e., only if currentUIState is None
+        if (UIManager.Instance.currentUIState != UIManager.UIState.None) return;
 
         // 3) Only open collection if the player is in range and pressed E
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.Log("HERE");
             CollectionManager.instance.OpenCollection();
-        }
     }
 }

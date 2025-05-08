@@ -403,6 +403,13 @@ public class BossController : Collectible, IDamageable
         HandleAnimation();
     }
 
+    public void OnCollisionEnter(Collision collision){
+        Player player = collision.gameObject.GetComponent<Player>();
+        if (player != null){
+            player.TakeDamage(1, this.gameObject);
+        }
+    }
+
     public void OnLanded()
     {
         //TODO: Play landing particles here.

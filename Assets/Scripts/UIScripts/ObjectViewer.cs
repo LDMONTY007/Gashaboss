@@ -246,24 +246,6 @@ public class ObjectViewer : UIInputHandler
         {
             viewerCamera.gameObject.SetActive(false);
         }
-
-        // Return to appropriate UI state
-        if (CollectionManager.instance.collectionPanel.activeSelf)
-        {
-            // If collection panel is still open
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            Time.timeScale = 0f;
-            UIManager.Instance.currentUIState = UIManager.UIState.Collection;
-        }
-        else
-        {
-            // Fully exit UI mode
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            Time.timeScale = 1f;
-            UIManager.Instance.currentUIState = UIManager.UIState.None;
-        }
     }
 
     /// <summary>
