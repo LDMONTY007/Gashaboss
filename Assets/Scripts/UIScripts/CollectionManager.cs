@@ -101,7 +101,15 @@ public class CollectionManager : UIInputHandler, IDataPersistence
         // add event to view button
         listing.transform.Find("CollectibleButton").GetComponent<Button>().onClick.AddListener(() => ObjectViewer.instance.OpenViewer(collectiblePrefab, collectibleName));
         // add event to buy button
-        listing.transform.Find("BuyButton").GetComponent<Button>().onClick.AddListener(() => BuyCollectible(collectibleName, cost));
+        Transform buyButton = listing.transform.Find("BuyButton");
+        buyButton.GetComponent<Button>().onClick.AddListener(() => BuyCollectible(collectibleName, cost));
+        
+        //Update the buy button to show cost        
+        TextMeshProUGUI costText = buyButton.transform.Find("CostText").GetComponent<TextMeshProUGUI>();
+        if (costText != null)
+        {
+            costText.text = "Buy: " + cost;
+        }
     }
 
     public void LoadData(GameData gameData)
