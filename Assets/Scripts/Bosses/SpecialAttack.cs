@@ -42,7 +42,7 @@ public class SpecialAttack : BossAction
         }
        
 
-        DashAwayMove dashAwayMove = new DashAwayMove();
+        //DashAwayMove dashAwayMove = new DashAwayMove();
 
         //boss.SwitchToIdle(0f);
 
@@ -52,7 +52,7 @@ public class SpecialAttack : BossAction
 
         //return the dash away coroutine so we
         //just reuse the dash away move at the end of our attack.
-        yield return dashAwayMove.ActionCoroutine(boss, duration);
+        //yield return dashAwayMove.ActionCoroutine(boss, duration);
 
         active = false;
 

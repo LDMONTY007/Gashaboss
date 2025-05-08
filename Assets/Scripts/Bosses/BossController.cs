@@ -1273,7 +1273,9 @@ public class BossController : Collectible, IDamageable
 
         //LD Montello
         //dash away from the player.
-        DashAwayMove dashAwayMove = new DashAwayMove();
+        // Moth
+        // Let's not dash away at the start of the Iframe, we aint making no punk ass bosses
+        //DashAwayMove dashAwayMove = new DashAwayMove();
         /*        dashAwayMove.Execute(this, 1f);*/
 
         //we need to wait for 
@@ -1287,7 +1289,7 @@ public class BossController : Collectible, IDamageable
         //and need to stop execution.
         yield return new WaitForFixedUpdate();
 
-        yield return dashAwayMove.ActionCoroutine(this, 1f);
+        //yield return dashAwayMove.ActionCoroutine(this, 1f);
 
         float total = iFrameTime;
         float curTime = 0f;
