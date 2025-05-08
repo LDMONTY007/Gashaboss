@@ -507,6 +507,10 @@ public class Weapon : Collectible
 
             collisionSensor.angle = 45;
 
+            //max hits for the spin attack is 3.
+            int maxHits = 3;
+            int hits = 0;
+
             //Wait until the animation is done
             while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             {
@@ -523,11 +527,17 @@ public class Weapon : Collectible
                     collisionSensor.transform.localRotation = Quaternion.Euler(0f, Mathf.Lerp(0, 360, animator.GetCurrentAnimatorStateInfo(0).normalizedTime), 0f);
                 }
 
-               
+                if (hits < maxHits)
+                {
+                    //Check and deal damage.
+                    //Execute the coroutine for dealing damage using our collision sensor.
+                    yield return DealDamage(1);
+                }
+                else
+                {
+                    Debug.Log("MAXED OUT HITS FOR SPIN ATTACK".Color("Orange"));
+                }
 
-                //Check and deal damage.
-                //Execute the coroutine for dealing damage using our collision sensor.
-                yield return DealDamage(1);
 
                 //if we did hit something, we need to wait 0.33 seconds
                 //before registering another hit in this spin attack.
@@ -535,6 +545,8 @@ public class Weapon : Collectible
                 {
                     //reset the flag.
                     specialDamageHitSuccess = false;
+                    //increment hit count.
+                    hits++;
                     yield return new WaitForSeconds(0.33f);
                 }
                 else
