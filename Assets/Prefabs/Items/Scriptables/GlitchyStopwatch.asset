@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09496eec29eb19b4f904b8de7ad76083, type: 3}
   m_Name: GlitchyStopwatch
   m_EditorClassIdentifier: 
-  description: every 10 seconds. Your next attack will stun the boss for 1 seconds.
+  description: ds
   stunCooldown: 10
   additionalStunDuration: 1
   stunReadyIndicator: {fileID: 0}

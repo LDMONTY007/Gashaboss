@@ -10,8 +10,14 @@ public class PhantomCloak : ItemData
     [Tooltip("Damage multiplier for surprise attack (1.5 = 50% more damage)")]
     public float surpriseAttackMultiplier = 1.5f;
 
+    [Tooltip("Cooldown between activations in seconds")]
+    public float cooldownDuration = 15f;
+
     [System.NonSerialized]
     private bool isInvisible = false;
+
+    [System.NonSerialized]
+    private bool isOnCooldown = false;
 
     [System.NonSerialized]
     private MonoBehaviour coroutineRunner;
@@ -19,9 +25,12 @@ public class PhantomCloak : ItemData
     [System.NonSerialized]
     private Coroutine invisibilityRoutine;
 
+    [System.NonSerialized]
+    private Coroutine cooldownRoutine;
+
     public override void OnPickup()
     {
-        Debug.Log("Phantom Cloak picked up! You'll become invisible when damaged.");
+        Debug.Log("Phantom Cloak picked up! You'll become invisible when damaged (with a cooldown).");
 
         // Store a reference to the player as our coroutine runner
         coroutineRunner = Player.instance;
@@ -37,6 +46,13 @@ public class PhantomCloak : ItemData
         {
             coroutineRunner.StopCoroutine(invisibilityRoutine);
             invisibilityRoutine = null;
+        }
+
+        // Stop cooldown if active
+        if (cooldownRoutine != null && coroutineRunner != null)
+        {
+            coroutineRunner.StopCoroutine(cooldownRoutine);
+            cooldownRoutine = null;
         }
 
         // Unsubscribe from player hit event
@@ -57,10 +73,14 @@ public class PhantomCloak : ItemData
 
     public override void ApplyEffect()
     {
-        // Activate invisibility
-        if (!isInvisible && invisibilityRoutine == null && coroutineRunner != null)
+        // Only activate if not invisible and not on cooldown
+        if (!isInvisible && !isOnCooldown && invisibilityRoutine == null && coroutineRunner != null)
         {
             invisibilityRoutine = coroutineRunner.StartCoroutine(InvisibilityRoutine());
+        }
+        else if (isOnCooldown)
+        {
+            Debug.Log("Phantom Cloak is on cooldown!");
         }
     }
 
@@ -107,6 +127,33 @@ public class PhantomCloak : ItemData
 
         // Reset for next use
         invisibilityRoutine = null;
+
+        // Start cooldown
+        isOnCooldown = true;
+        cooldownRoutine = coroutineRunner.StartCoroutine(CooldownRoutine());
+    }
+
+    // Coroutine to handle cooldown
+    private IEnumerator CooldownRoutine()
+    {
+        Debug.Log($"Phantom Cloak on cooldown for {cooldownDuration} seconds");
+
+        // Wait for cooldown duration
+        float elapsed = 0;
+        while (elapsed < cooldownDuration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset cooldown
+        isOnCooldown = false;
+        cooldownRoutine = null;
+
+        Debug.Log("Phantom Cloak ready to use again!");
+
+        // Use yield break to end the coroutine properly
+        yield break;
     }
 
     // Set player model visibility
@@ -158,14 +205,14 @@ public class PhantomCloak : ItemData
                                 renderer.enabled = true;
 
                                 // Restore opaque rendering
-/*                                renderer.material.SetFloat("_Mode", 0); // Opaque rendering mode
-                                renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                                renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                                renderer.material.SetInt("_ZWrite", 1);
-                                renderer.material.DisableKeyword("_ALPHATEST_ON");
-                                renderer.material.DisableKeyword("_ALPHABLEND_ON");
-                                renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                                renderer.material.renderQueue = -1;*/
+                                /*                                renderer.material.SetFloat("_Mode", 0); // Opaque rendering mode
+                                                                renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                                                                renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                                                                renderer.material.SetInt("_ZWrite", 1);
+                                                                renderer.material.DisableKeyword("_ALPHATEST_ON");
+                                                                renderer.material.DisableKeyword("_ALPHABLEND_ON");
+                                                                renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                                                                renderer.material.renderQueue = -1;*/
                             }
                         }
                         catch (System.Exception e)
@@ -214,6 +261,13 @@ public class PhantomCloak : ItemData
                 coroutineRunner.StopCoroutine(invisibilityRoutine);
                 invisibilityRoutine = null;
             }
+
+            // Start cooldown after attack ends invisibility early
+            if (!isOnCooldown)
+            {
+                isOnCooldown = true;
+                cooldownRoutine = coroutineRunner.StartCoroutine(CooldownRoutine());
+            }
         }
     }
 
@@ -242,10 +296,19 @@ public class PhantomCloak : ItemData
             }
         }
 
-        if (coroutineRunner != null && invisibilityRoutine != null)
+        if (coroutineRunner != null)
         {
-            coroutineRunner.StopCoroutine(invisibilityRoutine);
-            invisibilityRoutine = null;
+            if (invisibilityRoutine != null)
+            {
+                coroutineRunner.StopCoroutine(invisibilityRoutine);
+                invisibilityRoutine = null;
+            }
+
+            if (cooldownRoutine != null)
+            {
+                coroutineRunner.StopCoroutine(cooldownRoutine);
+                cooldownRoutine = null;
+            }
         }
 
         // Make sure player is visible

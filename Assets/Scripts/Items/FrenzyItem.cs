@@ -66,11 +66,11 @@ public class FrenzyItemEffect : MonoBehaviour
     {
         itemData = data;
 
-        // Subscribe to weapon attacks
+        // Subscribe to weapon attacks and successful hits
         playerWeapon = Player.instance.curWeapon;
         if (playerWeapon != null)
         {
-            playerWeapon.onAttack += OnPlayerAttack;
+            playerWeapon.onSuccessfulHit += OnSuccessfulHit;
         }
 
         // Store original speed - assuming Player has a moveSpeed property
@@ -79,7 +79,7 @@ public class FrenzyItemEffect : MonoBehaviour
         // Create particle effect
         CreateFrenzyParticles();
 
-        Debug.Log("Frenzy effect initialized!");
+        Debug.Log("Frenzy effect initialized! Now tracking successful hits on bosses.");
     }
 
     private void CreateFrenzyParticles()
@@ -108,13 +108,14 @@ public class FrenzyItemEffect : MonoBehaviour
         frenzyParticles.Stop();
     }
 
-    private void OnPlayerAttack()
+    // New method that only triggers on successful hits
+    private void OnSuccessfulHit()
     {
         if (inFrenzy || inCooldown)
             return;
 
         attackCounter++;
-        Debug.Log($"Frenzy counter: {attackCounter}/{itemData.attacksToTrigger}");
+        Debug.Log($"Frenzy counter (successful hit): {attackCounter}/{itemData.attacksToTrigger}");
 
         if (attackCounter >= itemData.attacksToTrigger)
         {
@@ -161,13 +162,13 @@ public class FrenzyItemEffect : MonoBehaviour
         {
             if (playerWeapon != null)
             {
-                playerWeapon.onAttack -= OnPlayerAttack;
+                playerWeapon.onSuccessfulHit -= OnSuccessfulHit;
             }
 
             playerWeapon = Player.instance.curWeapon;
             if (playerWeapon != null)
             {
-                playerWeapon.onAttack += OnPlayerAttack;
+                playerWeapon.onSuccessfulHit += OnSuccessfulHit;
             }
 
             // Reset counter when switching weapons
@@ -179,7 +180,7 @@ public class FrenzyItemEffect : MonoBehaviour
     {
         if (playerWeapon != null)
         {
-            playerWeapon.onAttack -= OnPlayerAttack;
+            playerWeapon.onSuccessfulHit -= OnSuccessfulHit;
         }
 
         // Restore original speed if in frenzy

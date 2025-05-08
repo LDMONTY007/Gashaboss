@@ -259,25 +259,25 @@ public class BossController : Collectible, IDamageable
 
     public GameObject playerObject;
 
+    // 1. Fix player visibility check in IsPlayerInAttackRange():
     bool IsPlayerInAttackRange()
     {
-
         // If player is invisible, they can't be detected
         if (!Player.instance.isVisible)
             return false;
 
         Collider[] objs = Physics.OverlapSphere(transform.position, attackCheckRadius);
 
-        //if the player is in the attack range
-        //return true. 
-        if (objs.Any<Collider>(c => c.GetComponent<Player>() != null))
+        // If the player is in the attack range, return true
+        foreach (Collider c in objs)
         {
-
-            return true;
+            if (c.GetComponent<Player>() != null)
+                return true;
         }
 
         return false;
     }
+
 
     //LD Montello
     //called on start
@@ -442,26 +442,22 @@ public class BossController : Collectible, IDamageable
         curState = BossState.idle;
     }
 
+    // 3. Fix HandleStateMachine to ensure bosses can recover when needed:
     public virtual void HandleStateMachine()
     {
+        // Add periodic check to force recovery if boss seems stuck
+        if (Time.frameCount % 300 == 0) // Every ~5 seconds at 60fps
+        {
+            // Check if we've been in the same state for too long
+            // Implementation depends on how you want to track state duration
 
-
-        #region boss state switching
-
-        //old code to go straight to attacking,
-        //but this doesn't make sense to do because
-        //we want to allow the state to execute fully first.
-        /*if (curState != BossState.attack)
-        { 
-            if (IsPlayerInAttackRange())
+            // For now, just ensure nextAttack is properly cleared if it's stuck
+            if (nextAttack != null && nextAttack.didExecute)
             {
-                curState = BossState.attack;
+                nextAttack.didExecute = false;
+                nextAttack = null;
             }
-        }*/
-
-        #endregion
-
-        #region handling individual states
+        }
 
         switch (curState)
         {
@@ -481,8 +477,6 @@ public class BossController : Collectible, IDamageable
                 bossRenderer.material.color = Color.yellow;
                 break;
         }
-
-        #endregion
     }
 
     //LD Montello
@@ -1038,61 +1032,90 @@ public class BossController : Collectible, IDamageable
 
     //continously moves towards player until 
     //the boss is in attack range.
+    // 2. Fix GetCloseForAttack to handle edge cases better:
     public IEnumerator GetCloseForAttack(float speed)
     {
         curState = BossState.move;
         isMoving = true;
 
+        // Add timeout to prevent infinite loop
+        float timeout = 15.0f; // 15 seconds max
+        float timeElapsed = 0f;
+
         // While the player isn't close enough to be attacked or is invisible,
         // walk closer to them (if visible) or just wait (if invisible)
-        while (!IsPlayerInAttackRange() || Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance)
+        while ((!IsPlayerInAttackRange() ||
+                Vector3.Distance(playerObject.transform.position, transform.position) >= weapon.attackDistance) &&
+               timeElapsed < timeout)
         {
-            // If player is invisible, don't move toward them, just wait
-            if (!Player.instance.isVisible)
+            timeElapsed += Time.deltaTime;
+
+            // If we've been chasing too long, reset state to idle to make a new decision
+            if (timeElapsed >= timeout)
             {
+                Debug.LogWarning($"{bossName} chase timeout - resetting state");
+                rb.linearVelocity = Vector3.zero;
+                isMoving = false;
+                SwitchToIdle(1f);
                 yield break;
             }
-            //if we're not in the move state
-            //anymore than stop moving.
-            //this is usually caused when a player
-            //hits us and we end up entering stun.
+
+            // If player is invisible, don't chase - go back to idle
+            if (!Player.instance.isVisible)
+            {
+                rb.linearVelocity = Vector3.zero;
+                isMoving = false;
+                SwitchToIdle(1f);
+                yield break;
+            }
+
+            // If we're not in the move state anymore, stop moving
             if (curState != BossState.move)
             {
-                //Stop moving.
                 rb.linearVelocity = Vector3.zero;
                 isMoving = false;
                 yield break;
             }
 
-            //calculate initial steering
+            // Check if we need to find a new path (in case we're stuck)
+            if (rb.linearVelocity.magnitude < 0.1f)
+            {
+                // Try to find an alternative path
+                Vector3 newPosition = Vector3.zero;
+                if (GetPathablePosition(5f, ref newPosition))
+                {
+                    // Move to this intermediate position first
+                    yield return StartCoroutine(MoveToPosition(newPosition, speed, 1f, 0.2f));
+                    continue;
+                }
+            }
+
+            // Calculate initial steering
             Vector3 steering = CalculateSteering(playerObject.transform.position, speed);
-            
-            //Add the collision avoidance rule
+
+            // Add the collision avoidance rule
             steering += CollisionAvoidance();
 
-            //add steering to current velocity.
+            // Add steering to current velocity
             rb.linearVelocity += steering;
-            //clamp linear velocity to the current given speed.
+
+            // Clamp linear velocity to the current given speed
             rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, speed);
 
             yield return new WaitForFixedUpdate();
         }
 
-        //TODO:
-        //Look at the player after moving
-        //and then switch to attacking 
-        //so we guaranteed hit them.
-
-        //Stop moving.
+        // Stop moving
         rb.linearVelocity = Vector3.zero;
         isMoving = false;
 
         Debug.Log("Move to attack finished");
 
-        //when they are in the attack range,
-        //switch to the attack state.
-        curState = BossState.attack;
-        //Debug.Break();
+        // When they are in the attack range, switch to the attack state
+        if (curState == BossState.move) // Only switch if we're still in move state
+        {
+            curState = BossState.attack;
+        }
     }
 
     //Just a small shake 
@@ -1175,6 +1198,9 @@ public class BossController : Collectible, IDamageable
         int modifiedDamage = Mathf.RoundToInt(d * incomingDamageMultiplier);
         curHealth -= modifiedDamage;
 
+        // Check if this is DOT damage - DOT damage doesn't cause stun
+        bool isDotDamage = other != null && other.GetComponent<DotDamageMarker>() != null;
+
         //idle for a few moments before moving again.
         //SwitchToIdle(1f);
 
@@ -1187,8 +1213,11 @@ public class BossController : Collectible, IDamageable
         //put them in the stun state if not immune
         //to cancel any movements.
         //When the boss takes damage, put them in stun state if not immune
-        if (!isStunImmune)
+        if (!isDotDamage && !isStunImmune)
         {
+            //When the boss takes damage,
+            //put them in the stun state
+            //to cancel any movements.
             curState = BossState.stun;
 
             //Start the shaking animation
@@ -1426,5 +1455,11 @@ public class BossController : Collectible, IDamageable
     }
     public override void OnCollect(){
         CollectionManager.instance.AddToCollection(this);
+    }
+
+    // WaitForSEcondsRoutine Method
+    private IEnumerator WaitForSecondsRoutine(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
     }
 }

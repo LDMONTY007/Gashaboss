@@ -12,17 +12,14 @@ public class DotStatusEffect : ItemData
     [Tooltip("Seconds between damage ticks")]
     public float tickInterval = 3f;
 
-    [Tooltip("Total duration of DOT effect")]
-    public float dotDuration = 12f;
-
-    [Tooltip("Visual effect prefab for the DOT")]
-    public GameObject dotVisualPrefab;
+    [Tooltip("AOE radius around player")]
+    public float aoeRadius = 30f;
 
     private static bool isApplied = false;
 
     public override void OnPickup()
     {
-        Debug.Log("DOT Status Effect item picked up! Your attacks now apply damage over time.");
+        Debug.Log("DOT Status Effect item picked up! Your presence now causes damage over time to nearby bosses.");
 
         if (!isApplied)
         {
@@ -56,178 +53,155 @@ public class DotStatusEffect : ItemData
 public class DotStatusController : MonoBehaviour
 {
     private DotStatusEffect itemData;
-    private Weapon playerWeapon;
-    private bool debugApplyToNearestBoss = false;
 
-    // Track which bosses are affected by DOT
-    private Dictionary<BossController, DotInfo> affectedBosses = new Dictionary<BossController, DotInfo>();
+    // Player AOE visual effect
+    private GameObject playerAoeVisual;
 
-    private class DotInfo
-    {
-        public IEnumerator dotCoroutine;
-        public GameObject dotVisual;
-        public float remainingDuration;
-        public GameObject dotDamageSource;
-    }
+    // Damage application coroutine
+    private Coroutine damageCoroutine;
 
     public void Initialize(DotStatusEffect data)
     {
         itemData = data;
 
-        // Subscribe to ALL player attacks like in CoordinatedAttackItem
-        Player.instance.OnAttack += OnPlayerAttack;
-        Player.instance.OnAltAttack += OnPlayerAttack;
-        Player.instance.OnSpecialAttack += OnPlayerAttack;
+        // Force the radius to be what's set in the script
+        float scriptRadius = 50f; // Match this to what you have in your script
+        if (itemData.aoeRadius != scriptRadius)
+        {
+            Debug.LogWarning($"AOE radius was {itemData.aoeRadius}, forcing to {scriptRadius}");
+            itemData.aoeRadius = scriptRadius;
+        }
 
-        // // Keep the weapon subscription for backward compatibility
-        // playerWeapon = Player.instance.curWeapon;
-        // if (playerWeapon != null)
-        // {
-        //     playerWeapon.onAttack += OnPlayerAttack;
-        // }
+        // Create AOE visual around player
+        CreatePlayerAoeVisual();
 
-        Debug.Log("DOT Status Effect initialized! Now listening to ALL attack types.");
+        // Start the damage application coroutine
+        damageCoroutine = StartCoroutine(ApplyDamageToAllInRange());
 
-        // Force apply on initialization for testing
-        // ForceApplyToAllBosses();
+        Debug.Log($"DOT Status Effect initialized! Continuous AOE damage enabled with radius {itemData.aoeRadius}.");
     }
 
-    private void Update()
+    private void CreatePlayerAoeVisual()
     {
-        // // Handle weapon switching
-        // if (Player.instance.curWeapon != playerWeapon)
-        // {
-        //     if (playerWeapon != null)
-        //     {
-        //         playerWeapon.onAttack -= OnPlayerAttack;
-        //     }
+        if (playerAoeVisual != null)
+            return;
 
-        //     playerWeapon = Player.instance.curWeapon;
-        //     if (playerWeapon != null)
-        //     {
-        //         playerWeapon.onAttack += OnPlayerAttack;
-        //     }
-        // }
+        // Create a poison aura visual effect around player - JUST the particles
+        playerAoeVisual = new GameObject("PlayerDOTAura");
+        playerAoeVisual.transform.parent = transform;
+        playerAoeVisual.transform.localPosition = Vector3.zero;
 
-        // Testing: Apply DOT to nearest boss when flag is set
-        if (debugApplyToNearestBoss)
-        {
-            debugApplyToNearestBoss = false;  // Reset flag
-            BossController boss = FindNearestBoss();
-            if (boss != null)
-            {
-                Debug.Log($"DEBUG: Forcing DOT application on nearest boss: {boss.name}");
-                ApplyDotToBoss(boss);
-            }
-        }
+        // Add particle system
+        ParticleSystem particles = playerAoeVisual.AddComponent<ParticleSystem>();
+
+        // Green particle effect for poison
+        var main = particles.main;
+        main.startColor = new Color(0.4f, 0.8f, 0.2f, 0.4f);
+        main.startSize = 0.3f;
+        main.startSpeed = 2f;
+        main.startLifetime = 1.5f;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+        var emission = particles.emission;
+        emission.rateOverTime = 20;
+
+        var shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = itemData.aoeRadius;
+
+        // Make particles emit outward
+        var velocity = particles.velocityOverLifetime;
+        velocity.enabled = true;
+        velocity.speedModifier = 0.5f;
+
+        particles.Play();
     }
 
-    // Called when player attacks
-    private void OnPlayerAttack()
+    // Simple coroutine that regularly checks for all bosses in range and damages them
+    private IEnumerator ApplyDamageToAllInRange()
     {
-        Debug.Log("DOT Status Effect: Attack detected!");
+        Debug.Log("Starting persistent DOT effect on all bosses in range");
 
-        // Find nearest boss directly like CoordinatedAttackEffect does
-        BossController boss = FindNearestBoss();
+        // Dictionary to track bosses with visual effects
+        Dictionary<BossController, GameObject> bossVisuals = new Dictionary<BossController, GameObject>();
 
-        if (boss != null)
+        while (true)
         {
-            Debug.Log($"DOT Status Effect: Found boss '{boss.name}', applying DOT effect!");
-            ApplyDotToBoss(boss);
-        }
-        else
-        {
-            Debug.Log("DOT Status Effect: No valid boss targets found.");
-        }
-    }
+            // Wait for the tick interval
+            yield return new WaitForSeconds(itemData.tickInterval);
 
-    private BossController FindNearestBoss()
-    {
-        BossController[] bosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        BossController nearest = null;
-        float nearestDist = float.MaxValue;
+            // Find ALL bosses in the scene every time
+            BossController[] allBosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 
-        foreach (BossController boss in bosses)
-        {
-            if (boss == null || boss.isDead)
-                continue;
-
-            float dist = Vector3.Distance(Player.instance.transform.position, boss.transform.position);
-            if (dist < nearestDist)
+            // Process all bosses - applying damage to those in range, cleaning up those out of range
+            foreach (BossController boss in allBosses)
             {
-                nearest = boss;
-                nearestDist = dist;
-            }
-        }
+                if (boss == null || boss.isDead)
+                    continue;
 
-        if (nearest != null)
-            Debug.Log($"Found nearest boss: {nearest.name} at distance {nearestDist}");
+                float distance = Vector3.Distance(transform.position, boss.transform.position);
 
-        return nearest;
-    }
+                if (distance <= itemData.aoeRadius)
+                {
+                    // Boss is in range - apply damage
+                    int previousHealth = boss.curHealth;
+                    boss.curHealth -= itemData.dotDamage;
+                    int actualDamage = previousHealth - boss.curHealth;
 
-    public void ForceApplyToAllBosses()
-    {
-        Debug.Log("DOT Status Effect: Force applying to all bosses");
-        BossController[] bosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                    Debug.Log($"DOT dealt {actualDamage} damage to {boss.name}, health now: {boss.curHealth}");
 
-        Debug.Log($"DOT Status Effect: Found {bosses.Length} bosses in scene");
-        foreach (BossController boss in bosses)
-        {
-            if (boss != null && !boss.isDead)
-            {
-                Debug.Log($"DOT Status Effect: Force applying to boss {boss.name}");
-                ApplyDotToBoss(boss);
-            }
-        }
-    }
+                    // Create or update visual effect
+                    if (!bossVisuals.ContainsKey(boss))
+                    {
+                        bossVisuals[boss] = CreateDotVisual(boss);
+                    }
 
-    private void ApplyDotToBoss(BossController boss)
-    {
-        // Check if boss is already affected
-        if (affectedBosses.TryGetValue(boss, out DotInfo dotInfo))
-        {
-            // Refresh DOT duration
-            dotInfo.remainingDuration = itemData.dotDuration;
-            Debug.Log($"DOT refreshed on {boss.name}");
-        }
-        else
-        {
-            // Create a dedicated damage source
-            GameObject dotDamageSource = new GameObject("DotDamageSource");
-            dotDamageSource.transform.position = boss.transform.position;
-
-            // Apply new DOT
-            DotInfo newDotInfo = new DotInfo
-            {
-                remainingDuration = itemData.dotDuration,
-                dotDamageSource = dotDamageSource,
-                dotCoroutine = ApplyDotDamage(boss, dotDamageSource)
-            };
-
-            // Create visual effect
-            if (itemData.dotVisualPrefab != null)
-            {
-                newDotInfo.dotVisual = Instantiate(
-                    itemData.dotVisualPrefab,
-                    boss.transform.position,
-                    Quaternion.identity,
-                    boss.transform
-                );
-            }
-            else
-            {
-                newDotInfo.dotVisual = CreateDotVisual(boss);
+                    // Flash effect
+                    StartCoroutine(FlashEffect(bossVisuals[boss]));
+                }
+                else
+                {
+                    // Boss out of range - remove visual if exists
+                    if (bossVisuals.ContainsKey(boss))
+                    {
+                        if (bossVisuals[boss] != null)
+                        {
+                            Destroy(bossVisuals[boss]);
+                        }
+                        bossVisuals.Remove(boss);
+                    }
+                }
             }
 
-            affectedBosses.Add(boss, newDotInfo);
-            StartCoroutine(newDotInfo.dotCoroutine);
-            Debug.Log($"DOT applied to {boss.name}");
+            // Clean up any visuals for bosses that no longer exist
+            List<BossController> bossesToRemove = new List<BossController>();
+            foreach (var kvp in bossVisuals)
+            {
+                BossController boss = kvp.Key;
+                if (boss == null || boss.isDead)
+                {
+                    if (kvp.Value != null)
+                    {
+                        Destroy(kvp.Value);
+                    }
+                    bossesToRemove.Add(boss);
+                }
+            }
+
+            // Remove any missing bosses from the dictionary
+            foreach (BossController boss in bossesToRemove)
+            {
+                bossVisuals.Remove(boss);
+            }
         }
     }
 
     private GameObject CreateDotVisual(BossController boss)
     {
+        // Check if boss is valid
+        if (boss == null)
+            return null;
+
         // Create a green poison visual effect
         GameObject visualObj = new GameObject("DOTVisual");
         visualObj.transform.parent = boss.transform;
@@ -238,142 +212,74 @@ public class DotStatusController : MonoBehaviour
         // Green particle effect for poison
         var main = particles.main;
         main.startColor = new Color(0.4f, 0.8f, 0.2f, 0.7f);
-        main.startSize = 0.2f;
-        main.startSpeed = 1f;
+        main.startSize = 0.5f; // Larger particles
+        main.startSpeed = 2f;  // Faster particles
         main.startLifetime = 1f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
 
         var emission = particles.emission;
-        emission.rateOverTime = 15;
+        emission.rateOverTime = 30; // More particles
 
         var shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = 0.5f;
+        shape.radius = 1.0f; // Larger radius
 
         particles.Play();
 
         return visualObj;
     }
 
-    private IEnumerator ApplyDotDamage(BossController boss, GameObject dotDamageSource)
+    private IEnumerator FlashEffect(GameObject visual)
     {
-        DotInfo dotInfo = affectedBosses[boss];
-        Debug.Log($"DOT Effect: Starting DOT on {boss.name} for {dotInfo.remainingDuration} seconds");
-
-        // Apply damage every interval until duration expires
-        while (dotInfo.remainingDuration > 0 && boss != null && !boss.isDead)
-        {
-            // Wait for tick interval
-            yield return new WaitForSeconds(itemData.tickInterval);
-
-            // Reduce remaining duration
-            dotInfo.remainingDuration -= itemData.tickInterval;
-
-            // Apply damage if boss still exists
-            if (boss != null && !boss.isDead)
-            {
-                // Apply damage using the dedicated damage source - THIS IS KEY
-                yield return ApplyDotDamageTick(boss, itemData.dotDamage, dotDamageSource);
-
-                // Flash effect
-                if (dotInfo.dotVisual != null)
-                {
-                    ParticleSystem particles = dotInfo.dotVisual.GetComponent<ParticleSystem>();
-                    if (particles != null)
-                    {
-                        var emission = particles.emission;
-                        float originalRate = emission.rateOverTime.constant;
-                        emission.rateOverTime = originalRate * 3;
-
-                        yield return ResetEmissionRate(particles, originalRate);
-                    }
-                }
-            }
-            else
-            {
-                CleanupDotEffect(boss);
-                yield break;
-            }
-        }
-
-        // DOT expired, clean up
-        CleanupDotEffect(boss);
-    }
-
-    private IEnumerator ApplyDotDamageTick(BossController boss, int damage, GameObject damageSource)
-    {
-        if (boss == null || boss.isDead)
+        if (visual == null)
             yield break;
 
-        // Deal damage using the same approach as CompanionController
-        IDamageable damageable = boss.GetComponent<IDamageable>();
-        if (damageable != null)
-        {
-            Debug.Log($"DOT dealing {damage} damage to {boss.name} using {damageSource.name}");
-            damageable.TakeDamage(damage, damageSource);
-        }
-    }
-
-    private IEnumerator ResetEmissionRate(ParticleSystem particles, float originalRate)
-    {
-        yield return new WaitForSeconds(0.2f);
-
+        ParticleSystem particles = visual.GetComponent<ParticleSystem>();
         if (particles != null)
         {
+            // Get original emission rate
             var emission = particles.emission;
-            emission.rateOverTime = originalRate;
+            float originalRate = emission.rateOverTime.constant;
+
+            // Increase emission temporarily
+            emission.rateOverTime = originalRate * 3;
+
+            // Wait a moment
+            yield return new WaitForSeconds(0.2f);
+
+            // Restore original rate if particles still exist
+            if (particles != null)
+            {
+                emission = particles.emission;  // Get emission again in case it changed
+                emission.rateOverTime = originalRate;
+            }
         }
     }
 
-    private void CleanupDotEffect(BossController boss)
+    private void Update()
     {
-        if (affectedBosses.TryGetValue(boss, out DotInfo dotInfo))
+        // Update the position of the AOE visual
+        if (playerAoeVisual != null)
         {
-            // Clean up coroutine and visual
-            if (dotInfo.dotCoroutine != null)
-            {
-                StopCoroutine(dotInfo.dotCoroutine);
-            }
-
-            if (dotInfo.dotVisual != null)
-            {
-                Destroy(dotInfo.dotVisual);
-            }
-
-            // Destroy the damage source
-            if (dotInfo.dotDamageSource != null)
-            {
-                Destroy(dotInfo.dotDamageSource);
-            }
-
-            affectedBosses.Remove(boss);
-            Debug.Log($"Cleaned up DOT effect for {boss.name}");
+            playerAoeVisual.transform.position = transform.position;
         }
     }
 
     private void OnDisable()
     {
-        // Unsubscribe from all events
-        if (Player.instance != null)
+        // Stop damage coroutine
+        if (damageCoroutine != null)
         {
-            Player.instance.OnAttack -= OnPlayerAttack;
-            Player.instance.OnAltAttack -= OnPlayerAttack;
-            Player.instance.OnSpecialAttack -= OnPlayerAttack;
+            StopCoroutine(damageCoroutine);
+            damageCoroutine = null;
         }
 
-        // Also unsubscribe from weapon events for backward compatibility
-        if (playerWeapon != null)
+        // Destroy player AOE visual
+        if (playerAoeVisual != null)
         {
-            playerWeapon.onAttack -= OnPlayerAttack;
+            Destroy(playerAoeVisual);
+            playerAoeVisual = null;
         }
-
-        // Clean up all active DOTs
-        foreach (KeyValuePair<BossController, DotInfo> pair in new Dictionary<BossController, DotInfo>(affectedBosses))
-        {
-            CleanupDotEffect(pair.Key);
-        }
-
-        StopAllCoroutines();
 
         Debug.Log("DOT Status Effect removed.");
     }

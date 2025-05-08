@@ -12,6 +12,14 @@ public class Weapon : Collectible
     // NEW CODE FOR ITEMS
     // Event for when the weapon attacks - both normal and alt attacks will trigger this
     public event System.Action onAttack;
+
+    // NEW CODE FOR FRENZY ITEM
+    // Event for successful hits on bosses
+    public event System.Action onSuccessfulHit;
+
+    // Track the last enemy hit for Frenzy item to detect
+    public BossController lastHitEnemy { get; private set; }
+    // END NEW CODE FOR FRENZY ITEM
     // END NEW CODE FOR ITEMS
 
     //the weapon should handle animations within itself
@@ -56,7 +64,7 @@ public class Weapon : Collectible
     public bool isEquipped;
 
     bool swordOnLeft = false;
-    
+
     // For attack damage
     public int damage = 1;
 
@@ -122,6 +130,7 @@ public class Weapon : Collectible
         // END NEW CODE FOR ITEMS
 
         List<GameObject> objs = collisionSensor.ScanForObjects();
+        bool hitSuccessful = false;
 
         if (objs.Count > 0)
         {
@@ -148,6 +157,17 @@ public class Weapon : Collectible
                         //make the damageable take damage.
                         //and tell it we gave it damage.
                         damageable.TakeDamage(damage, gameObject);
+
+                        // NEW CODE FOR FRENZY ITEM - Track successful hit on a boss
+                        if (boss != null)
+                        {
+                            lastHitEnemy = boss;
+                            hitSuccessful = true;
+
+                            // Start coroutine to reset lastHitEnemy after a delay
+                            StartCoroutine(ResetLastHitEnemy());
+                        }
+                        // END NEW CODE FOR FRENZY ITEM
 
                         //tell the special attack that the special damage hit was a success.
                         specialDamageHitSuccess = true;
@@ -185,10 +205,26 @@ public class Weapon : Collectible
             }
         }
 
+        // NEW CODE FOR FRENZY ITEM
+        // If we successfully hit a boss, invoke the onSuccessfulHit event
+        if (hitSuccessful)
+        {
+            onSuccessfulHit?.Invoke();
+            Debug.Log("Successful hit on boss detected!");
+        }
+        // END NEW CODE FOR FRENZY ITEM
+
         yield break;
     }
 
-
+    // NEW CODE FOR FRENZY ITEM
+    // Coroutine to reset the lastHitEnemy after a short delay
+    private IEnumerator ResetLastHitEnemy()
+    {
+        yield return new WaitForSeconds(0.1f);
+        lastHitEnemy = null;
+    }
+    // END NEW CODE FOR FRENZY ITEM
 
     public IEnumerator DealDamageAndLaunch(int damage, Vector3 direction, float height = 30f, float timeToApex = 1, float timeToFall = 2)
     {
@@ -197,8 +233,8 @@ public class Weapon : Collectible
         onAttack?.Invoke();
         // END NEW CODE FOR ITEMS
 
-
         List<GameObject> objs = collisionSensor.ScanForObjects();
+        bool hitSuccessful = false;
 
         if (objs.Count > 0)
         {
@@ -226,6 +262,17 @@ public class Weapon : Collectible
                         //make the damageable take damage.
                         //and tell it we gave it damage.
                         damageable.TakeDamage(damage, gameObject);
+
+                        // NEW CODE FOR FRENZY ITEM - Track successful hit on a boss
+                        if (boss != null)
+                        {
+                            lastHitEnemy = boss;
+                            hitSuccessful = true;
+
+                            // Start coroutine to reset lastHitEnemy after a delay
+                            StartCoroutine(ResetLastHitEnemy());
+                        }
+                        // END NEW CODE FOR FRENZY ITEM
 
                         //TODO:
                         //Spawn a particle system burst that destroys itself
@@ -259,7 +306,16 @@ public class Weapon : Collectible
                 }
             }
         }
-        
+
+        // NEW CODE FOR FRENZY ITEM
+        // If we successfully hit a boss, invoke the onSuccessfulHit event
+        if (hitSuccessful)
+        {
+            onSuccessfulHit?.Invoke();
+            Debug.Log("Successful hit on boss detected!");
+        }
+        // END NEW CODE FOR FRENZY ITEM
+
         yield break;
     }
 
@@ -332,7 +388,7 @@ public class Weapon : Collectible
             return;
         }
 
-      
+
 
         //TODO: 
         //code a different attack that occurs when in the air. this way the player can have a quick downward smash attack that
@@ -366,7 +422,7 @@ public class Weapon : Collectible
         StartCoroutine(SpecialAttackCoroutine());
     }
 
-    
+
 
     public virtual IEnumerator AltAttackCoroutine()
     {
@@ -487,7 +543,7 @@ public class Weapon : Collectible
 
         //don't allow other attacks during our current attack.
         canAttack = false;
-        
+
         if (animator != null)
         {
             //Tell the player not to use gravity.
@@ -576,7 +632,7 @@ public class Weapon : Collectible
 
         yield break;
     }
-    
+
     //Cooldown coroutine.
     public IEnumerator CooldownCoroutine()
     {
@@ -587,7 +643,8 @@ public class Weapon : Collectible
         canAttack = true;
     }
 
-    public override void OnCollect(){
+    public override void OnCollect()
+    {
         //we should not be equipped more than once.
         if (isEquipped)
         {

@@ -72,50 +72,64 @@ public class ShieldEffectComponent : MonoBehaviour
         }
         else
         {
-            // Create a basic shield visual with transparent blue material
+            // Create a particle effect instead of a solid mesh sphere
             shieldVisual = new GameObject("ShieldVisual");
             shieldVisual.transform.parent = Player.instance.transform;
             shieldVisual.transform.localPosition = Vector3.zero;
 
-            MeshFilter meshFilter = shieldVisual.AddComponent<MeshFilter>();
-            meshFilter.mesh = CreateSphereMesh(1.2f);
+            // Add particle system
+            ParticleSystem particles = shieldVisual.AddComponent<ParticleSystem>();
 
-            MeshRenderer renderer = shieldVisual.AddComponent<MeshRenderer>();
-            renderer.material = new Material(Shader.Find("Standard"));
-            renderer.material.color = new Color(0.2f, 0.6f, 1f, 0.3f);
-            renderer.material.SetFloat("_Mode", 3);
-            renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            renderer.material.SetInt("_ZWrite", 0);
-            renderer.material.DisableKeyword("_ALPHATEST_ON");
-            renderer.material.EnableKeyword("_ALPHABLEND_ON");
-            renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            renderer.material.renderQueue = 3000;
+            // Blue particle effect for shield
+            var main = particles.main;
+            main.startColor = new Color(0.2f, 0.6f, 1f, 0.3f);
+            main.startSize = 0.2f;
+            main.startSpeed = 0.5f;
+            main.startLifetime = 2f;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+            var emission = particles.emission;
+            emission.rateOverTime = 30;
+
+            var shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.radius = 1.2f;
+
+            // Make particles move in circular patterns
+            var velocityOverLifetime = particles.velocityOverLifetime;
+            velocityOverLifetime.enabled = true;
+            velocityOverLifetime.orbitalX = 0.5f;
+            velocityOverLifetime.orbitalY = 0.5f;
+            velocityOverLifetime.orbitalZ = 0.5f;
+
+            particles.Play();
         }
 
         UpdateShieldVisual();
     }
 
-    private Mesh CreateSphereMesh(float radius)
-    {
-        GameObject tempSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Mesh mesh = tempSphere.GetComponent<MeshFilter>().sharedMesh;
-        Destroy(tempSphere);
-
-        Vector3[] vertices = mesh.vertices;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] *= radius;
-        }
-        mesh.vertices = vertices;
-
-        return mesh;
-    }
-
     private void UpdateShieldVisual()
     {
-        if (shieldVisual != null)
+        if (shieldVisual == null) return;
+
+        // If using particles
+        ParticleSystem particleSystem = shieldVisual.GetComponent<ParticleSystem>();
+        if (particleSystem != null)
         {
+            // Fade from blue to red as health decreases
+            float healthRatio = (float)currentShieldHealth / itemData.shieldHealth;
+            Color shieldColor = Color.Lerp(new Color(1f, 0.2f, 0.2f, 0.3f), new Color(0.2f, 0.6f, 1f, 0.3f), healthRatio);
+
+            var main = particleSystem.main;
+            main.startColor = shieldColor;
+
+            // Adjust emission rate based on health
+            var emission = particleSystem.emission;
+            emission.rateOverTime = 20 + (healthRatio * 10);
+        }
+        else
+        {
+            // For legacy mesh renderer (if present)
             MeshRenderer renderer = shieldVisual.GetComponent<MeshRenderer>();
             if (renderer != null && renderer.material != null)
             {
@@ -172,15 +186,34 @@ public class ShieldEffectComponent : MonoBehaviour
         if (shieldVisual == null)
             yield break;
 
-        MeshRenderer renderer = shieldVisual.GetComponent<MeshRenderer>();
-        if (renderer != null)
+        ParticleSystem particleSystem = shieldVisual.GetComponent<ParticleSystem>();
+        if (particleSystem != null)
         {
-            Color originalColor = renderer.material.color;
-            renderer.material.color = new Color(1f, 1f, 1f, 0.7f);
+            // Store original rate
+            var emission = particleSystem.emission;
+            float originalRate = emission.rateOverTime.constant;
 
-            yield return new WaitForSeconds(0.1f);
+            // Burst particles
+            emission.rateOverTime = originalRate * 3f;
 
-            renderer.material.color = originalColor;
+            yield return new WaitForSeconds(0.2f);
+
+            // Restore original rate
+            emission.rateOverTime = originalRate;
+        }
+        else
+        {
+            // Legacy mesh renderer effect
+            MeshRenderer renderer = shieldVisual.GetComponent<MeshRenderer>();
+            if (renderer != null)
+            {
+                Color originalColor = renderer.material.color;
+                renderer.material.color = new Color(1f, 1f, 1f, 0.7f);
+
+                yield return new WaitForSeconds(0.1f);
+
+                renderer.material.color = originalColor;
+            }
         }
     }
 
@@ -189,31 +222,64 @@ public class ShieldEffectComponent : MonoBehaviour
         if (shieldVisual == null)
             yield break;
 
-        MeshRenderer renderer = shieldVisual.GetComponent<MeshRenderer>();
-        if (renderer != null)
+        ParticleSystem particleSystem = shieldVisual.GetComponent<ParticleSystem>();
+        if (particleSystem != null)
         {
-            // Flash white
-            renderer.material.color = new Color(1f, 1f, 1f, 0.7f);
-            yield return new WaitForSeconds(0.1f);
+            // Final burst effect
+            var emission = particleSystem.emission;
+            emission.rateOverTime = 100;
 
-            // Fade out
+            // Change color to white
+            var main = particleSystem.main;
+            main.startColor = new Color(1f, 1f, 1f, 0.7f);
+
+            yield return new WaitForSeconds(0.3f);
+
+            // Fade out effect
             float duration = 0.5f;
             float elapsed = 0f;
-            Color startColor = renderer.material.color;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / duration;
 
-                Color newColor = startColor;
-                newColor.a = Mathf.Lerp(startColor.a, 0f, t);
-                renderer.material.color = newColor;
+                emission.rateOverTime = Mathf.Lerp(100, 0, t);
 
                 yield return null;
             }
 
-            shieldVisual.SetActive(false);
+            particleSystem.Stop();
+        }
+        else
+        {
+            // Legacy mesh renderer effect
+            MeshRenderer renderer = shieldVisual.GetComponent<MeshRenderer>();
+            if (renderer != null)
+            {
+                // Flash white
+                renderer.material.color = new Color(1f, 1f, 1f, 0.7f);
+                yield return new WaitForSeconds(0.1f);
+
+                // Fade out
+                float duration = 0.5f;
+                float elapsed = 0f;
+                Color startColor = renderer.material.color;
+
+                while (elapsed < duration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = elapsed / duration;
+
+                    Color newColor = startColor;
+                    newColor.a = Mathf.Lerp(startColor.a, 0f, t);
+                    renderer.material.color = newColor;
+
+                    yield return null;
+                }
+
+                shieldVisual.SetActive(false);
+            }
         }
     }
 
