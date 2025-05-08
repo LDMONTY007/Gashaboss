@@ -3153,6 +3153,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 303853281254220573, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4679923034109049304, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
+      propertyPath: moveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252672741350623739, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093820632016278288, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
+      propertyPath: m_Height
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093820632016278288, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
+      propertyPath: m_Center.y
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 9171208677914516136, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
       propertyPath: m_Name
       value: MimicBossController
