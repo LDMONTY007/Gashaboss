@@ -345,7 +345,6 @@ public class BossController : Collectible, IDamageable
             //in the next Idle state.
             if (nextAttack != null && nextAttack.didExecute)
             {
-                Debug.Break();
                 //reset the attack's didExecute flag.
                 nextAttack.didExecute = false;
                 nextAttack = null;
