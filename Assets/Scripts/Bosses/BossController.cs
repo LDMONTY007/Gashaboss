@@ -377,7 +377,6 @@ public class BossController : Collectible, IDamageable
             //in the next Idle state.
             if (nextAttack != null && nextAttack.didExecute)
             {
-                //Debug.Break();
                 //reset the attack's didExecute flag.
                 nextAttack.didExecute = false;
                 nextAttack = null;
@@ -420,7 +419,7 @@ public class BossController : Collectible, IDamageable
     /// </summary>
     public virtual void ApplyFinalMovements()
     {
-        //Debug.Log(rb.rotation.eulerAngles.ToString());
+        
 
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.
@@ -603,6 +602,14 @@ public class BossController : Collectible, IDamageable
                     attackCheckRadius = weapon.altAtkCheckRadius;
                     break;
                 case 2:
+                    // if boss doesn't have an alt or a special, use a reg attack instead
+                    if (!weapon.hasAlt && !weapon.hasSpecial)
+                    {
+                        nextAttack = meleeAttack;
+                        //Set the attack check radius to be that of the normal attack.
+                        attackCheckRadius = weapon.atkCheckRadius;
+                        break;
+                    }
                     // if boss doesn't have a special, use an alt attack instead
                     if (!weapon.hasSpecial)
                     {
@@ -620,7 +627,7 @@ public class BossController : Collectible, IDamageable
     }
 
     public void HandleAttack()
-    {   
+    {
        //if we have our next attack and aren't attacking, execute it.
        if (nextAttack != null && !meleeAttack.active && !altAttack.active && !specialAttack.active)
        {

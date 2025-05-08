@@ -12,7 +12,7 @@ public class AltAttack : BossAction
         //because it should be null.
         if (boss.weapon != null)
         {
-            if (boss.animator != null)
+            if (boss.animator != null && boss.weapon.animateAlt)
             {
                 //set the attack trigger animation
                 //so we do the attack animation.
@@ -26,6 +26,7 @@ public class AltAttack : BossAction
 
             //wait for the animation to finish before 
             //exiting this coroutine.
+            if (boss.animator != null && boss.weapon.animateAlt)
             yield return LDUtil.WaitForAnimationFinish(boss.animator);
         }
         else
@@ -43,7 +44,7 @@ public class AltAttack : BossAction
         }
 
 
-        //DashAwayMove dashAwayMove = new DashAwayMove();
+        DashAwayMove dashAwayMove = new DashAwayMove();
 
         //boss.SwitchToIdle(0f);
 
@@ -53,7 +54,7 @@ public class AltAttack : BossAction
 
         //return the dash away coroutine so we
         //just reuse the dash away move at the end of our attack.
-        //yield return dashAwayMove.ActionCoroutine(boss, duration);
+        yield return dashAwayMove.ActionCoroutine(boss, duration);
 
         active = false;
 

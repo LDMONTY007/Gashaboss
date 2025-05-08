@@ -12,7 +12,7 @@ public class SpecialAttack : BossAction
         //because it should be null.
         if (boss.weapon != null)
         {
-            if (boss.animator != null)
+            if (boss.animator != null && boss.weapon.animateSpecial)
             {
                 //set the attack trigger animation
                 //so we do the attack animation.
@@ -25,7 +25,8 @@ public class SpecialAttack : BossAction
 
             //wait for the animation to finish before 
             //exiting this coroutine.
-            yield return LDUtil.WaitForAnimationFinish(boss.animator);
+            if (boss.animator != null && boss.weapon.animateAlt)
+                yield return LDUtil.WaitForAnimationFinish(boss.animator);
         }
         else
         {
