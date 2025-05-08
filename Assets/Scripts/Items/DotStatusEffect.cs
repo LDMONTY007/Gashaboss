@@ -72,14 +72,19 @@ public class DotStatusController : MonoBehaviour
     {
         itemData = data;
 
-        // Subscribe to weapon attacks
+        // Subscribe to ALL player attacks like in CoordinatedAttackItem
+        Player.instance.OnAttack += OnPlayerAttack;
+        Player.instance.OnAltAttack += OnPlayerAttack;
+        Player.instance.OnSpecialAttack += OnPlayerAttack;
+
+        // Keep the weapon subscription for backward compatibility
         playerWeapon = Player.instance.curWeapon;
         if (playerWeapon != null)
         {
             playerWeapon.onAttack += OnPlayerAttack;
         }
 
-        Debug.Log("DOT Status Effect initialized!");
+        Debug.Log("DOT Status Effect initialized! Now listening to ALL attack types.");
     }
 
     private void Update()
@@ -103,20 +108,36 @@ public class DotStatusController : MonoBehaviour
     // Called when player attacks
     private void OnPlayerAttack()
     {
-        // Find bosses in weapon range
+        Debug.Log("DOT Status Effect: Attack detected!");
+
+        // Increase detection radius for better coverage
+        float detectionRadius = playerWeapon != null ?
+            Mathf.Max(5.0f, playerWeapon.attackDistance) : 5.0f;
+
+        // Use player position instead of weapon position for more reliable detection
         Collider[] colliders = Physics.OverlapSphere(
-            playerWeapon.transform.position,
-            playerWeapon.attackDistance,
+            Player.instance.transform.position,
+            detectionRadius,
             ~LayerMask.GetMask("Player", "Ignore Raycast")
         );
 
+        Debug.Log($"DOT Status Effect: Scanning for bosses in radius {detectionRadius}. Found {colliders.Length} potential targets.");
+
+        bool foundAnyBoss = false;
         foreach (Collider collider in colliders)
         {
             BossController boss = collider.GetComponent<BossController>();
             if (boss != null && !boss.isDead)
             {
+                foundAnyBoss = true;
+                Debug.Log($"DOT Status Effect: Found boss '{boss.name}', applying DOT effect!");
                 ApplyDotToBoss(boss);
             }
+        }
+
+        if (!foundAnyBoss)
+        {
+            Debug.Log("DOT Status Effect: No valid boss targets found in range.");
         }
     }
 
@@ -263,7 +284,15 @@ public class DotStatusController : MonoBehaviour
 
     private void OnDisable()
     {
-        // Unsubscribe from events
+        // Unsubscribe from all events
+        if (Player.instance != null)
+        {
+            Player.instance.OnAttack -= OnPlayerAttack;
+            Player.instance.OnAltAttack -= OnPlayerAttack;
+            Player.instance.OnSpecialAttack -= OnPlayerAttack;
+        }
+
+        // Also unsubscribe from weapon events for backward compatibility
         if (playerWeapon != null)
         {
             playerWeapon.onAttack -= OnPlayerAttack;

@@ -184,16 +184,17 @@ public class GachaMachine : MonoBehaviour, IDamageable {
             Debug.Log("Free gacha pull used from Voucher item!");
             return true;
         }
-
         if (p.curHealth > 0)
         {
-            //Decrement player coins.
-            p.TakeDamage(1);
-            //Give player a cap if they use gacha machine, cause *shrugs*
+            // Decrement player coins, providing both required parameters
+            p.TakeDamage(1, this.gameObject);  // Pass 'this.gameObject' as the source of damage
+
+            // Give player a cap if they use gacha machine, cause *shrugs*
             p.caps += 1;
             return true;
         }
-        //player didn't have enough coins.
+
+        // Player didn't have enough coins.
         return false;
 
     }

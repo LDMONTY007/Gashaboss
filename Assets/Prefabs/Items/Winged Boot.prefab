@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 11400000, guid: c43b7c81b7833d848ba8ca2850f5f6cf, type: 2}
-  collectibleName: Bubble Wand
+  collectibleName: Winged Boot
   item: {fileID: 11400000, guid: b7726ccf13c320d488c6faaca30403aa, type: 2}
   itemModel: {fileID: 5131226736869583252}
 --- !u!136 &2553104844938006899

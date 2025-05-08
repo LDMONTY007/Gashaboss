@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aec05efa2522e314a9e892043031d4ef, type: 3}
   m_Name: WingedBoot
   m_EditorClassIdentifier: 
-  description: allows player to get an additional jump
+  description: allows player to get an additional jump up to a max of 2
   extraJumps: 1

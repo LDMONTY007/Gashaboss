@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WingedBoot
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 8311597373895976805, guid: 7fc3f820ed8097c4d8ea3d7d12046c55, type: 3}
-  weight: 3
+  weight: 1
   cost: 0
   isRemovedAfterDrop: 1
   isEnvironmentalUnlock: 0

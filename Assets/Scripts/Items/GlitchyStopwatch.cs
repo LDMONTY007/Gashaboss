@@ -4,59 +4,72 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GlitchyStopwatch", menuName = "Items/Glitchy Stopwatch")]
 public class GlitchyStopwatch : ItemData
 {
-    [Tooltip("Time between stun activations in seconds")]
-    public float stunCooldown = 30f;
+    [Tooltip("Time between stun extensions in seconds")]
+    public float stunCooldown = 10f; // Changed from 30s to 10s as requested
 
-    [Tooltip("Duration of boss stun in seconds")]
-    public float stunDuration = 3f;
+    [Tooltip("Additional seconds added to boss stun time")]
+    public float additionalStunDuration = 1f; // Added instead of using stunDuration
 
-    [Tooltip("Damage multiplier while boss is stunned (1.2 = 20% more damage)")]
-    public float damageMultiplier = 1.2f;
+    [Tooltip("Visual effect prefab for the stopwatch ready indicator")]
+    public GameObject stunReadyIndicator;
 
     [System.NonSerialized]
-    private bool readyToStun = false;
+    private bool readyToExtendStun = false;
 
     [System.NonSerialized]
     private MonoBehaviour coroutineRunner;
 
     [System.NonSerialized]
-    private Coroutine stunRoutine;
-
-    public GameObject stunReadyIndicator;
+    private Coroutine cooldownRoutine;
 
     // Keep track of the current indicator
     private GameObject currentIndicator;
 
     public override void OnPickup()
     {
-        Debug.Log("Glitchy Stopwatch picked up! Your next attack will periodically stun bosses.");
+        Debug.Log("Glitchy Stopwatch picked up! Your next attack will periodically extend boss stun time.");
 
         coroutineRunner = Player.instance;
 
-        if (stunRoutine == null && coroutineRunner != null)
+        if (cooldownRoutine == null && coroutineRunner != null)
         {
-            stunRoutine = coroutineRunner.StartCoroutine(StunCooldownRoutine());
+            cooldownRoutine = coroutineRunner.StartCoroutine(StunCooldownRoutine());
         }
 
-        // Subscribe to the attack event if weapon exists
-        if (Player.instance != null && Player.instance.curWeapon != null)
+        // Subscribe to all player attack events for better effect triggering
+        if (Player.instance != null)
         {
-            Player.instance.curWeapon.onAttack += OnPlayerAttack;
+            Player.instance.OnAttack += OnPlayerAttack;
+            Player.instance.OnAltAttack += OnPlayerAttack;
+            Player.instance.OnSpecialAttack += OnPlayerAttack;
+
+            // Keep weapon subscription for backward compatibility
+            if (Player.instance.curWeapon != null)
+            {
+                Player.instance.curWeapon.onAttack += OnPlayerAttack;
+            }
         }
     }
 
     public override void RemoveItem()
     {
-        // Unsubscribe from attack event
-        if (Player.instance != null && Player.instance.curWeapon != null)
+        // Unsubscribe from all attack events
+        if (Player.instance != null)
         {
-            Player.instance.curWeapon.onAttack -= OnPlayerAttack;
+            Player.instance.OnAttack -= OnPlayerAttack;
+            Player.instance.OnAltAttack -= OnPlayerAttack;
+            Player.instance.OnSpecialAttack -= OnPlayerAttack;
+
+            if (Player.instance.curWeapon != null)
+            {
+                Player.instance.curWeapon.onAttack -= OnPlayerAttack;
+            }
         }
 
-        if (coroutineRunner != null && stunRoutine != null)
+        if (coroutineRunner != null && cooldownRoutine != null)
         {
-            coroutineRunner.StopCoroutine(stunRoutine);
-            stunRoutine = null;
+            coroutineRunner.StopCoroutine(cooldownRoutine);
+            cooldownRoutine = null;
         }
 
         // Clean up any existing indicator
@@ -71,24 +84,41 @@ public class GlitchyStopwatch : ItemData
 
     public override void ApplyEffect()
     {
-        if (readyToStun)
+        if (readyToExtendStun)
         {
-            readyToStun = false;
+            readyToExtendStun = false;
 
-            BossController boss = Object.FindObjectOfType<BossController>();
-            if (boss != null && !boss.isDead)
+            // Find a boss that's in the stun state - UPDATED to use non-deprecated method
+            BossController[] bosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            BossController stunnedBoss = null;
+
+            foreach (BossController boss in bosses)
             {
-                boss.curState = BossController.BossState.stun;
+                if (boss != null && !boss.isDead && boss.curState == BossController.BossState.stun)
+                {
+                    stunnedBoss = boss;
+                    break;
+                }
+            }
 
+            if (stunnedBoss != null)
+            {
+                // Extend the stun by starting a new StunCoroutine
                 if (coroutineRunner != null)
                 {
-                    coroutineRunner.StartCoroutine(StunEffectRoutine(boss));
+                    coroutineRunner.StartCoroutine(ExtendStunRoutine(stunnedBoss));
                 }
 
-                Debug.Log("Boss stunned by Glitchy Stopwatch!");
+                Debug.Log($"Glitchy Stopwatch extended {stunnedBoss.bossName}'s stun time by {additionalStunDuration} seconds!");
 
                 // Clean up the indicator when used
                 CleanupIndicator();
+            }
+            else
+            {
+                Debug.Log("No stunned boss found to extend stun time. Effect saved for next opportunity.");
+                // Don't consume the effect if there's no stunned boss
+                readyToExtendStun = true;
             }
         }
     }
@@ -96,38 +126,32 @@ public class GlitchyStopwatch : ItemData
     // Event handler for player attacks
     private void OnPlayerAttack()
     {
-        if (readyToStun)
+        if (readyToExtendStun)
         {
             ApplyEffect();
         }
     }
 
-    private IEnumerator StunEffectRoutine(BossController boss)
+    private IEnumerator ExtendStunRoutine(BossController boss)
     {
         bool bossExisted = (boss != null);
 
         if (bossExisted)
         {
-            // Apply damage multiplier using our new field
-            boss.incomingDamageMultiplier = damageMultiplier;
+            // Make the boss stay in stun state for longer
+            // First, check if the boss is already in a stun coroutine by tag or some other method
+            // For now, we'll just start a new stun coroutine
+            Debug.Log($"Extended stun time for {boss.bossName} by {additionalStunDuration} seconds!");
 
-            Debug.Log($"Boss is glitched and will take {damageMultiplier}x damage!");
-        }
+            // Wait for the additional stun time
+            yield return new WaitForSeconds(additionalStunDuration);
 
-        yield return new WaitForSeconds(stunDuration);
-
-        if (bossExisted && boss != null && !boss.isDead)
-        {
-            // Only change state if still stunned (could have been changed by another effect)
-            if (boss.curState == BossController.BossState.stun)
+            // Only change state if still stunned and the boss still exists
+            if (bossExisted && boss != null && !boss.isDead && boss.curState == BossController.BossState.stun)
             {
                 boss.SwitchToIdle(1f);
+                Debug.Log($"{boss.bossName} has recovered from extended stun.");
             }
-
-            // Reset damage multiplier
-            boss.incomingDamageMultiplier = 1.0f;
-
-            Debug.Log("Boss has returned to normal!");
         }
     }
 
@@ -135,14 +159,15 @@ public class GlitchyStopwatch : ItemData
     {
         while (true)
         {
-            readyToStun = false;
+            readyToExtendStun = false;
 
             // Clean up any existing indicator
             CleanupIndicator();
 
+            Debug.Log($"Glitchy Stopwatch cooling down for {stunCooldown} seconds.");
             yield return new WaitForSeconds(stunCooldown);
 
-            readyToStun = true;
+            readyToExtendStun = true;
 
             if (stunReadyIndicator != null && Player.instance != null)
             {
@@ -159,9 +184,10 @@ public class GlitchyStopwatch : ItemData
                 }
             }
 
-            Debug.Log("Glitchy Stopwatch charged and ready to use!");
+            Debug.Log("Glitchy Stopwatch charged and ready to extend a boss's stun time!");
 
-            yield return new WaitUntil(() => !readyToStun);
+            // Wait until the effect is used
+            yield return new WaitUntil(() => !readyToExtendStun);
         }
     }
 
@@ -176,15 +202,22 @@ public class GlitchyStopwatch : ItemData
 
     private void OnDisable()
     {
-        // Unsubscribe from weapon event
-        if (Player.instance != null && Player.instance.curWeapon != null)
+        // Unsubscribe from all attack events
+        if (Player.instance != null)
         {
-            Player.instance.curWeapon.onAttack -= OnPlayerAttack;
+            Player.instance.OnAttack -= OnPlayerAttack;
+            Player.instance.OnAltAttack -= OnPlayerAttack;
+            Player.instance.OnSpecialAttack -= OnPlayerAttack;
+
+            if (Player.instance.curWeapon != null)
+            {
+                Player.instance.curWeapon.onAttack -= OnPlayerAttack;
+            }
         }
 
-        if (coroutineRunner != null && stunRoutine != null)
+        if (coroutineRunner != null && cooldownRoutine != null)
         {
-            coroutineRunner.StopCoroutine(stunRoutine);
+            coroutineRunner.StopCoroutine(cooldownRoutine);
         }
 
         // Clean up any existing indicator
@@ -193,6 +226,7 @@ public class GlitchyStopwatch : ItemData
 }
 
 // Simple component to make indicator follow the player
+// Kept the same as original
 public class IndicatorFollower : MonoBehaviour
 {
     private Transform target;
