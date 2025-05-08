@@ -64,7 +64,7 @@ public class DotStatusController : MonoBehaviour
 
     private class DotInfo
     {
-        public Coroutine dotCoroutine;
+        public IEnumerator dotCoroutine;
         public GameObject dotVisual;
         public float remainingDuration;
         public GameObject dotDamageSource;
@@ -79,35 +79,35 @@ public class DotStatusController : MonoBehaviour
         Player.instance.OnAltAttack += OnPlayerAttack;
         Player.instance.OnSpecialAttack += OnPlayerAttack;
 
-        // Keep the weapon subscription for backward compatibility
-        playerWeapon = Player.instance.curWeapon;
-        if (playerWeapon != null)
-        {
-            playerWeapon.onAttack += OnPlayerAttack;
-        }
+        // // Keep the weapon subscription for backward compatibility
+        // playerWeapon = Player.instance.curWeapon;
+        // if (playerWeapon != null)
+        // {
+        //     playerWeapon.onAttack += OnPlayerAttack;
+        // }
 
         Debug.Log("DOT Status Effect initialized! Now listening to ALL attack types.");
 
         // Force apply on initialization for testing
-        ForceApplyToAllBosses();
+        // ForceApplyToAllBosses();
     }
 
     private void Update()
     {
-        // Handle weapon switching
-        if (Player.instance.curWeapon != playerWeapon)
-        {
-            if (playerWeapon != null)
-            {
-                playerWeapon.onAttack -= OnPlayerAttack;
-            }
+        // // Handle weapon switching
+        // if (Player.instance.curWeapon != playerWeapon)
+        // {
+        //     if (playerWeapon != null)
+        //     {
+        //         playerWeapon.onAttack -= OnPlayerAttack;
+        //     }
 
-            playerWeapon = Player.instance.curWeapon;
-            if (playerWeapon != null)
-            {
-                playerWeapon.onAttack += OnPlayerAttack;
-            }
-        }
+        //     playerWeapon = Player.instance.curWeapon;
+        //     if (playerWeapon != null)
+        //     {
+        //         playerWeapon.onAttack += OnPlayerAttack;
+        //     }
+        // }
 
         // Testing: Apply DOT to nearest boss when flag is set
         if (debugApplyToNearestBoss)
@@ -202,7 +202,7 @@ public class DotStatusController : MonoBehaviour
             {
                 remainingDuration = itemData.dotDuration,
                 dotDamageSource = dotDamageSource,
-                dotCoroutine = StartCoroutine(ApplyDotDamage(boss, dotDamageSource))
+                dotCoroutine = ApplyDotDamage(boss, dotDamageSource)
             };
 
             // Create visual effect
@@ -221,6 +221,7 @@ public class DotStatusController : MonoBehaviour
             }
 
             affectedBosses.Add(boss, newDotInfo);
+            StartCoroutine(newDotInfo.dotCoroutine);
             Debug.Log($"DOT applied to {boss.name}");
         }
     }
@@ -272,7 +273,7 @@ public class DotStatusController : MonoBehaviour
             if (boss != null && !boss.isDead)
             {
                 // Apply damage using the dedicated damage source - THIS IS KEY
-                StartCoroutine(ApplyDotDamageTick(boss, itemData.dotDamage, dotDamageSource));
+                yield return ApplyDotDamageTick(boss, itemData.dotDamage, dotDamageSource);
 
                 // Flash effect
                 if (dotInfo.dotVisual != null)
@@ -284,7 +285,7 @@ public class DotStatusController : MonoBehaviour
                         float originalRate = emission.rateOverTime.constant;
                         emission.rateOverTime = originalRate * 3;
 
-                        StartCoroutine(ResetEmissionRate(particles, originalRate));
+                        yield return ResetEmissionRate(particles, originalRate);
                     }
                 }
             }
