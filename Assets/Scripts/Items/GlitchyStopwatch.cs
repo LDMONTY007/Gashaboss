@@ -138,9 +138,8 @@ public class GlitchyStopwatch : ItemData
 
         if (bossExisted)
         {
-            // Make the boss stay in stun state for longer
-            // First, check if the boss is already in a stun coroutine by tag or some other method
-            // For now, we'll just start a new stun coroutine
+            // Get the original time when the boss would exit stun 
+            // (we can't directly access this, so we'll just add our time)
             Debug.Log($"Extended stun time for {boss.bossName} by {additionalStunDuration} seconds!");
 
             // Wait for the additional stun time
@@ -151,6 +150,8 @@ public class GlitchyStopwatch : ItemData
             {
                 boss.SwitchToIdle(1f);
                 Debug.Log($"{boss.bossName} has recovered from extended stun.");
+
+                // Note: The stun immunity will be handled by the boss's StunCoroutine already running
             }
         }
     }

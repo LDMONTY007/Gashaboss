@@ -160,6 +160,12 @@ public class BossController : Collectible, IDamageable
 
     public float stunTime = 0.5f;
 
+    // Variables for stun immunity
+    private bool isStunImmune = false;
+
+    [Tooltip("Time between stuns where boss can't be stunned again (seconds)")]
+    public float stunImmunityTime = 5f; // Adjust this value as needed
+
     //LD Montello
     //time to idle before making a decision
     //by default this is zero but will change 
@@ -1176,28 +1182,34 @@ public class BossController : Collectible, IDamageable
         Debug.Log("Boss Took: ".Color("Orange") + modifiedDamage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
 
         //When the boss takes damage,
-        //put them in the stun state
+        //put them in the stun state if not immune
         //to cancel any movements.
-        curState = BossState.stun;
+        //When the boss takes damage, put them in stun state if not immune
+        if (!isStunImmune)
+        {
+            curState = BossState.stun;
 
+            //Start the shaking animation
+            ShakeModel();
 
-        //Start the shaking animation
-        ShakeModel();
+            //Set to be low resolution for a small amount of time.
+            StartLowResRoutine();
 
-        //Set to be low resolution for a small amount of time.
-        StartLowResRoutine();
+            //rotate -1 degrees away from the player so we get bounced at an angle away from it.
+            Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
 
-        //rotate -1 degrees away from the player so we get bounced at an angle away from it.
-        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
+            //bounce the boss away from the player.
+            //this is how we simulate knockback.
+            StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
 
-        //bounce the boss away from the player.
-        //this is how we simulate knockback.
-        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
-
-        //LD Montello
-        //Stun the boss for 1f
-        //This gives the player a 0.5 second range to continue their attack combo and keep the boss stunned.
-        StartCoroutine(StunCoroutine(stunTime));
+            //LD Montello
+            //Stun the boss for stunTime
+            StartCoroutine(StunCoroutine(stunTime));
+        }
+        else
+        {
+            Debug.Log($"{bossName} is currently immune to stun!");
+        }
     }
 
     public IEnumerator BounceCoroutine(Vector3 direction, float force)
@@ -1336,12 +1348,26 @@ public class BossController : Collectible, IDamageable
         curIFramesRoutine = null;
     }
 
+    // Modified StunCoroutine with immunity cooldown
     public IEnumerator StunCoroutine(float stunTime)
     {
+        isStunImmune = true; // Boss is immune during stun and cooldown
+
         //We are already in stun,
         //so wait some amount of time before exiting stun.
         yield return new WaitForSeconds(stunTime);
+
+        // Exit stun state
         curState = BossState.idle;
+
+        Debug.Log($"{bossName} recovered from stun. Immune to stun for {stunImmunityTime} seconds.");
+
+        // Wait for immunity cooldown
+        yield return new WaitForSeconds(stunImmunityTime);
+
+        // End immunity
+        isStunImmune = false;
+        Debug.Log($"{bossName} is now vulnerable to stun again.");
     }
 
     bool isLowRes = false;
