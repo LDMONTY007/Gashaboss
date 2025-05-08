@@ -979,13 +979,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drops:
+  - {fileID: 11400000, guid: 01ac7a7bab796eb4d95a431df8f97348, type: 2}
+  - {fileID: 11400000, guid: 3d0cb10b7a9c5dd4cb99101a96b1c2c3, type: 2}
+  - {fileID: 11400000, guid: 7ae8b00031dce94499abc62d50cc8dce, type: 2}
   - {fileID: 11400000, guid: b4b72a044e17ed44ea5c1ed6bbf27a8f, type: 2}
+  - {fileID: 11400000, guid: 49b31e42bbd390b4999870c8dafa550e, type: 2}
+  - {fileID: 11400000, guid: 795a1e504f5cd9a4cb22a9a6a4c1fab6, type: 2}
+  - {fileID: 11400000, guid: 7e276556b8db4374699a4c21ac0a16c2, type: 2}
+  - {fileID: 11400000, guid: 5deb2c229b2264140947f88f3a5681fd, type: 2}
+  - {fileID: 11400000, guid: f6fb36e88abcdb54ba472c88785c3def, type: 2}
+  - {fileID: 11400000, guid: e4b96f639f57e174a85e2bc121228dc6, type: 2}
+  - {fileID: 11400000, guid: 759fbf96517b7f245afe108ea15ffc41, type: 2}
+  - {fileID: 11400000, guid: 7bad1e12724926f42abbbb55aa6ad3ea, type: 2}
   - {fileID: 11400000, guid: ce6e849a1a8c2ff40aada531592d2ddb, type: 2}
   - {fileID: 11400000, guid: b606eed6c6af2294cbdc6907d57f1db9, type: 2}
-  - {fileID: 11400000, guid: 3d0cb10b7a9c5dd4cb99101a96b1c2c3, type: 2}
-  - {fileID: 11400000, guid: 01ac7a7bab796eb4d95a431df8f97348, type: 2}
-  - {fileID: 11400000, guid: 49b31e42bbd390b4999870c8dafa550e, type: 2}
-  - {fileID: 11400000, guid: 7ae8b00031dce94499abc62d50cc8dce, type: 2}
   capsule: {fileID: 4408692558850734106, guid: 0c36a2390d6f192469d7e60c54ddaf16, type: 3}
   capsuleSpawnTransform: {fileID: 8338456749772633073}
   gachaAnimator: {fileID: 4801727538148170217}

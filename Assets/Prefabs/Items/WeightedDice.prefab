@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1772165263924479032}
   - component: {fileID: 1489719917937695580}
   m_Layer: 0
-  m_Name: Crit Fishing
+  m_Name: WeightedDice
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

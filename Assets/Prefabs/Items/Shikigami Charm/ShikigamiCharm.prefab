@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 159833766817239763}
   - component: {fileID: 2723950315800388666}
   m_Layer: 0
-  m_Name: Coordinated Attack Item
+  m_Name: ShikigamiCharm
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

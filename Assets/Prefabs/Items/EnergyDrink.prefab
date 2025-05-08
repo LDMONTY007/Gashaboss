@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4034241828464724348}
   - component: {fileID: 2096726501650376628}
   m_Layer: 0
-  m_Name: Frenzy
+  m_Name: EnergyDrink
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

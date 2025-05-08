@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5a13430a56d05d4684302bd880424b8, type: 3}
-  m_Name: CritFishing
+  m_Name: ExpiredMilk
   m_EditorClassIdentifier: 
-  droppedObject: {fileID: 4919794085805842665, guid: d7ba2c272da264742aa0c234c1ba4a1b, type: 3}
-  weight: 10
+  droppedObject: {fileID: 5517679711612390859, guid: 7b73da4efc4a29a4aac86c62d92255e8, type: 3}
+  weight: 1
   cost: 0
   isRemovedAfterDrop: 1
   isEnvironmentalUnlock: 0

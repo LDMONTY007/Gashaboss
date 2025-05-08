@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6699365334489294295}
   - component: {fileID: 8962339782795030331}
   m_Layer: 0
-  m_Name: Gacha Gambit
+  m_Name: Unstable Pipe Bomb
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

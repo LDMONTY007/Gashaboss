@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 4920203340645558409}
   - component: {fileID: 2472052774939936395}
   m_Layer: 0
-  m_Name: DOT Status Effect
+  m_Name: ExpiredMilk
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
