@@ -104,6 +104,7 @@ public class UIManager : MonoBehaviour
                     break;
                 case UIState.None:
                     TogglePause();
+                    pauseMenuPanel.SetActive(isPaused);
                     break;
             }
         }
@@ -129,22 +130,20 @@ public class UIManager : MonoBehaviour
     public void HandleCursorStates()
     {
         Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = !isPaused;
+        Cursor.visible = isPaused;
     }
 
     // Toggle Pause Menu (Pause Game)
-    public void TogglePause()
-    {
+    public void TogglePause(){
+        Debug.Log("Here1" + isPaused);
         isPaused = !isPaused;
-        pauseMenuPanel.SetActive(isPaused);
+        Debug.Log("Here2" + isPaused);
         inGameUI.SetActive(!isPaused);
         Time.timeScale = isPaused ? 0 : 1;
         HandleCursorStates();
-
+        uiBlock = isPaused;
         currentUIState = isPaused ? UIState.Pause : UIState.None;
     }
-
-
     public void ResumeGame()
     {
         isPaused = false;
@@ -152,10 +151,10 @@ public class UIManager : MonoBehaviour
         inGameUI.SetActive(true);
         Time.timeScale = 1;
         HandleCursorStates();
+        uiBlock = false;
 
         currentUIState = UIState.None;
     }
-
 
     // Quit to Title Screen (Load Title Scene)
     public void QuitToTitle()
