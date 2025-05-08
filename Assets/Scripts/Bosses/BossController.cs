@@ -164,7 +164,7 @@ public class BossController : Collectible, IDamageable
     private bool isStunImmune = false;
 
     [Tooltip("Time between stuns where boss can't be stunned again (seconds)")]
-    public float stunImmunityTime = 5f; // Adjust this value as needed
+    public float stunImmunityTime = 3f; // Adjust this value as needed
 
     //LD Montello
     //time to idle before making a decision

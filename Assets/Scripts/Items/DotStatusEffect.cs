@@ -57,6 +57,7 @@ public class DotStatusController : MonoBehaviour
 {
     private DotStatusEffect itemData;
     private Weapon playerWeapon;
+    private bool debugApplyToNearestBoss = false;
 
     // Track which bosses are affected by DOT
     private Dictionary<BossController, DotInfo> affectedBosses = new Dictionary<BossController, DotInfo>();
@@ -66,6 +67,7 @@ public class DotStatusController : MonoBehaviour
         public Coroutine dotCoroutine;
         public GameObject dotVisual;
         public float remainingDuration;
+        public GameObject dotDamageSource;
     }
 
     public void Initialize(DotStatusEffect data)
@@ -85,6 +87,9 @@ public class DotStatusController : MonoBehaviour
         }
 
         Debug.Log("DOT Status Effect initialized! Now listening to ALL attack types.");
+
+        // Force apply on initialization for testing
+        ForceApplyToAllBosses();
     }
 
     private void Update()
@@ -103,6 +108,18 @@ public class DotStatusController : MonoBehaviour
                 playerWeapon.onAttack += OnPlayerAttack;
             }
         }
+
+        // Testing: Apply DOT to nearest boss when flag is set
+        if (debugApplyToNearestBoss)
+        {
+            debugApplyToNearestBoss = false;  // Reset flag
+            BossController boss = FindNearestBoss();
+            if (boss != null)
+            {
+                Debug.Log($"DEBUG: Forcing DOT application on nearest boss: {boss.name}");
+                ApplyDotToBoss(boss);
+            }
+        }
     }
 
     // Called when player attacks
@@ -110,34 +127,58 @@ public class DotStatusController : MonoBehaviour
     {
         Debug.Log("DOT Status Effect: Attack detected!");
 
-        // Increase detection radius for better coverage
-        float detectionRadius = playerWeapon != null ?
-            Mathf.Max(5.0f, playerWeapon.attackDistance) : 5.0f;
+        // Find nearest boss directly like CoordinatedAttackEffect does
+        BossController boss = FindNearestBoss();
 
-        // Use player position instead of weapon position for more reliable detection
-        Collider[] colliders = Physics.OverlapSphere(
-            Player.instance.transform.position,
-            detectionRadius,
-            ~LayerMask.GetMask("Player", "Ignore Raycast")
-        );
-
-        Debug.Log($"DOT Status Effect: Scanning for bosses in radius {detectionRadius}. Found {colliders.Length} potential targets.");
-
-        bool foundAnyBoss = false;
-        foreach (Collider collider in colliders)
+        if (boss != null)
         {
-            BossController boss = collider.GetComponent<BossController>();
-            if (boss != null && !boss.isDead)
+            Debug.Log($"DOT Status Effect: Found boss '{boss.name}', applying DOT effect!");
+            ApplyDotToBoss(boss);
+        }
+        else
+        {
+            Debug.Log("DOT Status Effect: No valid boss targets found.");
+        }
+    }
+
+    private BossController FindNearestBoss()
+    {
+        BossController[] bosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        BossController nearest = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (BossController boss in bosses)
+        {
+            if (boss == null || boss.isDead)
+                continue;
+
+            float dist = Vector3.Distance(Player.instance.transform.position, boss.transform.position);
+            if (dist < nearestDist)
             {
-                foundAnyBoss = true;
-                Debug.Log($"DOT Status Effect: Found boss '{boss.name}', applying DOT effect!");
-                ApplyDotToBoss(boss);
+                nearest = boss;
+                nearestDist = dist;
             }
         }
 
-        if (!foundAnyBoss)
+        if (nearest != null)
+            Debug.Log($"Found nearest boss: {nearest.name} at distance {nearestDist}");
+
+        return nearest;
+    }
+
+    public void ForceApplyToAllBosses()
+    {
+        Debug.Log("DOT Status Effect: Force applying to all bosses");
+        BossController[] bosses = Object.FindObjectsByType<BossController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+
+        Debug.Log($"DOT Status Effect: Found {bosses.Length} bosses in scene");
+        foreach (BossController boss in bosses)
         {
-            Debug.Log("DOT Status Effect: No valid boss targets found in range.");
+            if (boss != null && !boss.isDead)
+            {
+                Debug.Log($"DOT Status Effect: Force applying to boss {boss.name}");
+                ApplyDotToBoss(boss);
+            }
         }
     }
 
@@ -148,15 +189,20 @@ public class DotStatusController : MonoBehaviour
         {
             // Refresh DOT duration
             dotInfo.remainingDuration = itemData.dotDuration;
-            Debug.Log($"DOT refreshed on {boss.bossName}");
+            Debug.Log($"DOT refreshed on {boss.name}");
         }
         else
         {
+            // Create a dedicated damage source
+            GameObject dotDamageSource = new GameObject("DotDamageSource");
+            dotDamageSource.transform.position = boss.transform.position;
+
             // Apply new DOT
             DotInfo newDotInfo = new DotInfo
             {
                 remainingDuration = itemData.dotDuration,
-                dotCoroutine = StartCoroutine(ApplyDotDamage(boss))
+                dotDamageSource = dotDamageSource,
+                dotCoroutine = StartCoroutine(ApplyDotDamage(boss, dotDamageSource))
             };
 
             // Create visual effect
@@ -175,7 +221,7 @@ public class DotStatusController : MonoBehaviour
             }
 
             affectedBosses.Add(boss, newDotInfo);
-            Debug.Log($"DOT applied to {boss.bossName}");
+            Debug.Log($"DOT applied to {boss.name}");
         }
     }
 
@@ -208,9 +254,10 @@ public class DotStatusController : MonoBehaviour
         return visualObj;
     }
 
-    private IEnumerator ApplyDotDamage(BossController boss)
+    private IEnumerator ApplyDotDamage(BossController boss, GameObject dotDamageSource)
     {
         DotInfo dotInfo = affectedBosses[boss];
+        Debug.Log($"DOT Effect: Starting DOT on {boss.name} for {dotInfo.remainingDuration} seconds");
 
         // Apply damage every interval until duration expires
         while (dotInfo.remainingDuration > 0 && boss != null && !boss.isDead)
@@ -224,8 +271,8 @@ public class DotStatusController : MonoBehaviour
             // Apply damage if boss still exists
             if (boss != null && !boss.isDead)
             {
-                boss.TakeDamage(itemData.dotDamage, gameObject);
-                Debug.Log($"DOT dealt {itemData.dotDamage} damage to {boss.bossName}");
+                // Apply damage using the dedicated damage source - THIS IS KEY
+                StartCoroutine(ApplyDotDamageTick(boss, itemData.dotDamage, dotDamageSource));
 
                 // Flash effect
                 if (dotInfo.dotVisual != null)
@@ -250,6 +297,20 @@ public class DotStatusController : MonoBehaviour
 
         // DOT expired, clean up
         CleanupDotEffect(boss);
+    }
+
+    private IEnumerator ApplyDotDamageTick(BossController boss, int damage, GameObject damageSource)
+    {
+        if (boss == null || boss.isDead)
+            yield break;
+
+        // Deal damage using the same approach as CompanionController
+        IDamageable damageable = boss.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            Debug.Log($"DOT dealing {damage} damage to {boss.name} using {damageSource.name}");
+            damageable.TakeDamage(damage, damageSource);
+        }
     }
 
     private IEnumerator ResetEmissionRate(ParticleSystem particles, float originalRate)
@@ -278,7 +339,14 @@ public class DotStatusController : MonoBehaviour
                 Destroy(dotInfo.dotVisual);
             }
 
+            // Destroy the damage source
+            if (dotInfo.dotDamageSource != null)
+            {
+                Destroy(dotInfo.dotDamageSource);
+            }
+
             affectedBosses.Remove(boss);
+            Debug.Log($"Cleaned up DOT effect for {boss.name}");
         }
     }
 
