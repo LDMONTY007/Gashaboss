@@ -330,7 +330,7 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 1265195092187752908}
   isEquipped: 0
-  damage: 30
+  damage: 50
 --- !u!135 &4471090823642522675
 SphereCollider:
   m_ObjectHideFlags: 0

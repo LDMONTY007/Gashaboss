@@ -412,7 +412,7 @@ public class BossController : Collectible, IDamageable
     /// </summary>
     public virtual void ApplyFinalMovements()
     {
-        Debug.Log(rb.rotation.eulerAngles.ToString());
+        //Debug.Log(rb.rotation.eulerAngles.ToString());
 
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.

@@ -127,7 +127,7 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
-  damage: 50
+  damage: 100
   projectile: {fileID: 1111534917611664777, guid: d3484dcdce6c3954a9c60b57e4fc64fd, type: 3}
   specialWaitTime: 0.5
   altSizeMult: 10

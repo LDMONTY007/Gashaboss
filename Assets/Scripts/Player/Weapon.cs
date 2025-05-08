@@ -299,7 +299,7 @@ public class Weapon : Collectible
         //weaponCollider.enabled = true;
 
         //Execute the coroutine for dealing damage using our collision sensor.
-        yield return DealDamage(1);
+        yield return DealDamage(damage);
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
@@ -451,7 +451,7 @@ public class Weapon : Collectible
 
         //Execute the coroutine for dealing damage using our collision sensor.
         //Deal 2 damage.
-        StartCoroutine(DealDamage(2));
+        StartCoroutine(DealDamage(damage * 2));
 
         //set color of debug mesh to show we are in cooldown
         collisionSensor.sensorColor = cooldownMeshColor;
