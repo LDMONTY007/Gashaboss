@@ -187,7 +187,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         if (p.curHealth > 0)
         {
             // Decrement player coins, providing both required parameters
-            p.TakeDamage(1, this.gameObject);  // Pass 'this.gameObject' as the source of damage
+            p.curHealth -= 1;
 
             // Give player a cap if they use gacha machine, cause *shrugs*
             p.caps += 1;
