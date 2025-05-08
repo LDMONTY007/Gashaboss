@@ -674,13 +674,19 @@ public class BossController : Collectible, IDamageable
     //LD Montello
     public void HandleRbRotation()
     {
-        //rotate towards the velocity direction but don't rotate upwards.
-        if (!manualRotation && new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
+
+        //When moving rotate towards the velocity direction but don't rotate upwards.
+        if (curState == BossState.move && !manualRotation && new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z) != Vector3.zero)
         {
             //LD Montello
             //Rotation is locked on our rigidbody settings
             //so only code can rotate the object.
             rb.MoveRotation(Quaternion.LookRotation(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), transform.up));
+        }
+        //otherwise look at the player.
+        else if (!manualRotation)
+        {
+            LookAtPlayer();
         }
 
         
