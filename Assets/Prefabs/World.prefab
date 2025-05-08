@@ -1886,6 +1886,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UFOGrabber_Gacha
       objectReference: {fileID: 0}
+    - target: {fileID: 6134301314510664991, guid: 64ab1b497e57395478b9886f61318e4b, type: 3}
+      propertyPath: drops.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6134301314510664991, guid: 64ab1b497e57395478b9886f61318e4b, type: 3}
+      propertyPath: 'drops.Array.data[6]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 4902be53c38dbf6438dc3c49c49dc08d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
