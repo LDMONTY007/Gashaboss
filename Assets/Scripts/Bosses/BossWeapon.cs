@@ -20,7 +20,7 @@ public class BossWeapon: Weapon{
     [SerializeField] private float altAtkHeight;
     public float altAtkCheckRadius = 15;
     [SerializeField] private int altAction = -1; // holds the action index to be called as part of the alt
-    [SerializeField] private bool animateAlt = false; // set this to true if animator controls alt action
+    public bool animateAlt = false; // set this to true if animator controls alt action
     #endregion
     #region SpecialAttack vars
     [SerializeField] public bool hasSpecial = false;
@@ -29,7 +29,7 @@ public class BossWeapon: Weapon{
     [SerializeField] private float specialAtkHeight;
     public float specialAtkCheckRadius = 15;
     [SerializeField] private int specialAction = -1; // holds the action index to be called as part of the special
-    [SerializeField] private bool animateSpecial = false; // set this to true if animator controls special action
+    public bool animateSpecial = false; // set this to true if animator controls special action
     #endregion
     
     public void Awake(){
