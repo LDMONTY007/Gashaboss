@@ -306,6 +306,8 @@ public class BossController : Collectible, IDamageable
 
         bossRenderer = animatedModel.GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
+        startCoroutine(WaitForSeconds(2f));
+        startCoroutine(IFramesCoroutine(1.5f));
     }
 
     public Vector3 GetPathablePoint(Vector3 desiredPoint, float searchRadius)
