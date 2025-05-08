@@ -807,6 +807,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameUICanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 5407252883032814958, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5600491273381313181, guid: e1739a6fac47ab94380e44e5aa48ccb4, type: 3}
       propertyPath: m_Value
       value: 0

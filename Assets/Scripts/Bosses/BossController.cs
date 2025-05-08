@@ -198,6 +198,8 @@ public class BossController : Collectible, IDamageable
 
     bool isShaking = false;
 
+    bool manualConstraints;
+
     public enum BossState
     {
         idle,
@@ -227,8 +229,17 @@ public class BossController : Collectible, IDamageable
             }
             else
             {
-                //otherwise freeze position and rotation.
-                rb.constraints = RigidbodyConstraints.FreezeAll;
+                if (manualConstraints)
+                {
+                    //otherwise freeze position and rotation.
+                    rb.constraints = RigidbodyConstraints.FreezeAll;
+                }
+                else
+                {
+                    //only freeze rotation when moving, not position.
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;
+                }
+
             }
 
             _curState = value;
@@ -426,7 +437,7 @@ public class BossController : Collectible, IDamageable
         //we freeze the position otherwise. 
         //we just allow gravity to take over
         //so that it can fall back to the ground.
-        if (!manualRotation && curState != BossState.stun && curState != BossState.move && !isGrounded)
+        if (!manualConstraints && !manualRotation && curState != BossState.stun && curState != BossState.move && !isGrounded)
         {
             //freeze all rotation and only allow movement on the y axis.
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
@@ -696,7 +707,8 @@ public class BossController : Collectible, IDamageable
     public void LookAtPlayer()
     {
         RigidbodyConstraints prevConstraints = rb.constraints;
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         Vector3 rotDir = (new Vector3(Player.instance.transform.position.x, 0, Player.instance.transform.position.z) - transform.position).normalized;
         rotDir.y = 0;
@@ -1231,6 +1243,22 @@ public class BossController : Collectible, IDamageable
         //Debug.Log("Boss Took: ".Color("Orange") + d.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
         Debug.Log("Boss Took: ".Color("Orange") + modifiedDamage.ToString().Color("Red") + " from " + other.transform.root.name.Color("Blue"));
 
+        //BOSS SHOULD ALWAYS TAKE KNOCKBACK.
+        #region knockback
+
+
+
+        //rotate -5 degrees away from the player so we get bounced at an angle away from it.
+        Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
+
+        Debug.DrawRay(transform.position, vectorAngle * 1000f, Color.green, 10f);
+        
+        //bounce the boss away from the player.
+        //this is how we simulate knockback.
+        StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
+
+        #endregion
+
         //When the boss takes damage,
         //put them in the stun state if not immune
         //to cancel any movements.
@@ -1248,13 +1276,6 @@ public class BossController : Collectible, IDamageable
             //Set to be low resolution for a small amount of time.
             StartLowResRoutine();
 
-            //rotate -1 degrees away from the player so we get bounced at an angle away from it.
-            Vector3 vectorAngle = LDUtil.RotateVectorAroundAxis((transform.position - other.transform.position).normalized, other.transform.right, -5);
-
-            //bounce the boss away from the player.
-            //this is how we simulate knockback.
-            StartCoroutine(BounceCoroutine(vectorAngle, bounceForce));
-
             //LD Montello
             //Stun the boss for stunTime
             StartCoroutine(StunCoroutine(stunTime));
@@ -1267,6 +1288,9 @@ public class BossController : Collectible, IDamageable
 
     public IEnumerator BounceCoroutine(Vector3 direction, float force)
     {
+
+        Debug.Log("START BOUNCE".Color("Green"));
+
         Vector3 startForce = direction * force;
 
         //stop the boss
@@ -1275,20 +1299,27 @@ public class BossController : Collectible, IDamageable
         float bounceTime = 0.5f;
         float curTime = 0f;
 
-        if (curState == BossState.stun)
-        {
-            //don't freeze position anymore
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-        }
+        manualConstraints = true;
 
+        //don't freeze position anymore
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        rb.AddForce(startForce, ForceMode.Impulse);
 
         while (curTime <= bounceTime)
         {
             //we need to wait for fixed update so that this can
             //properly be applied to the boss.
+
             yield return new WaitForFixedUpdate();
 
-            rb.linearVelocity = startForce;
+            Debug.Log(startForce);
+
+            //rb.linearVelocity = startForce;
+            //rb.linearVelocity = new Vector3(100f, 0f, 100f);
+            //rb.AddForce(startForce, ForceMode.VelocityChange);
+
+            Debug.Log(rb.linearVelocity);
 
             curTime += Time.deltaTime;
         }
@@ -1296,12 +1327,12 @@ public class BossController : Collectible, IDamageable
 
         rb.linearVelocity = Vector3.zero;
 
-        if (curState == BossState.stun)
-        {
-            //go back to freezing position
-            rb.constraints = RigidbodyConstraints.FreezeAll;
-        }
 
+
+        //go back to freezing position
+        //rb.constraints = RigidbodyConstraints.FreezeAll;
+
+        manualConstraints = false;
 
         //this only works while the boss is stunned,
         //they can escape being knocked back much quicker if they
