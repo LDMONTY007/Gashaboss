@@ -258,7 +258,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
     //gets the position of the bottom of the player collider.
     public Vector3 GetFeetPosition()
     {
-        return transform.position + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
+        return this.GetComponent<Collider>().bounds.center + (-transform.up * this.GetComponent<Collider>().bounds.size.y / 2);
     }
 
     //set our static instance so it's easier to find the player.
@@ -528,6 +528,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         }
 
         #endregion
+
+        HandleUI();
     }
 
     private void FixedUpdate()
@@ -555,7 +557,25 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         HandleWalkParticles();
 
-        HandleUI();
+
+
+        HandleGravity();
+
+        ApplyFinalMovements();
+    }
+
+    public void HandleGravity()
+    {
+        if (useGravity)
+        {
+            //Apply gravity, because gravity is not affected by mass and 
+            //we can't use ForceMode.acceleration with 2D just multiply
+            //by mass at the end. It's basically the same.
+            //In unity it factors in mass for this calculation so 
+            //multiplying by mass cancels out mass entirely.
+            rb.AddForce(-transform.up * gravity * rb.mass);
+        }
+
     }
 
     public void HandleWalkParticles()
@@ -972,10 +992,10 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
 
 
-    void LateUpdate()
+/*    void LateUpdate()
     {
         ApplyFinalMovements();
-    }
+    }*/
 
     /// <summary>
     /// Called in late update, should only contain applications that occur after we are done calculating physics. 
@@ -1031,16 +1051,7 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
 
         }
 
-        if (useGravity)
-        {
-            //Apply gravity, because gravity is not affected by mass and 
-            //we can't use ForceMode.acceleration with 2D just multiply
-            //by mass at the end. It's basically the same.
-            //In unity it factors in mass for this calculation so 
-            //multiplying by mass cancels out mass entirely.
-            rb.AddForce(-transform.up * gravity * rb.mass);
-        }
-
+        HandleGravity();
     }
 
     private IEnumerator slowToStop()
