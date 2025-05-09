@@ -1136,6 +1136,8 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         curHealth = startHealth;
         caps = 0;
 
+        //Set player's weapon to be the sword.
+
         //Save all game data after deleting the inventory.
         //This ensures we save the collection before leaving this scene.
         //everything but the collection resets when the player dies. 
@@ -1154,7 +1156,9 @@ public class Player : MonoBehaviour, IDamageable, IDataPersistence
         //Delete the player's weapon from them so it is deleted when we save.
         if (curWeapon != null)
         Destroy(curWeapon.gameObject);
-        curWeapon = null;
+        //Replace their weapon with the sword
+        //So they spawn with it when they respawn.
+        curWeapon = Instantiate(SaveDataManager.instance.FindDropGameObj("SwordDropData")).GetComponent<Weapon>();
         //delete the player's inventory
         inventory.Clear();
         //delete the player's modifiers.
