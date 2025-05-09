@@ -12,6 +12,7 @@ public class GachaMachine : MonoBehaviour, IDamageable {
     [SerializeField] private List<DropData> drops;
     [SerializeField] private GameObject capsule;
     private int totalWeights;
+    private DropData lastDrop;
 
     public Transform capsuleSpawnTransform;
 
@@ -82,11 +83,16 @@ public class GachaMachine : MonoBehaviour, IDamageable {
         foreach (DropData drop in drops){
             currDrop += drop.weight;
             if (currDrop >= dropRoll){
+                if (lastDrop != null && lastDrop == drop){
+                    Debug.Log("Found Same Drop: Recursive Calling");
+                    return GetRandomDrop();
+                }
                 if (drop.isRemovedAfterDrop){
                     drops.Remove(drop);
                     totalWeights -= drop.weight;
                 }
-                
+                lastDrop = drop;
+                Debug.Log("Found Drop");
                 return drop.droppedObject;
             }
         }
