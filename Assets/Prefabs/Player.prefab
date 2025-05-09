@@ -4975,14 +4975,14 @@ MonoBehaviour:
   jumpTotal: 1
   jumpCanceled: 0
   jumping: 0
-  jumpHeight: 30
+  jumpHeight: 15
   buttonTime: 0
   jumpTime: 0
   fallMultiplier: 9
   lowJumpMultiplier: 2
   multiplier: 100
   timeToApex: 1
-  timeToFall: 2
+  timeToFall: 1
   didLaunch: 0
   useGravity: 1
   doJump: 0
