@@ -49,6 +49,7 @@ public class UIManager : MonoBehaviour
             Instance.inGameUI = inGameUI;
             Instance.pauseMenuPanel = pauseMenuPanel;
             Instance.inventoryPanel = inventoryPanel;
+            Instance.popupUIManager = popupUIManager;
 
 
 
