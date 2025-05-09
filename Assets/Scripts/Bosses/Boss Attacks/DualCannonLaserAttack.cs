@@ -22,8 +22,6 @@ public class DualCannonLaserAttack : BossAction{
             GameObject.Instantiate(materials.projectiles[1], boss.launchTransform.position - (boss.launchTransform.right * 0.9f), boss.launchTransform.rotation);
             GameObject.Instantiate(materials.projectiles[1], boss.launchTransform.position + (boss.launchTransform.right * 0.9f), boss.launchTransform.rotation);
 
-            Debug.Break();
-
             boss.manualRotation = false;
 
             yield return new WaitForSeconds(1);

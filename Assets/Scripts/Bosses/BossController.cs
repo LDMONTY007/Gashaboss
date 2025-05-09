@@ -1320,13 +1320,13 @@ public class BossController : Collectible, IDamageable
 
             yield return new WaitForFixedUpdate();
 
-            Debug.Log(startForce);
+            //Debug.Log(startForce);
 
             //rb.linearVelocity = startForce;
             //rb.linearVelocity = new Vector3(100f, 0f, 100f);
             //rb.AddForce(startForce, ForceMode.VelocityChange);
 
-            Debug.Log(rb.linearVelocity);
+            //Debug.Log(rb.linearVelocity);
 
             curTime += Time.deltaTime;
         }
