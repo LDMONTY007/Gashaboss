@@ -165,7 +165,7 @@ public class Tutorial : MonoBehaviour
 
         //while any objective of the tutorial is incomplete
         //we sit here and wait until it is complete.
-        while (!didAttack || !didAltAttack || !didSpecialAttack || !didDash || !didJump || !didPickupSword || !didGashaDispense || !didDefeatBoss || !didOpenCollection || !didCloseCollection)
+        while (!didAttack || !didAltAttack || !didSpecialAttack || !didDash || !didJump || !didPickupSword || !didGashaDispense || !didDefeatBoss || !didCloseCollection)
         {
             yield return null;
         }
