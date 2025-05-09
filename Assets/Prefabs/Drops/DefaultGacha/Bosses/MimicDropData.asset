@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MimicDropData
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 9171208677914516136, guid: 33307bb5e3982ae42ba4a47571af670e, type: 3}
-  weight: 3
+  weight: 10
   cost: 3
   isRemovedAfterDrop: 0
   isEnvironmentalUnlock: 0

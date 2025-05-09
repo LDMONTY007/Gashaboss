@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PillowAlienDrop
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 2190712066403661329, guid: 532b21d353c3e9c438b2839f733bad31, type: 3}
-  weight: 5
+  weight: 20
   cost: 5
   isRemovedAfterDrop: 0
   isEnvironmentalUnlock: 0

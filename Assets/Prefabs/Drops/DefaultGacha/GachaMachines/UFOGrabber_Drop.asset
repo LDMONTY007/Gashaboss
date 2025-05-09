@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UFOGrabber_Drop
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 4235953428179477702, guid: 1fc2e3d053789594eaf189cb9b03810a, type: 3}
-  weight: 10
+  weight: 2
   cost: 100
   isRemovedAfterDrop: 1
   isEnvironmentalUnlock: 1

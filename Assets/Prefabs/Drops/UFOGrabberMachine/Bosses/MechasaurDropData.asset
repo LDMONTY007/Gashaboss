@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MechasaurDropData
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 1171149156322651485, guid: 93b65356defbb8c48828d6d33fdbd133, type: 3}
-  weight: 3
+  weight: 15
   cost: 12
   isRemovedAfterDrop: 0
   isEnvironmentalUnlock: 0

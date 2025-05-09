@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UFOBossDropData
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 8844612180304265273, guid: 94ad5e4059fe7c649b2374b709a92565, type: 3}
-  weight: 3
+  weight: 15
   cost: 10
   isRemovedAfterDrop: 0
   isEnvironmentalUnlock: 0

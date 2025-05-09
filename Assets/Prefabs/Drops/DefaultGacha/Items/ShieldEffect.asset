@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShieldEffect
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 1891130999345376837, guid: 1a82b3e710a77fc48b0327dfbf49e2b9, type: 3}
-  weight: 5
-  cost: 0
+  weight: 1
+  cost: 4
   isRemovedAfterDrop: 1
   isEnvironmentalUnlock: 0

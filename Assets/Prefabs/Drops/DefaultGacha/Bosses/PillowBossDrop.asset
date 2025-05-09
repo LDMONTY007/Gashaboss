@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PillowBossDrop
   m_EditorClassIdentifier: 
   droppedObject: {fileID: 2190712066403661329, guid: 6f02b4c5a8e7d0943b654727c18bdd10, type: 3}
-  weight: 1
+  weight: 18
   cost: 2
   isRemovedAfterDrop: 0
+  isEnvironmentalUnlock: 0
