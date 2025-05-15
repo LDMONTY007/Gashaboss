@@ -5293,10 +5293,11 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 0}
   isEquipped: 0
+  damage: 1
   materials: {fileID: 11400000, guid: f3a7b941fd16f894b8442588ee10d00a, type: 2}
   atkAngle: 75
-  atkHeight: 1
-  atkCheckRadius: 15
+  atkHeight: 5
+  atkCheckRadius: 10
   hasAlt: 0
   altAtkRadius: 15
   altAtkAngle: 180
@@ -5305,8 +5306,8 @@ MonoBehaviour:
   altAction: -1
   animateAlt: 0
   hasSpecial: 0
-  specialAtkAngle: 0
   specialAtkRadius: 0
+  specialAtkAngle: 0
   specialAtkHeight: 0
   specialAtkCheckRadius: 15
   specialAction: -1
@@ -5416,6 +5417,7 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 20
   stunTime: 0.5
+  stunImmunityTime: 3
   curIdleTime: 0
   doStateMachine: 1
   rb: {fileID: 0}
@@ -5424,6 +5426,7 @@ MonoBehaviour:
   avoidanceForceMultiplier: 50
   avoidanceDistance: 5
   avoidanceAngle: 75
+  incomingDamageMultiplier: 1
   animatedModel: {fileID: 1154712229751142874}
   weapon: {fileID: 4953268039357917136}
   lookTransform: {fileID: 5252672741350623739}
