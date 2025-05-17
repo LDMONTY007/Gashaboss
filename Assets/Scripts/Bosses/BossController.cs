@@ -321,6 +321,36 @@ public class BossController : Collectible, IDamageable
         StartCoroutine(IFramesCoroutine(1.5f));
     }
 
+    public bool IsPointOnNavMesh(Vector3 point)
+    {
+        //make sure to set the y value to be zero.
+        //as our bosses can only path on ground that is at y = 0.
+        
+
+
+        NavMeshHit hit;
+        //get the closest position within a radius of 5.
+        if (NavMesh.SamplePosition(point, out hit, 5f, NavMesh.AllAreas))
+        {
+
+            //if our position matches within 0.1f ignoring the y
+            //then we are indeed on the navmesh still.
+            if (Mathf.Abs(hit.position.x - point.x) <= 0.1f && Mathf.Abs(hit.position.z - point.z) <= 0.1f)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        //no point found, return false.
+        else
+        {
+            return false;
+        }
+    }
+
     public Vector3 GetPathablePoint(Vector3 desiredPoint, float searchRadius)
     {
         Vector3 foundPoint = Vector3.zero;
@@ -437,7 +467,25 @@ public class BossController : Collectible, IDamageable
     /// </summary>
     public virtual void ApplyFinalMovements()
     {
-        
+        //if the boss isn't on the navmesh, 
+        //we need to lock it to the nearest navmesh
+        //location.
+        //this only currently happens when knockback is applied to us.
+        if (isBouncing && !IsPointOnNavMesh(rb.position))
+        {
+
+            Debug.LogWarning("STOPPED FROM FALLING OFF NAVESH");
+
+            //find the nearest point on the navmesh to our boss.
+            Vector3 newPos = GetPathablePoint(rb.position, 50f);
+
+            //don't modify the y position.
+            newPos.y = rb.position.y;
+
+            //set the current position
+            //to be back on the navmesh.
+            rb.position = newPos;
+        }
 
         //when we aren't doing some kind of move, 
         //the boss can't fall unless we check here and allow them to fall.
@@ -1293,6 +1341,8 @@ public class BossController : Collectible, IDamageable
         }
     }
 
+    bool isBouncing = false;
+
     public IEnumerator BounceCoroutine(Vector3 direction, float force)
     {
 
@@ -1313,6 +1363,9 @@ public class BossController : Collectible, IDamageable
 
         rb.AddForce(startForce, ForceMode.Impulse);
 
+
+        isBouncing = true;
+
         while (curTime <= bounceTime)
         {
             //we need to wait for fixed update so that this can
@@ -1331,6 +1384,7 @@ public class BossController : Collectible, IDamageable
             curTime += Time.deltaTime;
         }
 
+        isBouncing = false;
 
         rb.linearVelocity = Vector3.zero;
 
