@@ -5612,6 +5612,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 37ef2f7a7b5619340b64bf27e7cedce1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7342194164298905738}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 37ef2f7a7b5619340b64bf27e7cedce1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4388095994016413562}
   m_SourcePrefab: {fileID: 100100000, guid: 37ef2f7a7b5619340b64bf27e7cedce1, type: 3}
 --- !u!4 &6068093550201865145 stripped
 Transform:
@@ -5645,3 +5648,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4388095994016413562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880904585518471427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5614e8099c6bd478b1538d05edc061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4953268039357917136}
+        m_TargetAssemblyTypeName: BossWeapon, Assembly-CSharp
+        m_MethodName: set_animationAttackTrigger
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
