@@ -977,7 +977,7 @@ public class BossController : Collectible, IDamageable
             //at the distance to check if there is anything colliding there.
             //Vector3 pointToCheck = transform.position + dir.normalized * desiredDist;
 
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, (bossCollider as CapsuleCollider).radius, dir, desiredDist);
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, bossCollider.bounds.size.magnitude, dir, desiredDist);
 
             if (hits.Length > 0)
             {
