@@ -5120,6 +5120,7 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 20
   stunTime: 0.15
+  stunImmunityTime: 3
   curIdleTime: 0
   doStateMachine: 1
   rb: {fileID: 0}
@@ -5523,6 +5524,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d67fb6a3c2b6b084d81948e8905f1af0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6610936195214905957}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d67fb6a3c2b6b084d81948e8905f1af0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 76042439537961705}
   m_SourcePrefab: {fileID: 100100000, guid: d67fb6a3c2b6b084d81948e8905f1af0, type: 3}
 --- !u!4 &2491174054955161582 stripped
 Transform:
@@ -5556,3 +5560,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &76042439537961705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3015649465965333844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5614e8099c6bd478b1538d05edc061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4285133830365013823}
+        m_TargetAssemblyTypeName: BossWeapon, Assembly-CSharp
+        m_MethodName: set_animationAttackTrigger
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2

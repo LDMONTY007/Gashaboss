@@ -521,6 +521,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c2a7d46dc2c7d438afc829b2f5e01c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &185044170
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 34.14281
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.80264235
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 47.83657
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4261816378586283534, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7220439192702206297, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      propertyPath: m_Name
+      value: TrexBossController
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2074020084073323972, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+  m_SourcePrefab: {fileID: 100100000, guid: 8540fca780631da4a9e63e8b9f1b1657, type: 3}
 --- !u!1001 &234092451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2922,3 +2982,4 @@ SceneRoots:
   - {fileID: 1652076412}
   - {fileID: 689292698}
   - {fileID: 5765394802999621754}
+  - {fileID: 185044170}

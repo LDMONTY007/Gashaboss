@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-public class BossWeapon: Weapon{
+public class BossWeapon : Weapon {
     [SerializeField] public BossActionMaterials materials; // Holds the reference to pass to boss actions
     private List<BossAction> bossActions = new List<BossAction>();// Holds actions for attacks
 
@@ -31,7 +31,19 @@ public class BossWeapon: Weapon{
     [SerializeField] private int specialAction = -1; // holds the action index to be called as part of the special
     public bool animateSpecial = false; // set this to true if animator controls special action
     #endregion
-    
+
+    //This is set in animation events
+    //using the animation event to call 
+    //the AnimationEventReciever
+    //which simply sets this boolean to
+    //true which tells the individual attack coroutines
+    //that they should invoke damage. 
+    //this is how we time dealing damage with the animations
+    //so it's easier for the player to tell when they're going
+    //to get hit, instead of just damaging them at the beginning
+    //of every animation.
+    public bool animationAttackTrigger { get; set; }
+
     public void Awake(){
         // This list holds all the possible boss actions that can be used as part of an attack
         // Put the index of which action you want to use in for the fields related to the alt action and special action
@@ -61,6 +73,16 @@ public class BossWeapon: Weapon{
 
         //say we are currently attacking
         isAttacking = true;
+
+        //For other attacks check if the attack is animated
+        //before doing this wait.
+        //wait for the animation to trigger
+        //activating the attack code.
+        while (!animationAttackTrigger)
+        {
+            yield return null;
+        }
+        animationAttackTrigger = false;
 
         yield return DealDamage(1);
         

@@ -143,6 +143,7 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 20
   stunTime: 0.3
+  stunImmunityTime: 3
   curIdleTime: 0
   doStateMachine: 1
   rb: {fileID: 0}
@@ -627,7 +628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7646845112805564682, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 18.109526
+      value: -54.919735
       objectReference: {fileID: 0}
     - target: {fileID: -6914167429984788900, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -643,15 +644,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -28.140722
+      value: -13.734148
       objectReference: {fileID: 0}
     - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -12.299775
+      value: -15.693817
       objectReference: {fileID: 0}
     - target: {fileID: -5864015810827677624, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 5.871199
+      value: 26.48487
       objectReference: {fileID: 0}
     - target: {fileID: -5821295507300260617, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -675,15 +676,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 28.598959
+      value: 20.103456
       objectReference: {fileID: 0}
     - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -5.1793394
+      value: 1.0634487
       objectReference: {fileID: 0}
     - target: {fileID: 867074532947437456, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -2.4844437
+      value: 22.19704
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       propertyPath: m_Name
@@ -699,6 +700,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6611115359159960206}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3771478745686334521}
   m_SourcePrefab: {fileID: 100100000, guid: 13ae4da9463c0ad42a5e4a3f35ed069e, type: 3}
 --- !u!4 &6150730650149202073 stripped
 Transform:
@@ -745,6 +749,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 7294310384592750280}
+--- !u!114 &3771478745686334521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777944225526870563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5614e8099c6bd478b1538d05edc061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7294310384592750280}
+        m_TargetAssemblyTypeName: BossWeapon, Assembly-CSharp
+        m_MethodName: set_animationAttackTrigger
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1001 &6663968779356413085
 PrefabInstance:
   m_ObjectHideFlags: 0
