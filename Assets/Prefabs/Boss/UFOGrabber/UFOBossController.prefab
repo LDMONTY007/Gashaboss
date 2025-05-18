@@ -324,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectibleData: {fileID: 0}
   collectibleName: 
-  hitParticles: {fileID: 0}
+  hitParticles: {fileID: 1620763710155296358, guid: 8ea736d82e9c62849a08c6910d0ff440, type: 3}
   slamParticles: {fileID: 0}
   collisionSensor: {fileID: 228893530067643418}
   handleTransform: {fileID: 0}
@@ -574,7 +574,7 @@ MonoBehaviour:
   capsRewarded: 1
   debugInfoTextMesh: {fileID: 1488098221061821844}
   bossCollider: {fileID: 7036920441980893923}
-  animator: {fileID: 0}
+  animator: {fileID: 132677810207461903}
   movementParticles: {fileID: 0}
   stunParticles: {fileID: 1880148003771326553}
   parentMachine: {fileID: 0}
@@ -583,6 +583,7 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 20
   stunTime: 0.2
+  stunImmunityTime: 3
   curIdleTime: 0
   doStateMachine: 1
   rb: {fileID: 0}
@@ -756,13 +757,23 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.014220437
       objectReference: {fileID: 0}
+    - target: {fileID: 9013638940889411661, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1621382774687162996}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 132677810207461903}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6872580463294411923}
   m_SourcePrefab: {fileID: 100100000, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
 --- !u!4 &3938636036682477034 stripped
 Transform:
@@ -774,6 +785,55 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 368e68d173a416b4b9088d4837030c21, type: 3}
   m_PrefabInstance: {fileID: 3540499901643196929}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &132677810207461903
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459417088623294288}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: aa9a7a82a343ccb4b889170386a456b4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6872580463294411923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459417088623294288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5614e8099c6bd478b1538d05edc061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8130890095560975542}
+        m_TargetAssemblyTypeName: BossWeapon, Assembly-CSharp
+        m_MethodName: set_animationAttackTrigger
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1001 &6228514281999344786
 PrefabInstance:
   m_ObjectHideFlags: 0
